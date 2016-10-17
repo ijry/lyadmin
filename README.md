@@ -4,6 +4,10 @@
 
 lyadmin是一套轻量级通用后台，采用Bootstrap3制作，自带权限管理，模块化开发
 
+## 后台截图
+
+![lyadmin](http://of7audkb0.bkt.clouddn.com/lyadmin.png)
+
 ## 目录结构
 ```
 ├─index.php 入口文件
