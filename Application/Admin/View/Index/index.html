@@ -1,0 +1,387 @@
+<extend name="$_admin_public_layout"/>
+
+<block name="full-header">
+    <!-- 顶部导航 -->
+    <div class="navbar navbar-default navbar-fixed-top main-nav" role="navigation">
+        <div class="container-fluid">
+            <div>
+                <div class="navbar-header navbar-header-default">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-top">
+                        <span class="sr-only">切换导航</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <php>if(C('WEB_SITE_LOGO')):</php>
+                        <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                            <img class="logo img-responsive" src="{$Think.config.WEB_SITE_LOGO|get_cover}">
+                        </a>
+                    <php>else:</php>
+                        <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                            <span>{:C('PRODUCT_LOGO')}</span>
+                        </a>
+                    <php>endif;</php>
+                </div>
+                <div class="navbar-header navbar-header-inverse">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-top">
+                        <span class="sr-only">切换导航</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <php>if(C('WEB_SITE_LOGO_INVERSE')):</php>
+                        <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                            <img class="logo img-responsive" src="{$Think.config.WEB_SITE_LOGO_INVERSE|get_cover}">
+                        </a>
+                    <php>else:</php>
+                        <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                            <span>{:C('PRODUCT_LOGO')}</span>
+                        </a>
+                    <php>endif;</php>
+                </div>
+                <div class="collapse navbar-collapse navbar-collapse-top">
+                    <ul class="nav navbar-nav">
+                        <!-- 主导航 -->
+                        <?php if (!C('ADMIN_TABS')): ?>
+                            <li><a href="{:U('Admin/Index/index')}"><i class="fa fa-home"></i> 首页</a></li>
+                            <?php if (count($_menu_list) > 6): ?>
+                                <volist name="_menu_list" id="vo" offset="0" length="6">
+                                    <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
+                                        <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
+                                            <i class="fa {$vo.icon}"></i>
+                                            <span>{$vo.title}</span>
+                                        </a>
+                                    </li>
+                                </volist>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa fa-th-large"></i> 更多 <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <volist name="_menu_list" id="vo" offset="6">
+                                            <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
+                                                <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
+                                                    <i class="fa {$vo.icon}"></i>
+                                                    <span>{$vo.title}</span>
+                                                </a>
+                                            </li>
+                                        </volist>
+                                    </ul>
+                                </li>
+                            <?php else: ?>
+                                <volist name="_menu_list" id="vo">
+                                    <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
+                                        <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
+                                            <i class="fa {$vo.icon}"></i>
+                                            <span>{$vo.title}</span>
+                                        </a>
+                                    </li>
+                                </volist>
+                            <?php endif; ?>
+                        <?php else: ?>
+                             <?php if (count($_menu_list) > 7): ?>
+                                <volist name="_menu_list" id="vo" offset="0" length="7">
+                                    <li>
+                                        <a href="#module{$vo.id}" role="tab" data-toggle="tab">
+                                            <i class="fa {$vo.icon}"></i>
+                                            <span>{$vo.title}</span>
+                                        </a>
+                                    </li>
+                                </volist>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                        <i class="fa fa-th-large"></i> 更多 <b class="caret"></b>
+                                    </a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <volist name="_menu_list" id="vo" offset="7">
+                                            <li>
+                                                <a href="#module{$vo.id}" role="tab" data-toggle="tab">
+                                                    <i class="fa {$vo.icon}"></i>
+                                                    <span>{$vo.title}</span>
+                                                </a>
+                                            </li>
+                                        </volist>
+                                    </ul>
+                                </li>
+                            <?php else: ?>
+                                <volist name="_menu_list" id="vo">
+                                    <li>
+                                        <a href="#module{$vo.id}" role="tab" data-toggle="tab">
+                                            <i class="fa {$vo.icon}"></i>
+                                            <span>{$vo.title}</span>
+                                        </a>
+                                    </li>
+                                </volist>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left" class="btn ajax-get no-refresh"><i class="fa fa-trash"></i> 清空缓存</a></li>
+                        <li><a target="_blank" href="__ROOT__/"><i class="fa fa-external-link"></i> 打开前台</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-user"></i> {$_user_auth.username} <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a target="_blank" href="__ROOT__/"><i class="fa fa-external-link"></i> 打开前台</a></li>
+                                <li><a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left" class="btn ajax-get no-refresh"><i class="fa fa-trash"></i> 清空缓存</a></li>
+                                <li><a href="{:U('Admin/Public/logout')}" class="ajax-get"><i class="fa fa-sign-out"></i> 退出</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="full-container">
+    <input type="hidden" name="check_version_url" value="{:U('Admin/Update/checkVersion')}">
+    <div class="container-fluid with-top-navbar" style="height: 100%;overflow: hidden;">
+        <div class="row" style="height: 100%;">
+            <!-- 后台左侧导航 -->
+            <div id="sidebar" class="col-xs-12 col-sm-3 sidebar tab-content">
+                <?php if (!C('ADMIN_TABS')): ?>
+                    <!-- 模块菜单 -->
+                    <nav class="navside navside-default" role="navigation">
+                        <?php if($_current_menu_list['_child']): ?>
+                            <ul class="nav navside-nav navside-first">
+                                <volist name="_current_menu_list._child" id="_ns_first" key="fkey">
+                                    <li>
+                                        <a data-toggle="collapse" href="#navside-collapse-{$_ns.id}-{$fkey}">
+                                            <i class="{$_ns_first.icon}"></i>
+                                            <span class="nav-label">{$_ns_first.title}</span>
+                                            <span class="fa arrow"></span>
+                                        </a>
+                                        <notempty name="_ns_first._child">
+                                            <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns.id}-{$fkey}">
+                                                <volist name="_ns_first._child" id="_ns_second" key="skey">
+                                                    <li <?php if($_parent_menu_list[2]['id'] == $_ns_second['id']) echo 'class="active"'; ?>>
+                                                        <a href="{:U($_ns_second['url'])}" >
+                                                            <i class="{$_ns_second.icon}"></i>
+                                                            <span class="nav-label">{$_ns_second.title}</span>
+                                                        </a>
+                                                    </li>
+                                                </volist>
+                                            </ul>
+                                        </notempty>
+                                    </li>
+                                </volist>
+                            </ul>
+                        <?php endif; ?>
+                    </nav>
+                <?php else: ?>
+                    <!-- 模块菜单 -->
+                    <volist name="_menu_list" id="_ns">
+                        <?php if($_ns['_child']): ?>
+                            <div role="tabpanel" class="tab-pane fade <?php if($i === 1) echo 'active in';?>" id="module{$_ns.id}">
+                                <nav class="navside navside-default" role="navigation">
+                                    <ul class="nav navside-nav navside-first">
+                                        <notempty name="_ns._child">
+                                            <volist name="_ns._child" id="_ns_first" key="fkey">
+                                                <li>
+                                                    <a data-toggle="collapse" href="#navside-collapse-{$_ns.id}-{$fkey}">
+                                                        <i class="{$_ns_first.icon}"></i>
+                                                        <span class="nav-label">{$_ns_first.title}</span>
+                                                        <span class="fa arrow"></span>
+                                                    </a>
+                                                    <notempty name="_ns_first._child">
+                                                        <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns.id}-{$fkey}">
+                                                            <volist name="_ns_first._child" id="_ns_second" key="skey">
+                                                                <li>
+                                                                    <a href="{:U($_ns_second['url'])}" class="open-tab" tab-name="navside-collapse-{$_ns.id}-{$fkey}-{$skey}">
+                                                                        <i class="{$_ns_second.icon}"></i>
+                                                                        <span class="nav-label">{$_ns_second.title}</span>
+                                                                    </a>
+                                                                </li>
+                                                            </volist>
+                                                        </ul>
+                                                    </notempty>
+                                                </li>
+                                            </volist>
+                                        </notempty>
+                                    </ul>
+                                </nav>
+                            </div>
+                        <?php endif; ?>
+                    </volist>
+                <?php endif; ?>
+            </div>
+
+            <!-- 右侧内容 -->
+            <div id="main" class="col-xs-12 col-sm-9 main" style="padding-right: 0;">
+                <?php if (C('ADMIN_TABS')): ?>
+                    <!-- 多标签后台 -->
+                    <nav class="navbar navbar-default ct-tab-nav" role="navigation">
+                        <div class="collapse navbar-collapse">
+                            <ul class="nav navbar-nav navbar-left">
+                                <li><a href="#" id="tab-left"><i class="fa fa-caret-left"></i></a></li>
+                            </ul>
+                            <div class="ct-tab-wrap clearfix">
+                                <ul class="nav navbar-nav nav-close ct-tab">
+                                    <li href="#home" role="tab" data-toggle="tab">
+                                        <a href="#"><i class="fa fa-dashboard"></i> <span>首页</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li><a href="#" id="tab-right"><i class="fa fa-caret-right"></i></a></li>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">关闭操作 <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" class="close-all">关闭所有</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                <?php else: ?>
+                    <!-- 面包屑导航 -->
+                    <ul class="breadcrumb">
+                        <li><i class="fa fa-map-marker"></i></li>
+                        <li class="text-muted">首页</li>
+                    </ul>
+                <?php endif; ?>
+
+                <!-- 多标签后台内容部分 -->
+                <div class="tab-content ct-tab-content" style="height: 100%;">
+                    <!-- 首页 -->
+                    <div role="tabpanel" class="tab-pane fade in active" id="home">
+                        <div class="dashboard clearfix">
+                            <div class="col-xs-12 col-sm-6 col-lg-6 ct-update">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="update pull-right"></div>
+                                        <i class="fa fa-cog"></i> 系统信息
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <td>{:C('PRODUCT_NAME')}版本</td>
+                                                    <td>
+                                                        <span class="version">
+                                                            v{:C('CURRENT_VERSION')}
+                                                            <?php echo C('DEVELOP_VERSION'); ?>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>产品型号</td>
+                                                    <td>{:C('PRODUCT_TITLE')}（ {:C('PRODUCT_MODEL')} ）</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>ThinkPHP版本</td>
+                                                    <td>{$Think.VERSION}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>服务器操作系统</td>
+                                                    <td>{$Think.const.PHP_OS}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>运行环境</td>
+                                                    <td>
+                                                        <?php
+                                                            $server_software = explode(' ', $_SERVER['SERVER_SOFTWARE']);
+                                                            echo $server_software[0];
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>PHP版本</td>
+                                                    <td><?php echo PHP_VERSION; ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>MYSQL版本</td>
+                                                    <td><php>$system_info_mysql = M()->query("select version() as v;");</php>{$system_info_mysql.0.v}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>上传限制</td>
+                                                    <td>{:ini_get('upload_max_filesize')}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                             <div class="col-xs-12 col-sm-6 col-lg-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="panel-actions"></div>
+                                        <i class="fa fa-users"></i> 产品团队
+                                    </div>
+                                    <div class="panel-body">
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                                <tr>
+                                                    <td>网站标题</td>
+                                                    <td>{:C('WEB_SITE_TITLE')}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>项目开发</td>
+                                                    <td>{:C('DEVELOP_TEAM')}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>官方网址</td>
+                                                    <td><a href="http://lyadmin.lyunweb.com">http://lyadmin.lyunweb.com</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>公司地址</td>
+                                                    <td>南京市鼓楼区广东路38号</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>核心团队</td>
+                                                    <td>江如意、赵瀚卿、张玥、潘美红、赵川...</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>官方QQ群</td>
+                                                    <td>
+                                                        <a target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=9e5c6b98cf3bb4265bd6031b25f236cc4c7e596c31612b50d98b5e099cc3d246"><img border="0" src="http://pub.idqqimg.com/wpa/images/group.png" alt="lyadmin通用后台" title="lyadmin通用后台"></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>联系我们</td>
+                                                    <td>
+                                                        {:C('COMPANY_EMAIL')}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 后台首页小工具 -->
+                            {:hook('AdminIndex')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix footer">
+                    <div class="navbar navbar-default" role="navigation">
+                        <div class="container-fluid">
+                            <div class="navbar-header">
+                                <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                                    <span>{:C('PRODUCT_NAME')}</span>
+                                </a>
+                            </div>
+                            <div class="collapse navbar-collapse navbar-collapse-bottom">
+                                <ul class="nav navbar-nav">
+                                    <li>
+                                        <a href="{:C('WEBSITE_DOMAIN')}" class="text-muted" target="_blank">
+                                            <span>版权所有 © 2014-<php>echo date("Y",time());</php></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <ul class="nav navbar-nav navbar-right">
+                                    <li><a class="text-muted pull-right">框架开发：{:C('COMPANY_NAME')}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>

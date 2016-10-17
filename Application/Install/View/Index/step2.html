@@ -1,0 +1,83 @@
+<extend name="Public/layout"/>
+
+<block name="header">
+    <li class="active"><a href="javascript:;">安装协议</a></li>
+    <li class="active"><a href="javascript:;">环境检测</a></li>
+    <li><a href="javascript:;">参数设置</a></li>
+    <li><a href="javascript:;">开始安装</a></li>
+    <li><a href="javascript:;">完成安装</a></li>
+</block>
+
+<block name="main">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>环境检测</span>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <caption><h4>运行环境检查</h4></caption>
+                    <thead>
+                        <tr>
+                            <th>项目</th>
+                            <th>所需配置</th>
+                            <th>当前配置</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <volist name="check_env" id="item">
+                            <tr>
+                                <td>{$item['title']}</td>
+                                <td>{$item['limit']}</td>
+                                <td><i class="fa {$item['icon']}"></i> {$item['current']}</td>
+                            </tr>
+                        </volist>
+                    </tbody>
+                </table>
+                <present name="check_dirfile">
+                    <table class="table table-hover">
+                        <caption><h4>目录、文件权限检查</h4></caption>
+                        <thead>
+                            <tr>
+                                <th>目录/文件</th>
+                                <th>所需状态</th>
+                                <th>当前状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <volist name="check_dirfile" id="item">
+                                <tr>
+                                    <td>{$item['path']}</td>
+                                    <td><i class="fa fa-check text-success"></i> 可写</td>
+                                    <td><i class="fa {$item['icon']}"></i> {$item['title']}</td>
+                                </tr>
+                            </volist>
+                        </tbody>
+                    </table>
+                </present>
+                <table class="table table-hover">
+                    <caption><h4>函数及扩展依赖性检查</h4></caption>
+                    <thead>
+                        <tr>
+                            <th>名称</th>
+                            <th>检查结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <volist name="check_func_and_ext" id="item">
+                            <tr>
+                                <td>{$item['name']}</td>
+                                <td><i class="fa {$item['icon']}"></i> {$item['title']}</td>
+                            </tr>
+                        </volist>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary btn-block ajax-get" href="{:U('step2')}">下一步</button>
+                <a class="btn btn-default btn-block" href="{:U('step1')}">上一步</a>
+            </div>
+            <div class="panel-footer">
+                <span>版权所有 (c) 2014－<php>echo date("Y",time());</php>{:C('INSTALL_COMPANY_NAME')} 保留所有权利。</span>
+            </div>
+        </div>
+    </div>
+</block>

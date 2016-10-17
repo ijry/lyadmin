@@ -1,0 +1,244 @@
+<extend name="$_home_public_layout"/>
+
+<block name="title"><title>{:C('WEB_SITE_TITLE')}－{:C('WEB_SITE_SLOGAN')}</title></block>
+
+<block name="style">
+    <style type="text/css">
+        /* jumbotron */
+        .lyadmin .title {
+            margin-top: 60px;
+        }
+        .lyadmin .abstract {
+            margin: 50px 0 70px;
+        }
+        .lyadmin .action .btn-default {
+            color: #fff;
+            border-color: #fff;
+            background: none;
+        }
+        .lyadmin .action .btn-default:hover,
+        .lyadmin .action .btn-default.active {
+            color: #3EA9F5;
+            background: #fff;
+        }
+
+        /* section */
+        .section {
+            padding: 10px 0;
+        }
+        .section h3 {
+            margin-bottom: 30px;
+        }
+
+        /* 优秀特性 */
+        .section-feature .feature-item {
+            margin-bottom: 30px;
+            position: relative;
+            cursor: pointer;
+        }
+        .section-feature .feature-item .feature-icon{
+            color:#fff;
+            padding-top:30px;
+            padding-bottom: 30px;
+        }
+        .section-feature .feature-item .feature-caption {
+            border: 1px solid rgb(228,229,230);
+            border-top: none;
+            padding-top:15px;
+            padding-bottom: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .section-feature .feature-item .feature-caption h4 {
+            margin: 0px;
+            font-weight: 300;
+            font-size: 14px;
+        }
+        .section-feature .feature-cover {
+            width: 100%;
+            height: 0px;
+            position: absolute;
+            top:0px;
+            left: 0px;
+            opacity: 0;
+            transition: all 0.3s;
+            color: #fff;
+            padding: 20px;
+        }
+        .section-feature .feature-cover.active{
+            height: 130px;
+            position: absolute;
+            top:0px;
+            left: 0px;
+            opacity: 1;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            /* section */
+            .section {
+                padding: 0px 0;
+            }
+            .section h3 {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</block>
+
+<block name="jumbotron">
+    <div class="jumbotron jumbotron-primary jumbotron-background section-feature-slider lyadmin">
+            <div class="container">
+                <div>
+                    <h1 class="title">
+                        {:C('WEB_SITE_TITLE')}
+                        <label class="small">{:C('CURRENT_VERSION')}</label>
+                    </h1>
+                </div>
+                <p class="abstract">
+                    {:C('WEB_SITE_DESCRIPTION')}
+                </p>
+                <div class="action">
+                    <a class="btn btn-default btn-pill" target="_blank" href="https://github.com/ijry/lyadmin" ><i class="fa fa-download"></i> 立即下载</a>
+                    <a class="btn btn-default btn-pill" target="_blank" href="https://github.com/ijry/lyadmin"><i class="fa fa-github"></i> GitHub</a>
+                    <a class="btn btn-default btn-pill hidden-xs" target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=9e5c6b98cf3bb4265bd6031b25f236cc4c7e596c31612b50d98b5e099cc3d246"><i class="fa fa-qq"></i> QQ群</a>
+                    <a class="btn btn-default btn-pill" target="_blank" href="http://lyadmin.lyunweb.com"><i class="fa fa-flask"></i> 演示</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="breadcrumb"></block>
+
+<block name="main">
+    <div class="section section-feature">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6 col-sm-offset-3 feature-bg text-center" >
+                    <h3 class="feature-title" style="color:rgb(109,188,245)">优秀特性</h3>
+                </div>
+            </div>
+            <div class="row feature-list">
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(81,175,241)"><span class="fa fa-cloud fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">开发模块化</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(81,175,241)">
+                            <div class="feature-cover-content">
+                                系统功能全面模块化、插件化；可以用来对系统功能进行无限扩展。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(245,181,91)"><span class="fa fa-hourglass-1 fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">Builder页面生成技术</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(245,181,91)">
+                            <div class="feature-cover-content">
+                                独创的Builder页面自动生成技术极大的解放了后端开发者的工作，只需要专注于业务逻辑，页面交给Builder帮您完成。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(59,183,225)"><span class="fa fa-tablet fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">多终端多平台支持</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(59,183,225)">
+                            <div class="feature-cover-content">
+                                支持PC、手机Wap、微信等常见界面的页面响应式。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(8,74,155)"><span class="fa fa-book fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">文档齐全开发简单</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(8,74,155)">
+                            <div class="feature-cover-content">
+                                官方开发文档齐全、更新及时，让二次开发变得简单。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(66,169,243)"><span class="fa fa-flash fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">基于ThinkPHP3.2.3最新版</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(66,169,243)">
+                            <div class="feature-cover-content">
+                                ThinkPHP 是一个免费开源的，快速、简单的面向对象的 轻量级PHP开发框架 ，遵循Apache2开源协议发布，是为了敏捷WEB应用开发和简化企业应用开发而诞生的。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(236,64,227)"><span class="fa fa-desktop fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">基于Bootstrap3.3.5</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(236,64,227)">
+                            <div class="feature-cover-content">
+                                官方开发cui前端框架，是在Bootstrap3.3.5基础上扩展出来的完全兼容Bootstrap3的最适合国人的前端框架。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(243,152,71)"><span class="fa fa-server fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">独家两种后台模式</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(243,152,71)">
+                            <div class="feature-cover-content">
+                                独创的经典和多标签两种后台，一键切换，让您在合适的场景选择合适的模式。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="feature-item text-center">
+                        <div class="feature-icon" style="background:rgb(84,222,234)"><span class="fa fa-heart fa-5x"></span></div>
+                        <div class="feature-caption">
+                            <h4 class="text-center">自主产权技术支持完善</h4>
+                        </div>
+                        <div class="feature-cover" style="background:rgb(84,222,234)">
+                            <div class="feature-cover-content">
+                                本系统经国家教育部科技查新工作站查新认证、具有国家版权中心软件著作权，完全官方自主研发核心技术，技术支持完善。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="script">
+    <script type="text/javascript" >
+        $(function(){
+            // 特性详情
+            $('.feature-item').hover(function() {
+                $(this).children('.feature-cover').addClass('active');
+            }, function() {
+                $(this).children('.feature-cover').removeClass('active');
+            });
+        });
+    </script>
+</block>

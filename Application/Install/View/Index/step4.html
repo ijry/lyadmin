@@ -1,0 +1,37 @@
+<extend name="Public/layout"/>
+
+<block name="header">
+    <li class="active"><a href="javascript:;">安装协议</a></li>
+    <li class="active"><a href="javascript:;">环境检测</a></li>
+    <li class="active"><a href="javascript:;">参数设置</a></li>
+    <li class="active"><a href="javascript:;">开始安装</a></li>
+    <li><a href="javascript:;">完成安装</a></li>
+</block>
+
+<block name="main">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>开始安装</span>
+            </div>
+            <div class="panel-body">
+                <div id="show-list" class="install-database">
+                </div>
+                <script type="text/javascript">
+                    var list   = document.getElementById('show-list');
+                    function showmsg(msg, classname){
+                        var li = document.createElement('p');
+                        li.innerHTML = msg;
+                        classname && li.setAttribute('class', classname);
+                        list.appendChild(li);
+                        document.scrollTop += 30;
+                    }
+                </script>
+                <button class="btn btn-warning disabled">正在<eq name="Think.session.update" value="1">升级<else/>安装</eq>，请稍后...</button>
+            </div>
+            <div class="panel-footer">
+                <span>版权所有 (c) 2014－<php>echo date("Y",time());</php>{:C('INSTALL_COMPANY_NAME')} 保留所有权利。</span>
+            </div>
+        </div>
+    </div>
+</block>

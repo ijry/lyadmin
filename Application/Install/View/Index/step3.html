@@ -1,0 +1,78 @@
+<extend name="Public/layout"/>
+
+<block name="header">
+    <li class="active"><a href="javascript:;">安装协议</a></li>
+    <li class="active"><a href="javascript:;">环境检测</a></li>
+    <li class="active"><a href="javascript:;">参数设置</a></li>
+    <li><a href="javascript:;">开始安装</a></li>
+    <li><a href="javascript:;">完成安装</a></li>
+</block>
+
+<block name="main">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>参数设置</span>
+            </div>
+            <div class="panel-body">
+                <form class="form" action="__SELF__" method="post" target="_self">
+                    <h2>数据库连接信息</h2>
+                    <div class="form-group">
+                        <label class="control-label">数据库连接类型</label>
+                        <div class="control-group">
+                            <select name="db[DB_TYPE]" class="form-control">
+                                <option>mysql</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">数据库服务器，数据库服务器IP，一般为127.0.0.1</label>
+                        <div class="control-group">
+                            <input class="form-control" type="text" name="db[DB_HOST]" value="127.0.0.1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">数据库名</label>
+                        <div class="control-group">
+                            <input class="form-control" type="text" name="db[DB_NAME]" value="{:C('PRODUCT_MODEL')}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">是否覆盖同名数据库</label>
+                        <div class="control-group">
+                            <label class="radio-inline" for="cover0">
+                                <input type="radio" id="cover0" class="radio" name="cover" value="0" checked="checked"> 不覆盖
+                            </label>
+                            <label class="radio-inline" for="cover1">
+                                <input type="radio" id="cover1" class="radio" name="cover" value="1"> 覆盖
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">数据库用户名</label>
+                        <div class="control-group">
+                            <input class="form-control" type="text" name="db[DB_USER]" value="root">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">数据库密码</label>
+                        <div class="control-group">
+                            <input class="form-control" type="password" name="db[DB_PWD]" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">数据表前缀，同一个数据库运行多个系统时请修改为不同的前缀</label>
+                        <div class="control-group">
+                            <input class="form-control" type="text" name="db[DB_PREFIX]" value="{$Think.config.ORIGINAL_TABLE_PREFIX}">
+                        </div>
+                    </div>
+                </form>
+                <input type="submit" class="btn btn-primary btn-block ajax-post" target-form="form" value="下一步">
+                <a class="btn btn btn-default btn-block" href="{:U('step2')}">上一步</a>
+            </div>
+            <div class="panel-footer">
+                <span>版权所有 (c) 2014－<php>echo date("Y",time());</php>{:C('INSTALL_COMPANY_NAME')} 保留所有权利。</span>
+            </div>
+        </div>
+    </div>
+</block>

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <block name="title"><title>{$meta_title}｜{:C('WEB_SITE_TITLE')}－{:C('WEB_SITE_SLOGAN')}</title></block>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="author" content="{:C('WEB_SITE_TITLE')}">
+    <meta name="keywords" content="{$meta_keywords}">
+    <meta name="description" content="{$meta_description}">
+    <meta name="generator" content="零云">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{:C('WEB_SITE_TITLE')}">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="shortcut icon" type="image/x-icon" href="__ROOT__/favicon.ico">
+    <link rel="apple-touch-icon" type="image/x-icon" href="__ROOT__/logo.png">
+    <link rel="stylesheet" type="text/css" href="__LYUI__/css/lyui.min.css">
+    <link rel="stylesheet" type="text/css" href="__HOME_CSS__/home.css">
+    <block name="style"></block>
+    <!--[if lt IE 9]>
+        <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        window.jQuery || document.write('<script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"><\/script>');
+        var OpenCMF = window.OpenCMF = {
+            "TOP_HOME_PAGE" : "{:C('TOP_HOME_PAGE')}",
+            "HOME_PAGE" : "{:C('HOME_PAGE')}",
+            "VAR_ROOT"  : "__ROOT__",
+            "DEFAULT_IMG" : "{:get_cover('', 'default')}"
+        }
+    </script>
+</head>
+<body class="{$_page_name}">
+    <block name="full_wrap">
+        <block name="hook_page_header">
+            <div class="clearfix hook hook-page-header">
+                {:hook('PageHeader')} <!-- 文档开始钩子 -->
+            </div>
+        </block>
+
+        <block name="wrap">
+            <div class="clearfix full-wrap">
+                <div class="clearfix full-header">
+                    <block name="header">
+                        <block name="main-nav">
+                            <nav class="navbar navbar-default main-nav m-a-0" role="navigation">
+                                <div class="container">
+                                    <div class="navbar-header">
+                                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-main">
+                                            <span class="sr-only">切换导航</span>
+                                            <span class="icon-bar"></span>
+                                            <span class="icon-bar"></span>
+                                            <span class="icon-bar"></span>
+                                        </button>
+                                        <php>if(C('WEB_SITE_LOGO')):</php>
+                                            <a class="navbar-brand" href="{:C('HOME_PAGE')}">
+                                                <img alt="logo" src="{$Think.config.WEB_SITE_LOGO|get_cover}" style="display: inline-block">
+                                            </a>
+                                        <php>else:</php>
+                                            <a class="navbar-brand" href="{:C('HOME_PAGE')}">
+                                                <span style="font-size: 30px;">{:C('PRODUCT_LOGO')}</span>
+                                            </a>
+                                        <php>endif;</php>
+                                    </div>
+                                    <div class="collapse navbar-collapse navbar-collapse-main">
+                                        <ul class="nav navbar-nav navbar-left"></ul>
+                                        <ul class="nav navbar-nav navbar-right">
+                                            <!-- 主导航 开始 -->
+                                            <lingyun:nav_list name="vo" pid="0" group="main">
+                                                <php>if(isset($vo['_child'])):</php>
+                                                    <li class="dropdown">
+                                                        <a href="{$vo.href}" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                                            {$vo.title} <span class="caret"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <volist name="vo._child" id="vo1">
+                                                                <li>
+                                                                    <a target="{$vo.target}" href="{$vo1.href}">{$vo1.title}</a>
+                                                                </li>
+                                                            </volist>
+                                                        </ul>
+                                                    </li>
+                                                <php>else:</php>
+                                                    <li class="<?php 
+                                                            if(C('HOME_DOMAIN') . $_SERVER['REQUEST_URI'] == $vo['href']) {
+                                                                echo 'active'; 
+                                                            }
+                                                        ?>">
+                                                        <a target="{$vo.target}" href="{$vo.href}">
+                                                            <span> {$vo.title}</span>
+                                                        </a>
+                                                    </li>
+                                                <php>endif;</php>
+                                            </lingyun:nav_list>
+                                            <!-- 主导航 结束 -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </nav>
+                        </block>
+                    </block>
+                </div>
+
+                <div class="clearfix full-container">
+                    <block name="jumbotron">
+                        <div class="jumbotron jumbotron-primary jumbotron-background main-jumbotron text-center m-b-sm">
+                            <h4>简单、高效、卓越 － <span class="small">{:C('WEB_SITE_SLOGAN')}</span></h4>
+                        </div>
+                    </block>
+
+                    <block name="breadcrumb">
+                        <!-- 子域名部署支持 -->
+                        <?php if($_current_module && $_current_module !== $meta_title): ?>   <!-- 如果是模块首页则不显示面包屑导航 -->
+                            <div class="container m-t">
+                                <ol class="breadcrumb m-a-0">
+                                    <li><a href="{:C('TOP_HOME_PAGE')}">首页</a></li>
+                                    <li><a href="{:U('/'.MODULE_NAME)}"><?php echo $_current_module; ?></a></li>
+                                    <li class="active">{$meta_title}</li>
+                                </ol>
+                            </div>
+                        <?php endif; ?>
+                    </block>
+
+                    <div id="main" class="main">
+                        <block name="main">这里是内容</block>
+                    </div>
+                </div>
+
+                <div class="clearfix full-foooter">
+                    <block name="footer">
+                        <div class="footer">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-sm-6  col-lg-7 footnav-list">
+                                        <div class="row">
+                                            <!-- 底部导航 开始 -->
+                                            <lingyun:nav_list name="vo" pid="0" group="bottom">
+                                                <div class="col-xs-3">
+                                                    <h4>{$vo.title}</h4>
+                                                    <ul class="list-unstyled">
+                                                        <volist name="vo._child" id="vo1">
+                                                            <li>
+                                                                <a target="{$vo1.target}" class="text-muted" href="{$vo1.href}">{$vo1.title}</a>
+                                                            </li>
+                                                        </volist>
+                                                    </ul>
+                                                </div>
+                                            </lingyun:nav_list>
+                                            <!-- 底部导航 结束 -->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-5 qrcode-list">
+                                        <div class="col-xs-6 text-center">
+                                            <img src="__HOME_IMG__/default/ios.png" width="100">
+                                            <p>iOS版本</p>
+                                        </div>
+                                        <div class="col-xs-6 text-center">
+                                            <img src="__HOME_IMG__/default/android.png" width="100">
+                                            <p>Android版本</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer-bottom">
+                            <div class="container">
+                                <ul class="list-inline pull-left">
+                                    <li><a class="icp" href="http://www.miibeian.gov.cn/" target="_blank">{:C('WEB_SITE_ICP')}</a></li>
+                                    <li><span class="copyright">{:C('WEB_SITE_COPYRIGHT')}</span></li>
+                                </ul>
+                                <ul class="list-inline pull-right hidden-xs">
+                                    <li><a href="mailto:{:C('COMPANY_EMAIL')}" target="_blank"><i class="fa fa-envelope-o" style="color: #fff;"></i> 联系我们</a></li>
+                                    <li><span>当前版本：{:C('CURRENT_VERSION')}</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </block>
+                </div>
+            </div>
+        </block>
+
+        <block name="hook_page_footer">
+            <div class="clearfix hook hook-page-footer">
+                {:hook('PageFooter')} <!-- 文档末尾钩子 -->
+            </div>
+        </block>
+    </block>
+
+    <block name="full_script">
+        <div class="clearfix full-script">
+            <div class="container-fluid">
+                <include file="$_home_public_modal" /> <!-- 弹窗 -->
+                <script type="text/javascript" src="__LYUI__/js/lyui.min.js"></script>
+                <script type="text/javascript" src="__HOME_JS__/home.js"></script>
+                <script type="text/javascript">
+                    $(function() {
+                        // 主导航如果没有当前URL完全一致的页面则高亮当前页面所在的模块
+                        var $nav_list = $(".main-nav .navbar-right");
+                        var $current = $nav_list.find("li.active");
+                        if ($current.length == 0) {
+                            var url = "<?php echo U('/'.MODULE_NAME, '', true, true); ?>";
+                            $('.navbar li a[href="' + url + '"]').closest('li').addClass('active');
+                        }
+                    });
+                </script>
+                <block name="script"></block>
+                {:C('WEB_SITE_STATISTICS')} <!-- 站点统计代码 -->
+            </div>
+        </div>
+    </block>
+</body>
+</html>

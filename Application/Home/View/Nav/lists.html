@@ -1,0 +1,83 @@
+<extend name="$_home_public_layout"/>
+
+<block name="style">
+    <style type="text/css">
+        /* 文章列表样式 */
+        .article-list .media {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .article-list .list-cover{
+            width: 180px;
+            height: 100px;
+        }
+        .article-list .list-title{
+            margin-top: 6px;
+        }
+        .article-list .list-abstract{
+            height: 42px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 768px) {
+            .article-list .list-title{
+                font-size: 14px;
+                margin: 0px;
+            }
+            .article-list .list-cover{
+                width: 90px;
+                height: 66px;
+            }
+            .article-list .list-info {
+                font-size: 10px;
+                margin-top: 3px !important;
+                margin-bottom: 2px !important;
+            }
+            .article-list .list-abstract{
+                height: 36px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</block>
+
+<block name="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <?php if (isset($data_list)): ?>
+                    <div class="panel row">
+                        <div class="article-list panel-body">
+                            <volist name="data_list" id="vo">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <a href="{:U( MODULE_NAME. '/Nav/post', array('id' => $vo['id']))}">
+                                            <img class="list-cover lazy" data-src="{$vo.cover_url}">
+                                        </a>
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="list-title text-overflow margin-top-none">
+                                            <a href="{:U('post', array('id' => $vo['id']))}">
+                                                {$vo.title}
+                                            </a>
+                                        </h4>
+                                        <ul class="list-info list-unstyled list-inline text-muted small">
+                                            <li><i class="fa fa-calendar"></i> {$vo.create_time|time_format='Y-m-d'}</li>
+                                            <li><i class="fa fa-eye"></i> {$vo.view_count|default=0}</li>
+                                        </ul>
+                                        <div class="list-abstract text-muted">{$vo.abstract}</div>
+                                    </div>
+                                </div>
+                            </volist>
+                            <notempty name="page">
+                                <ul class="pagination">{$page}</ul>
+                            </notempty>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <p class="text-center text-muted">在后台［系统－导航管理］可以管理 {$meta_title} 的文章</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</block>

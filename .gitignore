@@ -1,0 +1,10 @@
+Thunbs.db
+.idea
+*.log
+node_modules/
+/Runtime/
+/Theme/
+/Uploads/
+!*.md
+!/vendor
+

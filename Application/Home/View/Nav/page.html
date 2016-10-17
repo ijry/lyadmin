@@ -1,0 +1,22 @@
+<extend name="$_home_public_layout"/>
+
+<block name="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <?php if (isset($info['content'])): ?>
+                    <div class="panel row">
+                        <article class="panel-body" style="min-height: 150px">
+                            <!-- 文章正文 -->
+                            <div class="article-body">
+                                {$info['content']|parse_content}
+                            </div>
+                        </article>
+                    </div>
+                <?php else: ?>
+                    <p class="text-center text-muted">在后台［系统－导航管理］可以编辑 {$meta_title} 的内容</p>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</block>

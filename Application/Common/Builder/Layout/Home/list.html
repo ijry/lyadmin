@@ -1,0 +1,17 @@
+<extend name="$_home_public_layout"/>
+
+<block name="style">
+    <link rel="stylesheet" type="text/css" href="__LYUI__/css/lyui.extend.min.css">
+    <include file="./Application/Common/Builder/style.html" />
+</block>
+
+<block name="main">
+    <div class="container">
+        <include file="$_listbuilder_layout" builderpath="./Application/Common/Builder" />
+    </div>
+</block>
+
+<block name="script">
+    <script type="text/javascript" src="__LYUI__/js/lyui.extend.min.js"></script>
+    <include file="./Application/Common/Builder/javascript.html" />
+</block>

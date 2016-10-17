@@ -1,0 +1,32 @@
+<extend name="Public/layout"/>
+
+<block name="header">
+    <li class="active"><a href="javascript:;">安装协议</a></li>
+    <li class="active"><a href="javascript:;">环境检测</a></li>
+    <li class="active"><a href="javascript:;">参数设置</a></li>
+    <li class="active"><a href="javascript:;">开始安装</a></li>
+    <li class="active"><a href="javascript:;">完成安装</a></li>
+</block>
+
+<block name="main">
+    <div class="col-xs-12 col-sm-8 col-sm-offset-2">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>恭喜您，{:C('INSTALL_PRODUCT_NAME')}安装完成！</span>
+            </div>
+            <div class="panel-body">
+                <div class="alert alert-success text-center">
+                    <h3>SUCCESS !</h3>
+                </div>
+                <div class="alert alert-danger margin-top">
+                    后台管理员用户名密码默认均为admin，请尽快登录系统进行修改，防止系统被恶意攻击。
+                </div>
+                <a class="btn btn-primary" target="_blank" href="__ROOT__/admin.php?s=/admin">登录后台</a>
+                <a class="btn btn-success" target="_blank" href="__ROOT__/">访问首页</a>
+            </div>
+            <div class="panel-footer">
+                <span>版权所有 (c) 2014－<php>echo date("Y",time());</php>{:C('INSTALL_COMPANY_NAME')} 保留所有权利。</span>
+            </div>
+        </div>
+    </div>
+</block>
