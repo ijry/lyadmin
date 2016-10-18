@@ -99,11 +99,11 @@ class IndexController extends Controller{
                     if ($result2) {
                         $this->error('该数据库已存在，请更换名称！如需覆盖，请选中覆盖按钮！');
                     }
-                }
 
-                //创建数据库
-                $sql = "CREATE DATABASE IF NOT EXISTS `{$db_name}` DEFAULT CHARACTER SET utf8";
-                $db_instance->execute($sql) || $this->error($db_instance->getError());
+                    //创建数据库
+                    $sql = "CREATE DATABASE IF NOT EXISTS `{$db_name}` DEFAULT CHARACTER SET utf8";
+                    $db_instance->execute($sql) || $this->error($db_instance->getError());
+                }
             }
 
             //跳转到数据库安装页面
