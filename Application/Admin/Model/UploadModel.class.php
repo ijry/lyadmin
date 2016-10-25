@@ -69,7 +69,7 @@ class UploadModel extends ModelModel
         if (in_array($result['ext'], array('jpg', 'jpeg', 'png', 'gif', 'bmp'))) {
             $result['show'] = '<img class="picture" src="' . $result['real_path'] . '">';
         } else {
-            $result['show'] = '<img class="picture" src="' . C('TMPL_PARSE_STRING.__HOME_IMG__') . '/file/' . $result['ext'] . '.png">';
+            $result['show'] = '<i class="fa fa-file-' . $result['ext'] . '"></i>';
         }
     }
 
