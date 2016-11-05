@@ -140,13 +140,13 @@
                                     <ul class="nav navside-nav navside-first">
                                         <volist name="_current_menu_list._child" id="_ns_first" key="fkey">
                                             <li>
-                                                <a data-toggle="collapse" href="#navside-collapse-{$_ns.id}-{$fkey}">
+                                                <a data-toggle="collapse" href="#navside-collapse-{$_ns_first.id}-{$fkey}">
                                                     <i class="{$_ns_first.icon}"></i>
                                                     <span class="nav-label">{$_ns_first.title}</span>
                                                     <span class="fa arrow"></span>
                                                 </a>
                                                 <notempty name="_ns_first._child">
-                                                    <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns.id}-{$fkey}">
+                                                    <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns_first.id}-{$fkey}">
                                                         <volist name="_ns_first._child" id="_ns_second" key="skey">
                                                             <li <?php if($_parent_menu_list[2]['url'] == $_ns_second['url']) echo 'class="active"'; ?>>
                                                                 <a href="{:U($_ns_second['url'])}" >

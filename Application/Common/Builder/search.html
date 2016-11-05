@@ -1,0 +1,46 @@
+<form class="form form-inline pull-right" method="get" action="{$search_url}">
+	<empty name="search">
+		<style>
+		.form-inline .form-group{
+		    margin-right: 12px;
+			margin-bottom: 15px;
+		}
+		.form-inline .btn{
+			margin-bottom: 15px;
+		}
+	</style>
+		<volist name="search_form_items" id="form" key="k">
+            <switch name="form.type">
+                <include file='Application/Common/Builder/FormType/hidden.html' type='' />
+                {// 不可修改文本 }
+                {// 字符串 }
+                <include file='Application/Common/Builder/SearchFormType/text.html' type='' />
+                {// 复选框 }
+                <include file='Application/Common/Builder/SearchFormType/checkbox.html' type='' />
+                {// 下拉框 }
+                <include file='Application/Common/Builder/SearchFormType/select.html' type='' />
+                {// 日期 }
+                <include file='Application/Common/Builder/SearchFormType/date.html' type='' />
+                {// 日期时间 }
+                <include file='Application/Common/Builder/SearchFormType/datetime.html' type='' />
+                {// 日期范围 }
+                <include file='Application/Common/Builder/SearchFormType/dateranger.html' type='' />
+                // 扩展类型
+                <default />
+                {:hook('FormBuilderExtend', array('form' => $form))}
+            </switch>
+        </volist>
+		<button type="submit" class="btn btn-default search-btn">搜索</button>
+	<else />
+    <div class="col-xs-12 col-sm-12 clearfix">
+        <form class="form" method="get" action="{$search.url}">
+            <div class="form-group">
+                <div class="input-group search-form">
+                    <input type="text" name="keyword" class="search-input form-control" value="{$_GET.keyword|default=''}" placeholder="{$search.title}">
+                    <span class="input-group-btn"><a class="btn btn-default search-btn"><i class="fa fa-search"></i></a></span>
+                </div>
+            </div>
+        </form>
+    </div>
+	</empty>
+</form>

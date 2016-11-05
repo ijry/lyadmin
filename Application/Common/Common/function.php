@@ -7,7 +7,7 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 
-require_once(APP_PATH . 'Common/Common/developer.php'); //加载开发者二次开发公共函数库
+require_once APP_PATH . 'Common/Common/developer.php'; //加载开发者二次开发公共函数库
 
 /**
  * 处理插件钩子
@@ -16,7 +16,8 @@ require_once(APP_PATH . 'Common/Common/developer.php'); //加载开发者二次�
  * @return void
  * @author jry <598821125@qq.com>
  */
-function hook($hook, $params = array()) {
+function hook($hook, $params = array())
+{
     $result = \Think\Hook::listen($hook, $params);
 }
 
@@ -25,7 +26,8 @@ function hook($hook, $params = array()) {
  * @param strng $name 插件名
  * @author jry <598821125@qq.com>
  */
-function get_addon_class($name) {
+function get_addon_class($name)
+{
     $class = "Addons\\{$name}\\{$name}Addon";
     return $class;
 }
@@ -36,10 +38,10 @@ function get_addon_class($name) {
  * @param array $param 参数
  * @author jry <598821125@qq.com>
  */
-function addons_url($url, $param = array()) {
+function addons_url($url, $param = array())
+{
     return D('Admin/Addon')->getAddonUrl($url, $param);
 }
-
 
 /**
  * 兼容Nginx
@@ -47,7 +49,8 @@ function addons_url($url, $param = array()) {
  * @author jry <598821125@qq.com>
  */
 if (!function_exists('getallheaders')) {
-    function getallheaders() {
+    function getallheaders()
+    {
         foreach ($_SERVER as $name => $value) {
             if (substr($name, 0, 5) == 'HTTP_') {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
@@ -62,13 +65,14 @@ if (!function_exists('getallheaders')) {
  * @return array
  * @author jry <598821125@qq.com>
  */
-function format_data($data = null) {
+function format_data($data = null)
+{
     //解析数据类似复选框类型的数组型值
     if (!$data) {
         $data = $_POST;
     }
     $data_object = new \Common\Util\Think\Date;
-    foreach($data as $key => $val){
+    foreach ($data as $key => $val) {
         if (!is_array($val)) {
             $val = trim($val);
             if ($data_object->checkDatetime($val)) {
@@ -91,7 +95,8 @@ function format_data($data = null) {
  * 获取所有数据并转换成一维数组
  * @author jry <598821125@qq.com>
  */
-function select_list_as_tree($model, $map = null, $extra = null, $key = 'id') {
+function select_list_as_tree($model, $map = null, $extra = null, $key = 'id')
+{
     //获取列表
     $con['status'] = array('eq', 1);
     if ($map) {
@@ -125,15 +130,16 @@ function select_list_as_tree($model, $map = null, $extra = null, $key = 'id') {
  * @return string
  * @author jry <598821125@qq.com>
  */
-function parse_content($str) {
+function parse_content($str)
+{
     // 将img标签的src改为lazy-src用户前台图片lazyload加载
     if (C('STATIC_DOMAIN')) {
-        $tmp = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='".C('STATIC_DOMAIN')."$1'>", $str);
-        $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='".C('STATIC_DOMAIN')."$1'>", $tmp);
+        $tmp = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . C('STATIC_DOMAIN') . "$1'>", $str);
+        $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='" . C('STATIC_DOMAIN') . "$1'>", $tmp);
     } else {
-        $domain = (is_ssl()?'https://':'http://').$_SERVER['HTTP_HOST'];
-        $tmp = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='".$domain."$1'>", $str);
-        $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='".$domain."$1'>", $tmp);
+        $domain = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
+        $tmp    = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . $domain . "$1'>", $str);
+        $tmp    = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='" . $domain . "$1'>", $tmp);
     }
     return $tmp;
 }
@@ -149,7 +155,8 @@ function parse_content($str) {
  * @param str $suffix 截断显示字符
  * @return str
  */
-function cut_str($str, $start, $length, $charset='utf-8', $suffix = true) {
+function cut_str($str, $start, $length, $charset = 'utf-8', $suffix = true)
+{
     return \Common\Util\Think\Str::cutStr(
         $str, $start, $length, $charset, $suffix
     );
@@ -161,8 +168,9 @@ function cut_str($str, $start, $length, $charset='utf-8', $suffix = true) {
  * @return string 处理后内容
  * @author jry <598821125@qq.com>
  */
-function html2text($str) {
-   return \Common\Util\Think\Str::html2text($str);
+function html2text($str)
+{
+    return \Common\Util\Think\Str::html2text($str);
 }
 
 /**
@@ -173,9 +181,19 @@ function html2text($str) {
  * @return string
  * @author jry <598821125@qq.com>
  */
-function friendly_date($sTime, $type = 'mohu', $alt = 'false') {
-    $date = new \Common\Util\Think\Date((int)$sTime);
+function friendly_date($sTime, $type = 'mohu', $alt = 'false')
+{
+    $date = new \Common\Util\Think\Date((int) $sTime);
     return $date->friendlyDate($type, $alt);
+}
+
+/**
+ * 用于生成插入datetime类型字段用的字符串
+ * @param string $str 支持偏移字符串
+ */
+function datetime($str = 'now')
+{
+    return @date("Y-m-d H:i:s", strtotime($str));
 }
 
 /**
@@ -184,8 +202,9 @@ function friendly_date($sTime, $type = 'mohu', $alt = 'false') {
  * @return string 完整的时间显示
  * @author jry <598821125@qq.com>
  */
-function time_format($time = NULL, $format='Y-m-d H:i') {
-    $time = $time === NULL ? time() : intval($time);
+function time_format($time = null, $format = 'Y-m-d H:i')
+{
+    $time = $time === null ? time() : intval($time);
     return date($format, $time);
 }
 
@@ -195,9 +214,10 @@ function time_format($time = NULL, $format='Y-m-d H:i') {
  * @return string
  * @author jry <598821125@qq.com>
  */
-function user_md5($str, $auth_key) {
+function user_md5($str, $auth_key)
+{
     if (!$auth_key) {
-        $auth_key = C('AUTH_KEY') ? : 'OpenCMF';
+        $auth_key = C('AUTH_KEY') ?: 'OpenCMF';
     }
     return '' === $str ? '' : md5(sha1($str) . $auth_key);
 }
@@ -207,7 +227,8 @@ function user_md5($str, $auth_key) {
  * @return integer 0-未登录，大于0-当前登录用户ID
  * @author jry <598821125@qq.com>
  */
-function is_login() {
+function is_login()
+{
     return D('Admin/User')->is_login();
 }
 
@@ -216,7 +237,8 @@ function is_login() {
  * @return integer VIP等级
  * @author jry <598821125@qq.com>
  */
-function is_vip($uid) {
+function is_vip($uid)
+{
     if (D('Admin/Module')->where('name="Vip" and status="1"')->count()) {
         $uid = $uid ? $uid : is_login();
         return D('Vip/Index')->isVip($uid);
@@ -230,7 +252,8 @@ function is_vip($uid) {
  * @return string
  * @author jry <598821125@qq.com>
  */
-function get_cover($id = null, $type = null) {
+function get_cover($id = null, $type = null)
+{
     return D('Admin/Upload')->getCover($id, $type);
 }
 
@@ -243,7 +266,8 @@ function get_cover($id = null, $type = null) {
  * @return string
  * @author jry <598821125@qq.com>
  */
-function oc_url($url = '', $vars = '', $suffix = true, $domain = true) {
+function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
+{
     $url = U($url, $vars, $suffix, $domain);
     if (MODULE_MARK === 'Admin') {
         $url_model = D('Admin/Config')->where(array('name' => 'URL_MODEL'))->getField('value');

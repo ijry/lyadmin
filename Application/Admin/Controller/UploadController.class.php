@@ -7,33 +7,36 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
+
 use Common\Util\Think\Page;
 use Think\Controller;
-use Think\Storage;
+
 /**
  * 后台上传控制器
  * @author jry <598821125@qq.com>
  */
-class UploadController extends AdminController {
+class UploadController extends AdminController
+{
     /**
      * 上传列表
      * @author jry <598821125@qq.com>
      */
-    public function index() {
+    public function index()
+    {
         //搜索
-        $keyword = I('keyword', '', 'string');
-        $condition = array('like','%'.$keyword.'%');
-        $map['id|path'] = array($condition, $condition,'_multi'=>true);
+        $keyword        = I('keyword', '', 'string');
+        $condition      = array('like', '%' . $keyword . '%');
+        $map['id|path'] = array($condition, $condition, '_multi' => true);
 
         //获取所有上传
         $map['status'] = array('egt', '0'); //禁用和正常状态
-        $p = !empty($_GET["p"]) ? $_GET['p'] : 1;
+        $p             = !empty($_GET["p"]) ? $_GET['p'] : 1;
         $upload_object = D('Upload');
-        $data_list = $upload_object
-                   ->page($p, C('ADMIN_PAGE_ROWS'))
-                   ->where($map)
-                   ->order('sort desc,id desc')
-                   ->select();
+        $data_list     = $upload_object
+            ->page($p, C('ADMIN_PAGE_ROWS'))
+            ->where($map)
+            ->order('sort desc,id desc')
+            ->select();
         $page = new Page(
             $upload_object->where($map)->count(),
             C('ADMIN_PAGE_ROWS')
@@ -41,44 +44,45 @@ class UploadController extends AdminController {
 
         foreach ($data_list as &$data) {
             $data['name'] = cut_str($data['name'], 0, 30)
-                          .'<input class="form-control input-sm" value="'
-                          .$data['path'].'">';
+                . '<input class="form-control input-sm" value="'
+                . $data['path'] . '">';
         }
 
         // 使用Builder快速建立列表页面。
         $builder = new \Common\Builder\ListBuilder();
-        $builder->setMetaTitle('上传列表')  // 设置页面标题
-                ->addTopButton('resume')   // 添加启用按钮
-                ->addTopButton('forbid')   // 添加禁用按钮
-                ->addTopButton('delete')   // 添加删除按钮
-                ->setSearch('请输入ID/上传关键字', U('index'))
-                ->addTableColumn('id', 'ID')
-                ->addTableColumn('show', '文件')
-                ->addTableColumn('name', '文件名及路径')
-                ->addTableColumn('size', '大小', 'byte')
-                ->addTableColumn('create_time', '创建时间', 'time')
-                ->addTableColumn('sort', '排序')
-                ->addTableColumn('status', '状态', 'status')
-                ->addTableColumn('right_button', '操作', 'btn')
-                ->setTableDataList($data_list)     // 数据列表
-                ->setTableDataPage($page->show())  // 数据列表分页
-                ->addRightButton('forbid')         // 添加禁用/启用按钮
-                ->addRightButton('delete')         // 添加删除按钮
-                ->display();
+        $builder->setMetaTitle('上传列表') // 设置页面标题
+            ->addTopButton('resume') // 添加启用按钮
+            ->addTopButton('forbid') // 添加禁用按钮
+            ->addTopButton('delete') // 添加删除按钮
+            ->setSearch('请输入ID/上传关键字', U('index'))
+            ->addTableColumn('id', 'ID')
+            ->addTableColumn('show', '文件')
+            ->addTableColumn('name', '文件名及路径')
+            ->addTableColumn('size', '大小', 'byte')
+            ->addTableColumn('create_time', '创建时间', 'time')
+            ->addTableColumn('sort', '排序')
+            ->addTableColumn('status', '状态', 'status')
+            ->addTableColumn('right_button', '操作', 'btn')
+            ->setTableDataList($data_list) // 数据列表
+            ->setTableDataPage($page->show()) // 数据列表分页
+            ->addRightButton('forbid') // 添加禁用/启用按钮
+            ->addRightButton('delete') // 添加删除按钮
+            ->display();
     }
 
     /**
      * 设置一条或者多条数据的状态
      * @author jry <598821125@qq.com>
      */
-    public function setStatus($model = CONTROLLER_NAME) {
+    public function setStatus($model = CONTROLLER_NAME, $script = false)
+    {
         $ids    = I('request.ids');
         $status = I('request.status');
         if (empty($ids)) {
             $this->error('请选择要操作的数据');
         }
         switch ($status) {
-            case 'delete' :  // 删除条目
+            case 'delete': // 删除条目
                 if (!is_array($ids)) {
                     $id_list[0] = $ids;
                 } else {
@@ -87,7 +91,7 @@ class UploadController extends AdminController {
                 foreach ($id_list as $id) {
                     $upload_info = D('Upload')->find($id);
                     if ($upload_info) {
-                        $realpath = realpath('.'.$upload_info['path']);
+                        $realpath = realpath('.' . $upload_info['path']);
                         if ($realpath) {
                             array_map("unlink", glob($realpath));
                             if (count(glob($realpath))) {
@@ -103,7 +107,7 @@ class UploadController extends AdminController {
                     }
                 }
                 break;
-            default :
+            default:
                 parent::setStatus($model);
                 break;
         }
@@ -113,7 +117,8 @@ class UploadController extends AdminController {
      * 上传
      * @author jry <598821125@qq.com>
      */
-    public function upload() {
+    public function upload()
+    {
         $return = json_encode(D('Upload')->upload());
         exit($return);
     }
@@ -122,7 +127,8 @@ class UploadController extends AdminController {
      * 下载
      * @author jry <598821125@qq.com>
      */
-    public function download($token) {
+    public function download($token)
+    {
         if (empty($token)) {
             $this->error('token参数错误！');
         }
@@ -134,7 +140,7 @@ class UploadController extends AdminController {
         }
 
         $upload_object = D('Upload');
-        $file_id = $upload_object->getFieldByMd5($file_md5, 'id');
+        $file_id       = $upload_object->getFieldByMd5($file_md5, 'id');
         if (!$upload_object->download($file_id)) {
             $this->error($upload_object->getError());
         }

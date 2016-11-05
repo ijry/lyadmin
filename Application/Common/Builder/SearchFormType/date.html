@@ -1,0 +1,18 @@
+<case value="date">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra_class}">
+        <label class="control-label">{$[type]form.title}</label>
+        <input type="text" id="[type]{$group_k|default=''}_date_{$[type]k}" class="form-control input date" name="{$[type]form.name}" value="<notempty name='[type]form.value'><if condition="is_numeric($[type]form['value'])">{$[type]form.value|time_format='Y-m-d'}<else />{$[type]form.value}</if></notempty>" {$[type]form.extra_attr} placeholder="{$[type]form.tip}">
+        <script type="text/javascript">
+            $(function(){
+                $('#[type]{$group_k|default=''}_date_{$[type]k}').datetimepicker({
+                    format      : 'yyyy-mm-dd',
+                    autoclose   : true,
+                    minView     : 'month',
+                    todayBtn    : 'linked',
+                    language    : 'zh-CN',
+                    fontAwesome : true
+                });
+            });
+        </script>
+    </div>
+</case>

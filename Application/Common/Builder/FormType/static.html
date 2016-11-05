@@ -1,5 +1,5 @@
 <case value="static">
-    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class}">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
         <label class="left control-label">{$[type]form.title}：</label>
         <div class="right">
             <p>{$[type]form.value}</p>

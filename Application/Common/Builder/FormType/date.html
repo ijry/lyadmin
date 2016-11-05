@@ -1,10 +1,10 @@
 <case value="date">
-    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class}">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
         <label class="left control-label">{$[type]form.title}：</label>
         <div class="right">
             <div class="input-group">
                 <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                <input type="text" id="[type]{$group_k}_date_{$[type]k}" class="form-control input date" name="{$[type]form.name}" value="
+                <input type="text" id="[type]{$group_k|default=''}_date_{$[type]k}" class="form-control input date" name="{$[type]form.name}" value="
 <notempty name='[type]form.value'>
     <?php 
         if(is_numeric($[type]form['value'])) {
@@ -15,11 +15,11 @@
     ?>
 <else/>
     <?php echo(date("Y-m-d"));?>
-</notempty>" {$[type]form.extra.attr}>
+</notempty>" {$[type]form.extra.attr|default=''}>
             </div>
             <script type="text/javascript">
                 $(function(){
-                    $('#[type]{$group_k}_date_{$[type]k}').datetimepicker({
+                    $('#[type]{$group_k|default=''}_date_{$[type]k}').datetimepicker({
                         format      : 'yyyy-mm-dd',
                         autoclose   : true,
                         minView     : 'month',
