@@ -1,0 +1,17 @@
+<case value="datetime">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra_class}">
+        <label class="left control-label">{$[type]form.title}：</label>
+        <input type="text" id="[type]{$group_k|default=''}_time_{$[type]k}" class="form-control input time" name="{$[type]form.name}" value="<notempty name='[type]form.value'>{$[type]form.value|time_format='Y-m-d H:i:s'}</notempty>" {$[type]form.extra_attr}>
+        <script type="text/javascript">
+            $(function(){
+                $('#[type]{$group_k|default=''}_time_{$[type]k}').datetimepicker({
+                    format      : 'yyyy-mm-dd hh:ii:ss',
+                    autoclose   : true,
+                    todayBtn    : 'linked',
+                    language    : 'zh-CN',
+                    fontAwesome : true
+                });
+            });
+        </script>
+    </div>
+</case>

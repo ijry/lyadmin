@@ -1,15 +1,15 @@
 <case value="kindeditor">
-    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class}">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
         <label class="left control-label">{$[type]form.title}：</label>
         <div class="right">
-            <textarea name="{$[type]form.name}" id="[type]{$group_k}_kindeditor_{$[type]k}" class="form-control" {$[type]form.extra.attr}>
+            <textarea name="{$[type]form.name}" id="[type]{$group_k|default=''}_kindeditor_{$[type]k}" class="form-control" {$[type]form.extra.attr|default=''}>
                 {$[type]form.value}
             </textarea>
             <script type="text/javascript" src="__PUBLIC__/libs/kindeditor/kindeditor-min.js" charset="utf-8"></script>
             <script type="text/javascript">
                 $(function(){
                     KindEditor.ready(function(K) {
-                        kindeditor_{$[type]k} = K.create('#[type]{$group_k}_kindeditor_{$[type]k}', {
+                        kindeditor_{$[type]k} = K.create('#[type]{$group_k|default=''}_kindeditor_{$[type]k}', {
                             allowFileManager : true,
                             filePostName : 'file',
                             cssPath : [

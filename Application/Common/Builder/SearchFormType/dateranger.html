@@ -1,0 +1,76 @@
+<case value="dateranger">
+    <link rel="stylesheet" href="__PUBLIC__/libs/bootstrap-daterangepicker/daterangepicker.css">
+    <style>
+        .dateranger{
+            width: 190px !important;
+        }
+    </style>
+    <script src="__PUBLIC__/libs/bootstrap-daterangepicker/moment.min.js"></script>
+    <script src="__PUBLIC__/libs/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra_class} clearfix">
+        <label class="control-label">{$[type]form.title}</label>
+         <div class="input-group search-form">
+            <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+            <input type="text" id="[type]{$group_k|default=''}_date_{$[type]k}" name="dates" class="form-control input dateranger" value="<notempty name='[type]form.value'><if condition="is_numeric($[type]form['value'])">{$[type]form.value|time_format='Y-m-d'}<else />{$[type]form.value}</if></notempty>" placeholder="{$[type]form.title}" {$[type]form.extra_attr}>
+        </div>
+        <script>
+        $(function(){
+            // 初始化日期范围插件
+            $('#[type]{$group_k|default=''}_date_{$[type]k}').daterangepicker({
+                "showDropdowns": true,
+                "autoApply": false,
+                // "dateLimit": {
+                //     "days": 365 * 100
+                // },
+                "linkedCalendars": false,
+                "ranges": {
+                    "一周内": [
+                        moment().subtract(6, 'days'),
+                        moment()
+                    ],
+                    "一月内": [
+                       moment().subtract(29, 'days'),
+                       moment()
+                    ],
+                    "本月内": [
+                        moment().startOf('month'),
+                        moment().endOf('month')
+                    ],
+                    "上个月": [
+                        moment().subtract(1, 'month').startOf('month'),
+                        moment().subtract(1, 'month').endOf('month')
+                    ]
+                },
+                autoUpdateInput: false,
+                locale : {
+                    format: 'YYYY-MM-DD',
+                    separator: ' - ',
+                    applyLabel: '确定',
+                    cancelLabel: '取消',
+                    fromLabel: '从',
+                    toLabel: '到',
+                    customRangeLabel: '日期范围',
+                    daysOfWeek: ['日', '一', '二', '三', '四', '五','六'],
+                    monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+                    firstDay: 1
+                },
+                "startDate": "{$start_date}",
+                "endDate": "{$end_date}",
+                "minDate": "YYYY-MM-DD",
+                "maxDate": "YYYY-MM-DD"
+            }, function(start, end, label) {
+                console.log("New date range selected: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD') + " (predefined range: " + label + ")");
+            });
+
+            $('#[type]{$group_k|default=''}_date_{$[type]k}').on('apply.daterangepicker', function(ev, picker) {
+                  $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+            });
+
+            $('#[type]{$group_k|default=''}_date_{$[type]k}').on('cancel.daterangepicker', function(ev, picker) {
+                $(this).val('');
+            });
+
+        })
+    </script>
+    </div>
+</case>

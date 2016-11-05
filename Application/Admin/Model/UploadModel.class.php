@@ -7,13 +7,16 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Model;
+
 use Common\Model\ModelModel;
 use Think\Upload;
+
 /**
  * 上传模型
  * @author jry <598821125@qq.com>
  */
-class UploadModel extends ModelModel {
+class UploadModel extends ModelModel
+{
     /**
      * 数据库表名
      * @author jry <598821125@qq.com>
@@ -24,7 +27,7 @@ class UploadModel extends ModelModel {
      * 自动验证规则
      * @author jry <598821125@qq.com>
      */
-    protected $_validate = array (
+    protected $_validate = array(
         array('name', 'require', '文件名不能为空', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
         array('path', 'require', '文件不能为空', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
         array('size', 'require', '文件大小不能为空', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
@@ -36,7 +39,7 @@ class UploadModel extends ModelModel {
      * 自动完成规则
      * @author jry <598821125@qq.com>
      */
-    protected $_auto = array (
+    protected $_auto = array(
         array('uid', 'is_login', self::MODEL_INSERT, 'function'),
         array('create_time', 'time', self::MODEL_INSERT, 'function'),
         array('update_time', 'time', self::MODEL_BOTH, 'function'),
@@ -47,25 +50,26 @@ class UploadModel extends ModelModel {
      * 查找后置操作
      * @author jry <598821125@qq.com>
      */
-    protected function _after_find(&$result, $options) {
+    protected function _after_find(&$result, $options)
+    {
         //获取上传文件的地址
         if ($result['url']) {
             $result['real_path'] = $result['url'];
         } else {
             if (C('STATIC_DOMAIN')) {
-                $result['real_path'] = C('STATIC_DOMAIN').$result['path'];
+                $result['real_path'] = C('STATIC_DOMAIN') . $result['path'];
             } else {
                 if (C('IS_API')) {
                     $result['real_path'] = C('TOP_HOME_PAGE') . $result['path'];
                 } else {
-                    $result['real_path'] = __ROOT__.$result['path'];
+                    $result['real_path'] = __ROOT__ . $result['path'];
                 }
             }
         }
-        if (in_array($result['ext'], array('jpg', 'jpeg', 'png', 'gif', 'bmp') )) {
-            $result['show'] = '<img class="picture" src="'.$result['real_path'].'">';
+        if (in_array($result['ext'], array('jpg', 'jpeg', 'png', 'gif', 'bmp'))) {
+            $result['show'] = '<img class="picture" src="' . $result['real_path'] . '">';
         } else {
-            $result['show'] = '<img class="picture" src="'.C('TMPL_PARSE_STRING.__HOME_IMG__').'/file/'.$result['ext'].'.png">';
+            $result['show'] = '<img class="picture" src="' . C('TMPL_PARSE_STRING.__HOME_IMG__') . '/file/' . $result['ext'] . '.png">';
         }
     }
 
@@ -73,8 +77,9 @@ class UploadModel extends ModelModel {
      * 查找后置操作
      * @author jry <598821125@qq.com>
      */
-    protected function _after_select(&$result, $options) {
-        foreach($result as &$record){
+    protected function _after_select(&$result, $options)
+    {
+        foreach ($result as &$record) {
             $this->_after_find($record, $options);
         }
     }
@@ -85,18 +90,20 @@ class UploadModel extends ModelModel {
      * @return string
      * @author jry <598821125@qq.com>
      */
-    function getCover($id = null, $type = null) {
+    public function getCover($id = null, $type = null)
+    {
+        $url = '';
         if ($id) {
             $upload_info = $this->find($id);
-            $url = $upload_info['real_path'];
+            $url         = $upload_info['real_path'];
         }
         if (!isset($url)) {
             switch ($type) {
-                case 'default' : //默认图片
-                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__').'/default/default.gif';
+                case 'default': //默认图片
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/default.gif';
                     break;
-                case 'avatar' : //用户头像
-                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__').'/default/avatar.png';
+                case 'avatar': //用户头像
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/avatar.png';
                     break;
                 default: //文档列表默认图片
                     break;
@@ -111,7 +118,8 @@ class UploadModel extends ModelModel {
      * @return string
      * @author jry <598821125@qq.com>
      */
-    public function getUploadInfo($id, $field) {
+    public function getUploadInfo($id, $field)
+    {
         $upload_info = $this->where('status = 1')->find($id);
         if ($field) {
             if (!$upload_info[$field]) {
@@ -127,13 +135,14 @@ class UploadModel extends ModelModel {
      * 上传文件
      * @author jry <598821125@qq.com>
      */
-    public function upload($files) {
+    public function upload($files)
+    {
         // 获取文件信息
         $_FILES = $files ? $files : $_FILES;
 
         // 返回标准数据
         $return = array('error' => 0, 'success' => 1, 'status' => 1);
-        $dir = I('request.dir') ? I('request.dir') : 'image';   // 上传类型image、flash、media、file
+        $dir    = I('request.dir') ? I('request.dir') : 'image'; // 上传类型image、flash、media、file
         if (!in_array($dir, array('image', 'flash', 'media', 'file'))) {
             $return['error']   = 1;
             $return['success'] = 0;
@@ -161,7 +170,7 @@ class UploadModel extends ModelModel {
 
         // 友情提醒
         $upload_max_filesize = substr(ini_get('upload_max_filesize'), 0, -1);
-        $post_max_size = substr(ini_get('post_max_size'), 0, -1);
+        $post_max_size       = substr(ini_get('post_max_size'), 0, -1);
         if ($post_max_size < $upload_max_filesize) {
             $return['error']   = 1;
             $return['success'] = 0;
@@ -179,7 +188,7 @@ class UploadModel extends ModelModel {
                     $return['message'] = '警告：php.ini里upload_max_filesize值小于系统后台设置的图片上传大小';
                     return $return;
                 }
-                $upload_config['maxSize'] = C('UPLOAD_IMAGE_SIZE')*1024*1024;  // 图片的上传大小限制
+                $upload_config['maxSize'] = C('UPLOAD_IMAGE_SIZE') * 1024 * 1024; // 图片的上传大小限制
             }
         } else {
             if (C('UPLOAD_FILE_SIZE')) {
@@ -190,7 +199,7 @@ class UploadModel extends ModelModel {
                     $return['message'] = '警告：php.ini里upload_max_filesize值小于系统后台设置的文件上传大小';
                     return $return;
                 }
-                $upload_config['maxSize'] = C('UPLOAD_FILE_SIZE')*1024*1024;  // 普通文件上传大小限制
+                $upload_config['maxSize'] = C('UPLOAD_FILE_SIZE') * 1024 * 1024; // 普通文件上传大小限制
             }
         }
 
@@ -203,12 +212,13 @@ class UploadModel extends ModelModel {
         );
 
         // 计算文件散列以查看是否已有相同文件上传过
-        $reay_file = array_shift($_FILES);
+        $reay_file   = array_shift($_FILES);
         $con['md5']  = md5_file($reay_file['tmp_name']);
         $con['sha1'] = sha1_file($reay_file['tmp_name']);
         $con['size'] = $reay_file['size'];
-        $upload = $this->where($con)->find();
-        if ($upload) {  // 发现相同文件直接返回
+        $upload      = $this->where($con)->find();
+        if ($upload) {
+            // 发现相同文件直接返回
             $return['id']   = $upload['id'];
             $return['name'] = $upload['name'];
             $return['url']  = $upload['real_path'];
@@ -216,20 +226,20 @@ class UploadModel extends ModelModel {
         } else {
             // 上传文件
             $upload_config['removeTrash'] = array($this, 'removeTrash');
-            $upload = new Upload($upload_config, $upload_driver, C("UPLOAD_{$upload_driver}_CONFIG"));  // 实例化上传类
-            $upload->exts = $ext_arr[$dir] ? $ext_arr[$dir] : $ext_arr['image'];    // 设置附件上传允许的类型，注意此处$dir为空时漏洞
-            $info = $upload->uploadOne($reay_file);  // 上传文件
+            $upload                       = new Upload($upload_config, $upload_driver, C("UPLOAD_{$upload_driver}_CONFIG")); // 实例化上传类
+            $upload->exts                 = $ext_arr[$dir] ? $ext_arr[$dir] : $ext_arr['image']; // 设置附件上传允许的类型，注意此处$dir为空时漏洞
+            $info                         = $upload->uploadOne($reay_file); // 上传文件
             if (!$info) {
-                $return['error']    = 1;
-                $return['success']  = 0;
+                $return['error']   = 1;
+                $return['success'] = 0;
                 $return['status']  = 0;
-                $return['message']  = '上传出错'.$upload->getError();
+                $return['message'] = '上传出错' . $upload->getError();
             } else {
                 // 获取上传数据
                 if ($_GET['temp'] === 'true') {
-                    $upload_data['name']  = $info["name"];
-                    $upload_data['path']  = '/Runtime/' . $info['savepath'] . $info['savename'];
-                    $upload_data['url']   = $info["url"] ? : '';
+                    $upload_data['name'] = $info["name"];
+                    $upload_data['path'] = '/Runtime/' . $info['savepath'] . $info['savename'];
+                    $upload_data['url']  = $info["url"] ?: '';
 
                     // 返回数据
                     if ($upload_data["url"]) {
@@ -240,15 +250,15 @@ class UploadModel extends ModelModel {
                     $return['path'] = '.' . $upload_data['path'];
                     $return['name'] = $upload_data['name'];
                 } else {
-                    $upload_data['type']  = $info["type"];
-                    $upload_data['name']  = $info["name"];
-                    $upload_data['path']  = '/Uploads/' . $info['savepath'] . $info['savename'];
-                    $upload_data['url']   = $info["url"] ? : '';
-                    $upload_data['ext']   = $info["ext"];
-                    $upload_data['size']  = $info["size"];
-                    $upload_data['md5']   = $info['md5'];
-                    $upload_data['sha1']  = $info['sha1'];
-                    $upload_data['location']  = $upload_driver;
+                    $upload_data['type']     = $info["type"];
+                    $upload_data['name']     = $info["name"];
+                    $upload_data['path']     = '/Uploads/' . $info['savepath'] . $info['savename'];
+                    $upload_data['url']      = $info["url"] ?: '';
+                    $upload_data['ext']      = $info["ext"];
+                    $upload_data['size']     = $info["size"];
+                    $upload_data['md5']      = $info['md5'];
+                    $upload_data['sha1']     = $info['sha1'];
+                    $upload_data['location'] = $upload_driver;
 
                     // 返回数据
                     $result = $this->create($upload_data);
@@ -261,15 +271,15 @@ class UploadModel extends ModelModel {
                         }
                         $return['path'] = '.' . $upload_data['path'];
                         $return['name'] = $upload_data['name'];
-                        $return['id'] = $result;
+                        $return['id']   = $result;
                     } else {
                         $return['error']   = 1;
                         $return['success'] = 0;
                         $return['status']  = 0;
-                        $return['message'] = '上传出错'.$this->error;
+                        $return['message'] = '上传出错' . $this->error;
                     }
                 }
-                
+
             }
         }
         return $return;
@@ -282,7 +292,8 @@ class UploadModel extends ModelModel {
      * @param  string  $args 回调函数参数
      * @return boolean false-下载失败，否则输出下载文件
      */
-    public function download($id, $callback = null, $args = null) {
+    public function download($id, $callback = null, $args = null)
+    {
         // 获取下载文件信息
         $file = $this->find($id);
         if (!$file) {
@@ -291,7 +302,7 @@ class UploadModel extends ModelModel {
         }
         // 下载文件
         switch ($file['location']) {
-            case 'Local':  // 下载本地文件
+            case 'Local': // 下载本地文件
                 return $this->downLocalFile($file, $callback, $args);
             default:
                 $this->error = '不支持的文件存储类型！';
@@ -306,8 +317,9 @@ class UploadModel extends ModelModel {
      * @param  string   $args     回调函数参数
      * @return boolean            下载失败返回false
      */
-    private function downLocalFile($file, $callback = null, $args = null) {
-        $fiel_path = '.'.$file['path'];
+    private function downLocalFile($file, $callback = null, $args = null)
+    {
+        $fiel_path = '.' . $file['path'];
         if (file_exists($fiel_path)) {
             // 调用回调函数
             is_callable($callback) && call_user_func($callback, $args);
@@ -319,7 +331,8 @@ class UploadModel extends ModelModel {
             header("Content-Description: File Transfer");
             header('Content-type: ' . $file['type']);
             header('Content-Length:' . $file['size']);
-            if (preg_match('/MSIE/', $_SERVER['HTTP_USER_AGENT'])) {  // for IE
+            if (preg_match('/MSIE/', $_SERVER['HTTP_USER_AGENT'])) {
+                // for IE
                 header('Content-Disposition: attachment; filename="' . rawurlencode($file['name']) . '"');
             } else {
                 header('Content-Disposition: attachment; filename="' . $file['name'] . '"');
