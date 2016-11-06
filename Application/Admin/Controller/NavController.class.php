@@ -60,7 +60,7 @@ class NavController extends AdminController
         // 使用Builder快速建立列表页面。
         $builder = new \Common\Builder\ListBuilder();
         $builder->setMetaTitle('导航列表') // 设置页面标题
-            ->addTopButton('addnew', array('href' => U('add', array('group' => $group)))) // 添加新增按钮
+            ->addTopButton('addnew', array('href' => U('Admin/Nav/add', array('group' => $group)))) // 添加新增按钮
             ->addTopButton('resume') // 添加启用按钮
             ->addTopButton('forbid') // 添加禁用按钮
             ->addTopButton('delete') // 添加删除按钮

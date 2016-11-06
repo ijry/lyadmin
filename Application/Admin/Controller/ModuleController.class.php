@@ -7,55 +7,59 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
-use Common\Util\Think\Page;
+
 use Common\Util\Sql;
+
 /**
  * 功能模块控制器
  * @author jry <598821125@qq.com>
  */
-class ModuleController extends AdminController {
+class ModuleController extends AdminController
+{
     /**
      * 默认方法
      * @author jry <598821125@qq.com>
      */
-    public function index() {
+    public function index()
+    {
         $module_object = D('Module');
-        $data_list = $module_object->getAll();
+        $data_list     = $module_object->getAll();
 
         // 使用Builder快速建立列表页面。
         $builder = new \Common\Builder\ListBuilder();
-        $builder->setMetaTitle('模块列表')  // 设置页面标题
-                ->addTopButton('resume')   // 添加启用按钮
-                ->addTopButton('forbid')   // 添加禁用按钮
-                ->setSearch('请输入ID/标题', U('index'))
-                ->addTableColumn('name', '名称')
-                ->addTableColumn('title', '标题')
-                ->addTableColumn('description', '描述')
-                ->addTableColumn('developer', '开发者')
-                ->addTableColumn('version', '版本')
-                ->addTableColumn('create_time', '创建时间', 'time')
-                ->addTableColumn('status_icon', '状态', 'text')
-                ->addTableColumn('right_button', '操作', 'btn')
-                ->setTableDataList($data_list)     // 数据列表
-                ->display();
+        $builder->setMetaTitle('模块列表') // 设置页面标题
+            ->addTopButton('resume') // 添加启用按钮
+            ->addTopButton('forbid') // 添加禁用按钮
+            ->setSearch('请输入ID/标题', U('index'))
+            ->addTableColumn('name', '名称')
+            ->addTableColumn('title', '标题')
+            ->addTableColumn('description', '描述')
+            ->addTableColumn('developer', '开发者')
+            ->addTableColumn('version', '版本')
+            ->addTableColumn('create_time', '创建时间', 'time')
+            ->addTableColumn('status_icon', '状态', 'text')
+            ->addTableColumn('right_button', '操作', 'btn')
+            ->setTableDataList($data_list) // 数据列表
+            ->display();
     }
 
     /**
      * 检查模块依赖
      * @author jry <598821125@qq.com>
      */
-    public function checkDependence($dependences) {
+    public function checkDependence($dependences)
+    {
         if (is_array($dependences)) {
             foreach ($dependences as $key => $val) {
                 $con['name'] = $key;
                 $module_info = D('Module')->where($con)->find();
                 if (!$module_info) {
-                    $this->error('该模块依赖'.$key.'模块');
+                    $this->error('该模块依赖' . $key . '模块');
                 }
-                if ( version_compare ($module_info['version'] , $val) >=  0 ) {
+                if (version_compare($module_info['version'], $val) >= 0) {
                     continue;
                 } else {
-                    $this->error($module_info['title'].'模块版本不得低于v'.$val);
+                    $this->error($module_info['title'] . '模块版本不得低于v' . $val);
                     return false;
                 }
             }
@@ -67,30 +71,32 @@ class ModuleController extends AdminController {
      * 安装模块之前
      * @author jry <598821125@qq.com>
      */
-    public function install_before($name) {
+    public function install_before($name)
+    {
         // 使用FormBuilder快速建立表单页面。
         $builder = new \Common\Builder\FormBuilder();
-        $builder->setMetaTitle('准备安装模块')  // 设置页面标题
-                ->setPostUrl(U('install'))     // 设置表单提交地址
-                ->addFormItem('name', 'hidden', 'name', 'name')
-                ->addFormItem('clear', 'radio', '是否清除历史数据', '是否清除历史数据', array('1' => '是', '0' => '否'))
-                ->setFormData(array('name' => $name))
-                ->display();
+        $builder->setMetaTitle('准备安装模块') // 设置页面标题
+            ->setPostUrl(U('install')) // 设置表单提交地址
+            ->addFormItem('name', 'hidden', 'name', 'name')
+            ->addFormItem('clear', 'radio', '是否清除历史数据', '是否清除历史数据', array('1' => '是', '0' => '否'))
+            ->setFormData(array('name' => $name))
+            ->display();
     }
 
     /**
      * 安装模块
      * @author jry <598821125@qq.com>
      */
-    public function install($name, $clear = true) {
+    public function install($name, $clear = true)
+    {
         // 获取当前模块信息
-        $config_file = realpath(APP_PATH.$name).'/'
-                     .D('Module')->install_file();
+        $config_file = realpath(APP_PATH . $name) . '/'
+        . D('Module')->install_file();
         if (!$config_file) {
             $this->error('安装失败');
         }
         $config_info = include $config_file;
-        $data = $config_info['info'];
+        $data        = $config_info['info'];
 
         // 处理模块配置
         if ($config_info['config']) {
@@ -123,7 +129,7 @@ class ModuleController extends AdminController {
         if ($config_info['admin_menu']) {
             // 将key值赋给id
             foreach ($config_info['admin_menu'] as $key => &$val) {
-                $val['id'] = (string)$key;
+                $val['id'] = (string) $key;
             }
             $data['admin_menu'] = json_encode($config_info['admin_menu']);
         }
@@ -136,24 +142,24 @@ class ModuleController extends AdminController {
         }
 
         // 安装数据库
-        $sql_object = new Sql();
+        $sql_object           = new Sql();
         $uninstall_sql_status = true;
         // 清除旧数据
         if ($clear) {
-            $sql_file = realpath(APP_PATH.$name).'/Sql/uninstall.sql';
+            $sql_file             = realpath(APP_PATH . $name) . '/Sql/uninstall.sql';
             $uninstall_sql_status = $sql_object->execute_sql_from_file($sql_file);
         }
         // 安装新数据表
         if (!$uninstall_sql_status) {
             $this->error('安装失败');
         }
-        $sql_file = realpath(APP_PATH.$name).'/Sql/install.sql';
+        $sql_file   = realpath(APP_PATH . $name) . '/Sql/install.sql';
         $sql_status = $sql_object->execute_sql_from_file($sql_file);
 
         if ($sql_status) {
             // 写入数据库记录
             $module_object = D('Module');
-            $data = $module_object->create($data);
+            $data          = $module_object->create($data);
             if ($data) {
                 $id = $module_object->add($data);
                 if ($id) {
@@ -162,9 +168,9 @@ class ModuleController extends AdminController {
                     $nav_data['title'] = $data['title'];
                     $nav_data['type']  = 'module';
                     $nav_data['value'] = $data['name'];
-                    $nav_data['icon']  = $data['icon'] ? : '';
-                    $nav_object = D('Nav');
-                    $nav_data_created = $nav_object->create($nav_data);
+                    $nav_data['icon']  = $data['icon'] ?: '';
+                    $nav_object        = D('Nav');
+                    $nav_data_created  = $nav_object->create($nav_data);
                     if ($nav_data_created) {
                         $nav_add_result = $nav_object->add($nav_data_created);
                     }
@@ -176,7 +182,7 @@ class ModuleController extends AdminController {
                 $this->error($module_object->getError());
             }
         } else {
-            $sql_file = realpath(APP_PATH.$name).'/Sql/uninstall.sql';
+            $sql_file   = realpath(APP_PATH . $name) . '/Sql/uninstall.sql';
             $sql_status = $sql_object->execute_sql_from_file($sql_file);
             $this->error('安装失败');
         }
@@ -186,24 +192,26 @@ class ModuleController extends AdminController {
      * 卸载模块之前
      * @author jry <598821125@qq.com>
      */
-    public function uninstall_before($id) {
+    public function uninstall_before($id)
+    {
         // 使用FormBuilder快速建立表单页面。
         $builder = new \Common\Builder\FormBuilder();
-        $builder->setMetaTitle('准备卸载模块')  // 设置页面标题
-                ->setPostUrl(U('uninstall'))     // 设置表单提交地址
-                ->addFormItem('id', 'hidden', 'ID', 'ID')
-                ->addFormItem('clear', 'radio', '是否清除数据', '是否清除数据', array('1' => '是', '0' => '否'))
-                ->setFormData(array('id' => $id))
-                ->display();
+        $builder->setMetaTitle('准备卸载模块') // 设置页面标题
+            ->setPostUrl(U('uninstall')) // 设置表单提交地址
+            ->addFormItem('id', 'hidden', 'ID', 'ID')
+            ->addFormItem('clear', 'radio', '是否清除数据', '是否清除数据', array('1' => '是', '0' => '否'))
+            ->setFormData(array('id' => $id))
+            ->display();
     }
 
     /**
      * 卸载模块
      * @author jry <598821125@qq.com>
      */
-    public function uninstall($id, $clear = false) {
+    public function uninstall($id, $clear = false)
+    {
         $module_object = D('Module');
-        $module_info = $module_object->find($id);
+        $module_info   = $module_object->find($id);
         if ($module_info['is_system'] === '1') {
             $this->error('系统模块不允许卸载！');
         }
@@ -211,7 +219,7 @@ class ModuleController extends AdminController {
         if ($result) {
             if ($clear) {
                 $sql_object = new Sql();
-                $sql_file = realpath(APP_PATH.$module_info['name']).'/Sql/uninstall.sql';
+                $sql_file   = realpath(APP_PATH . $module_info['name']) . '/Sql/uninstall.sql';
                 $sql_status = $sql_object->execute_sql_from_file($sql_file);
                 if ($sql_status) {
                     $this->success('卸载成功，相关数据彻底删除！', U('index'));
@@ -228,16 +236,17 @@ class ModuleController extends AdminController {
      * 更新模块信息
      * @author jry <598821125@qq.com>
      */
-    public function updateInfo($id) {
+    public function updateInfo($id)
+    {
         $module_object = D('Module');
-        $name = $module_object->getFieldById($id, 'name');
-        $config_file = realpath(APP_PATH.$name).'/'
-                     .D('Module')->install_file();
+        $name          = $module_object->getFieldById($id, 'name');
+        $config_file   = realpath(APP_PATH . $name) . '/'
+        . D('Module')->install_file();
         if (!$config_file) {
             $this->error('不存在安装文件');
         }
         $config_info = include $config_file;
-        $data = $config_info['info'];
+        $data        = $config_info['info'];
 
         // 读取数据库已有配置
         $db_moduel_config = D('Module')->getFieldByName($name, 'config');
@@ -270,7 +279,7 @@ class ModuleController extends AdminController {
         if ($config_info['admin_menu']) {
             // 将key值赋给id
             foreach ($config_info['admin_menu'] as $key => &$val) {
-                $val['id'] = (string)$key;
+                $val['id'] = (string) $key;
             }
             $data['admin_menu'] = json_encode($config_info['admin_menu']);
         }
@@ -283,7 +292,7 @@ class ModuleController extends AdminController {
         }
 
         $data['id'] = $id;
-        $data = $module_object->create($data);
+        $data       = $module_object->create($data);
         if ($data) {
             $id = $module_object->save($data);
             if ($id) {
@@ -300,7 +309,8 @@ class ModuleController extends AdminController {
      * 设置一条或者多条数据的状态
      * @author jry <598821125@qq.com>
      */
-    public function setStatus($model = CONTROLLER_NAME){
+    public function setStatus($model = CONTROLLER_NAME, $script = false)
+    {
         $ids = I('request.ids');
         if (is_array($ids)) {
             foreach ($ids as $id) {

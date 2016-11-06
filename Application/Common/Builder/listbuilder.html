@@ -66,14 +66,16 @@
                                 <volist name="table_data_list" id="data">
                                     <tr>
                                         <td>
-                                            <input class="ids" type="checkbox" value="{$data[$table_data_list_key]}" name="ids[]">
+                                            <input class="ids" type="checkbox" value="{$data[$table_data_list_key]|default=''}" name="ids[]">
                                         </td>
                                         <?php foreach ($table_column_list as $column) :?>
                                             <td>
                                                 <?php if ($column['name'] === 'right_button') : ?>
+                                                    <notempty name="data['right_button']">
                                                     <?php foreach ($data['right_button'] as $rb) : ?>
                                                         <a {$rb['attribute']}>{$rb['title']}</a>
                                                     <?php endforeach; ?>
+                                                    </notempty>
                                                 <?php else: ?>
                                                     {$data[$column['name']]}
                                                 <?php endif; ?>

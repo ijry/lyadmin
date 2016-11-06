@@ -7,18 +7,22 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
+
 use Common\Controller\ControllerController;
 use Think\Verify;
+
 /**
  * 后台唯一不需要权限验证的控制器
  * @author jry <598821125@qq.com>
  */
-class PublicController extends ControllerController {
+class PublicController extends ControllerController
+{
     /**
      * 后台登陆
      * @author jry <598821125@qq.com>
      */
-    public function login() {
+    public function login()
+    {
         if (IS_POST) {
             $username = I('username');
             $password = I('password');
@@ -30,17 +34,17 @@ class PublicController extends ControllerController {
 
             // 验证用户名密码是否正确
             $user_object = D('Admin/User');
-            $user_info = $user_object->login($username, $password);
+            $user_info   = $user_object->login($username, $password);
             if (!$user_info) {
                 $this->error($user_object->getError());
             }
 
             // 验证管理员表里是否有该用户
             $account_object = D('Admin/Access');
-            $where['uid'] = $user_info['id'];
-            $account_info = $account_object->where($where)->find();
+            $where['uid']   = $user_info['id'];
+            $account_info   = $account_object->where($where)->find();
             if (!$account_info) {
-                $this->error('该用户没有管理员权限'.$account_object->getError());
+                $this->error('该用户没有管理员权限' . $account_object->getError());
             }
 
             // 设置登录状态
@@ -62,9 +66,11 @@ class PublicController extends ControllerController {
      * 注销
      * @author jry <598821125@qq.com>
      */
-    public function logout() {
+    public function logout()
+    {
         session('user_auth', null);
         session('user_auth_sign', null);
+        session('user_group', null);
         $this->success('退出成功！', U('login'));
     }
 
@@ -72,8 +78,9 @@ class PublicController extends ControllerController {
      * 图片验证码生成，用于登录和注册
      * @author jry <598821125@qq.com>
      */
-    public function verify($vid = 1) {
-        $verify = new Verify();
+    public function verify($vid = 1)
+    {
+        $verify         = new Verify();
         $verify->length = 4;
         $verify->entry($vid);
     }
@@ -83,7 +90,8 @@ class PublicController extends ControllerController {
      * @param  integer $id 验证码ID
      * @return boolean 检测结果
      */
-    function check_verify($code, $vid = 1) {
+    public function check_verify($code, $vid = 1)
+    {
         $verify = new Verify();
         return $verify->check($code, $vid);
     }
