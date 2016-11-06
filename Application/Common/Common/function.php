@@ -290,3 +290,21 @@ function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
         return $url;
     }
 }
+
+// 将树形列表转换为树
+function list_as_tree($list, $extra = null, $key = 'id', $title_field = 'title')
+{
+    //转换成树状列表(非严格模式)
+    $tree = new \Common\Util\Tree();
+    $list = $tree->toFormatTree($list, $title_field, 'id', 'pid', 0, false);
+
+    if ($extra) {
+        $result[0] = $extra;
+    }
+
+    //转换成一维数组
+    foreach ($list as $val) {
+        $result[$val[$key]] = $val['title_show'];
+    }
+    return $result;
+}
