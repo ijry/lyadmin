@@ -42,7 +42,7 @@ class Crypt
             }
 
             $v .= substr($r, $c, 1) .
-            (substr($str, $i, 1) ^ substr($r, $c, 1));
+                (substr($str, $i, 1) ^ substr($r, $c, 1));
             $c++;
         }
         return self::ed($v, $key);

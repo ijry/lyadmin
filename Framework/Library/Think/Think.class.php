@@ -46,7 +46,7 @@ class Think
         } else {
             //在高并发状态下，这里容易引起死锁，建议去掉这里的删除和重建，毕竟后面已经有一个删除和重建操作了
             /*if (Storage::has($runtimefile)) {
-                Storage::unlink($runtimefile);
+            Storage::unlink($runtimefile);
             }*/
 
             $content = '';

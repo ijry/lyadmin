@@ -7,12 +7,15 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Addons\RocketToTop;
+
 use Common\Controller\Addon;
+
 /**
  * 小火箭返回顶部
  * @jry <598821125@qq.com>
  */
-class RocketToTopAddon extends Addon{
+class RocketToTopAddon extends Addon
+{
     /**
      * 插件信息
      * @author jry <598821125@qq.com>
@@ -30,7 +33,8 @@ class RocketToTopAddon extends Addon{
      * 插件安装方法
      * @author jry <598821125@qq.com>
      */
-    public function install(){
+    public function install()
+    {
         return true;
     }
 
@@ -38,7 +42,8 @@ class RocketToTopAddon extends Addon{
      * 插件卸载方法
      * @author jry <598821125@qq.com>
      */
-    public function uninstall(){
+    public function uninstall()
+    {
         return true;
     }
 
@@ -46,9 +51,10 @@ class RocketToTopAddon extends Addon{
      * 实现的PageFooter钩子方法
      * @author jry <598821125@qq.com>
      */
-    public function PageFooter($param){
+    public function PageFooter($param)
+    {
         $addons_config = $this->getConfig();
-        if($addons_config['status']){
+        if ($addons_config['status']) {
             $this->display('rocket');
         }
     }

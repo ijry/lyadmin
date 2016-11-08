@@ -295,9 +295,9 @@ abstract class Driver
     {
         if ($this->transTimes == 1) {
             // 由嵌套事物的最外层进行提交
-            $result = $this->_linkID->commit();
+            $result           = $this->_linkID->commit();
             $this->transTimes = 0;
-            $this->transPdo = null;
+            $this->transPdo   = null;
             if (!$result) {
                 $this->error();
                 return false;
@@ -316,9 +316,9 @@ abstract class Driver
     public function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = $this->_linkID->rollback();
+            $result           = $this->_linkID->rollback();
             $this->transTimes = 0;
-            $this->transPdo = null;
+            $this->transPdo   = null;
             if (!$result) {
                 $this->error();
                 return false;

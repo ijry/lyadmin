@@ -34,6 +34,7 @@ namespace Behavior;
  */
 use Behavior\FirePHP as FirePHP;
 use Think\Exception as Exception;
+
 class FireShowPageTraceBehavior
 {
     protected $tracePagTabs = array('BASE' => '基本', 'FILE' => '文件', 'INFO' => '流程', 'ERR|NOTIC' => '错误', 'SQL' => 'SQL', 'DEBUG' => '调试');

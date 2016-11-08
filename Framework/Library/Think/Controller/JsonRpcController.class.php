@@ -14,6 +14,7 @@ namespace Think\Controller;
  * ThinkPHP JsonRPC控制器类
  */
 use jsonRPCServer as jsonRPCServer;
+
 class JsonRpcController
 {
 

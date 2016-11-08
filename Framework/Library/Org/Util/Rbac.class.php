@@ -223,11 +223,11 @@ class Rbac
         $db    = Db::getInstance(C('RBAC_DB_DSN'));
         $table = array('role' => C('RBAC_ROLE_TABLE'), 'user' => C('RBAC_USER_TABLE'), 'access' => C('RBAC_ACCESS_TABLE'), 'node' => C('RBAC_NODE_TABLE'));
         $sql   = "select node.id,node.name from " .
-        $table['role'] . " as role," .
-        $table['user'] . " as user," .
-        $table['access'] . " as access ," .
-        $table['node'] . " as node " .
-        "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=1 and node.status=1";
+            $table['role'] . " as role," .
+            $table['user'] . " as user," .
+            $table['access'] . " as access ," .
+            $table['node'] . " as node " .
+            "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=1 and node.status=1";
         $apps   = $db->query($sql);
         $access = array();
         foreach ($apps as $key => $app) {
@@ -236,11 +236,11 @@ class Rbac
             // 读取项目的模块权限
             $access[strtoupper($appName)] = array();
             $sql                          = "select node.id,node.name from " .
-            $table['role'] . " as role," .
-            $table['user'] . " as user," .
-            $table['access'] . " as access ," .
-            $table['node'] . " as node " .
-            "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=2 and node.pid={$appId} and node.status=1";
+                $table['role'] . " as role," .
+                $table['user'] . " as user," .
+                $table['access'] . " as access ," .
+                $table['node'] . " as node " .
+                "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=2 and node.pid={$appId} and node.status=1";
             $modules = $db->query($sql);
             // 判断是否存在公共模块的权限
             $publicAction = array();
@@ -249,11 +249,11 @@ class Rbac
                 $moduleName = $module['name'];
                 if ('PUBLIC' == strtoupper($moduleName)) {
                     $sql = "select node.id,node.name from " .
-                    $table['role'] . " as role," .
-                    $table['user'] . " as user," .
-                    $table['access'] . " as access ," .
-                    $table['node'] . " as node " .
-                    "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=3 and node.pid={$moduleId} and node.status=1";
+                        $table['role'] . " as role," .
+                        $table['user'] . " as user," .
+                        $table['access'] . " as access ," .
+                        $table['node'] . " as node " .
+                        "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=3 and node.pid={$moduleId} and node.status=1";
                     $rs = $db->query($sql);
                     foreach ($rs as $a) {
                         $publicAction[$a['name']] = $a['id'];
@@ -267,11 +267,11 @@ class Rbac
                 $moduleId   = $module['id'];
                 $moduleName = $module['name'];
                 $sql        = "select node.id,node.name from " .
-                $table['role'] . " as role," .
-                $table['user'] . " as user," .
-                $table['access'] . " as access ," .
-                $table['node'] . " as node " .
-                "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=3 and node.pid={$moduleId} and node.status=1";
+                    $table['role'] . " as role," .
+                    $table['user'] . " as user," .
+                    $table['access'] . " as access ," .
+                    $table['node'] . " as node " .
+                    "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and access.node_id=node.id and node.level=3 and node.pid={$moduleId} and node.status=1";
                 $rs     = $db->query($sql);
                 $action = array();
                 foreach ($rs as $a) {
@@ -292,10 +292,10 @@ class Rbac
         $db    = Db::getInstance(C('RBAC_DB_DSN'));
         $table = array('role' => C('RBAC_ROLE_TABLE'), 'user' => C('RBAC_USER_TABLE'), 'access' => C('RBAC_ACCESS_TABLE'));
         $sql   = "select access.node_id from " .
-        $table['role'] . " as role," .
-        $table['user'] . " as user," .
-        $table['access'] . " as access " .
-        "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and  access.module='{$module}' and access.status=1";
+            $table['role'] . " as role," .
+            $table['user'] . " as user," .
+            $table['access'] . " as access " .
+            "where user.user_id='{$authId}' and user.role_id=role.id and ( access.role_id=role.id  or (access.role_id=role.pid and role.pid!=0 ) ) and role.status=1 and  access.module='{$module}' and access.status=1";
         $rs     = $db->query($sql);
         $access = array();
         foreach ($rs as $node) {

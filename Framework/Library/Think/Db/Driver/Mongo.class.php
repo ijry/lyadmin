@@ -270,7 +270,7 @@ class Mongo extends Driver
      * @param string $pk 主键名
      * @return integer
      */
-    public function getMongoNextId($pk,$options=array())
+    public function getMongoNextId($pk, $options = array())
     {
         if (isset($options['table'])) {
             $this->switchCollection($options['table']);

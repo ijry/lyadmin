@@ -7,17 +7,21 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Home\Controller;
+
 use Think\Controller;
+
 /**
  * 跳转到后台控制器
  * @author jry <598821125@qq.com>
  */
-class AdminController extends Controller {
+class AdminController extends Controller
+{
     /**
      * 自动跳转到后台入口文件
      * @author jry <598821125@qq.com>
      */
-    public function index() {
-        redirect(C('HOME_PAGE').'/admin.php');
+    public function index()
+    {
+        redirect(C('HOME_PAGE') . '/admin.php');
     }
 }

@@ -7,16 +7,19 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
+
 /**
  * 系统升级控制器
  * @author jry <598821125@qq.com>
  */
-class UpdateController extends AdminController {
+class UpdateController extends AdminController
+{
     /**
      * 初始化方法
      * @author jry <598821125@qq.com>
      */
-    protected function _initialize() {
+    protected function _initialize()
+    {
         //只有ID为1的超级管理员才有权限系统更新
         if (session('user_auth.uid') !== '1') {
             $this->success('');
@@ -27,9 +30,10 @@ class UpdateController extends AdminController {
      * 检查新版本
      * @author jry <598821125@qq.com>
      */
-    public function checkVersion() {
+    public function checkVersion()
+    {
         //远程更新地址
-        $url = C('WEBSITE_DOMAIN').C('UPDATE_URL').'.html?action=check';
+        $url = C('WEBSITE_DOMAIN') . C('UPDATE_URL') . '.html?action=check';
 
         //参数设置
         $params = array(
@@ -46,7 +50,7 @@ class UpdateController extends AdminController {
             //用户信息
             'data_auth_key'   => sha1(C('DATA_AUTH_KEY')),
             'website_domain'  => $_SERVER['HTTP_HOST'],
-            'server_software' => php_uname().'_'.$_SERVER['SERVER_SOFTWARE'],
+            'server_software' => php_uname() . '_' . $_SERVER['SERVER_SOFTWARE'],
             'website_title'   => C('WEB_SITE_TITLE'),
             'auth_sn'         => C('AUTH_SN'),
             'autn_username'   => C('AUTH_USERNAME'),
@@ -56,7 +60,7 @@ class UpdateController extends AdminController {
 
         //获取版本数据
         $conf_arr = array(
-            'post'  => $params,
+            'post' => $params,
         );
         $result = json_decode(\Org\Net\Http::fsockopenDownload($url, $conf_arr), true);
 

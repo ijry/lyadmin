@@ -7,17 +7,19 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Home\Controller;
-use Common\Util\Think\Page;
+
 /**
  * 前台默认控制器
  * @author jry <598821125@qq.com>
  */
-class IndexController extends HomeController {
+class IndexController extends HomeController
+{
     /**
      * 默认方法
      * @author jry <598821125@qq.com>
      */
-    public function index() {
+    public function index()
+    {
         $this->assign('meta_title', "首页");
         $this->display();
     }

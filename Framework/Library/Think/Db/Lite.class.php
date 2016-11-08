@@ -28,7 +28,7 @@ class Lite
     protected $lastInsID = null;
     // 返回或者影响记录数
     protected $numRows = 0;
-   	// 事物操作PDO实例
+    // 事物操作PDO实例
     protected $transPDO = null;
     // 事务指令数
     protected $transTimes = 0;
@@ -267,9 +267,9 @@ class Lite
     {
         if ($this->transTimes == 1) {
             // 由嵌套事物的最外层进行提交
-            $result = $this->_linkID->commit();
+            $result           = $this->_linkID->commit();
             $this->transTimes = 0;
-            $this->transPdo = null;
+            $this->transPdo   = null;
             if (!$result) {
                 $this->error();
                 return false;
@@ -288,9 +288,9 @@ class Lite
     public function rollback()
     {
         if ($this->transTimes > 0) {
-            $result = $this->_linkID->rollback();
+            $result           = $this->_linkID->rollback();
             $this->transTimes = 0;
-            $this->transPdo = null;
+            $this->transPdo   = null;
             if (!$result) {
                 $this->error();
                 return false;

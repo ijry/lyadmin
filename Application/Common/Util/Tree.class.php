@@ -7,12 +7,14 @@
 // | Author: jry <59821125@qq.com> <http://www.corethink.cn>
 // +----------------------------------------------------------------------
 namespace Common\Util;
+
 /**
  * 列表树生成工具类
  * 该类里的方法一部分来自OneThink，一部分来自网络，最后加上作者的修改形成完善的Tree类
  * @author jry <598821125@qq.com>
  */
-class Tree {
+class Tree
+{
     /**
      * 用于树型数组完成递归格式的全局变量
      * @author jry <598821125@qq.com>
@@ -20,36 +22,38 @@ class Tree {
     private $formatTree;
 
     /**
-    * 将格式数组转换为基于标题的树（实际还是列表，只是通过在相应字段加前缀实现类似树状结构）
-    * @param array $list
-    * @param integer $level 进行递归时传递用的参数
-    */
-    private function _toFormatTree($list, $level = 0, $title = 'title') {
-        foreach ($list as $key=>$val) {
-            $title_prefix = str_repeat("&nbsp;", $level*4);
+     * 将格式数组转换为基于标题的树（实际还是列表，只是通过在相应字段加前缀实现类似树状结构）
+     * @param array $list
+     * @param integer $level 进行递归时传递用的参数
+     */
+    private function _toFormatTree($list, $level = 0, $title = 'title')
+    {
+        foreach ($list as $key => $val) {
+            $title_prefix = str_repeat("&nbsp;", $level * 4);
             $title_prefix .= "┝ ";
-            $val['level'] = $level;
+            $val['level']        = $level;
             $val['title_prefix'] = $level == 0 ? '' : $title_prefix;
-            $val['title_show'] = $level == 0 ? $val[$title] : $title_prefix.$val[$title];
+            $val['title_show']   = $level == 0 ? $val[$title] : $title_prefix . $val[$title];
             if (!array_key_exists('_child', $val)) {
                 array_push($this->formatTree, $val);
             } else {
                 $child = $val['_child'];
                 unset($val['_child']);
                 array_push($this->formatTree, $val);
-                $this->_toFormatTree($child, $level+1, $title); //进行下一层递归
+                $this->_toFormatTree($child, $level + 1, $title); //进行下一层递归
             }
         }
         return;
     }
 
     /**
-    * 将格式数组转换为树
-    * @param array $list
-    * @param integer $level 进行递归时传递用的参数
-    */
-    public function toFormatTree($list, $title = 'title', $pk='id', $pid = 'pid', $root = 0, $strict = true) {
-        $list = $this->list_to_tree($list, $pk, $pid, '_child', $root, $strict);
+     * 将格式数组转换为树
+     * @param array $list
+     * @param integer $level 进行递归时传递用的参数
+     */
+    public function toFormatTree($list, $title = 'title', $pk = 'id', $pid = 'pid', $root = 0, $strict = true)
+    {
+        $list             = $this->list_to_tree($list, $pk, $pid, '_child', $root, $strict);
         $this->formatTree = array();
         $this->_toFormatTree($list, 0, $title);
         return $this->formatTree;
@@ -65,27 +69,28 @@ class Tree {
      * @param string $strict 默认严格模式
      * @return array
      */
-    public function list_to_tree($list, $pk='id', $pid = 'pid', $child = '_child', $root = 0, $strict = true) {
+    public function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0, $strict = true)
+    {
         // 创建Tree
         $tree = array();
         if (is_array($list)) {
             // 创建基于主键的数组引用
             $refer = array();
             foreach ($list as $key => $data) {
-                $refer[$data[$pk]] =& $list[$key];
+                $refer[$data[$pk]] = &$list[$key];
             }
             foreach ($list as $key => $data) {
                 // 判断是否存在parent
                 $parent_id = $data[$pid];
-                if ($parent_id === null || (String)$root === $parent_id) {
-                    $tree[] =& $list[$key];
+                if ($parent_id === null || (String) $root === $parent_id) {
+                    $tree[] = &$list[$key];
                 } else {
-                    if(isset($refer[$parent_id])){
-                        $parent =& $refer[$parent_id];
-                        $parent[$child][] =& $list[$key];
+                    if (isset($refer[$parent_id])) {
+                        $parent           = &$refer[$parent_id];
+                        $parent[$child][] = &$list[$key];
                     } else {
-                        if($strict === false){
-                            $tree[] =& $list[$key];
+                        if ($strict === false) {
+                            $tree[] = &$list[$key];
                         }
                     }
                 }
@@ -102,7 +107,8 @@ class Tree {
      * @param    array $list 过渡用的中间数组，
      * @return array 返回排过序的列表数组
      */
-    public function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array()) {
+    public function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
+    {
         if (is_array($tree)) {
             foreach ($tree as $key => $value) {
                 $reffer = $value;
@@ -112,20 +118,21 @@ class Tree {
                 }
                 $list[] = $reffer;
             }
-            $list = $this->list_sort_by($list, $order, $sortby='asc');
+            $list = $this->list_sort_by($list, $order, $sortby = 'asc');
         }
         return $list;
     }
 
     /**
-    * 对查询结果集进行排序
-    * @access public
-    * @param array $list 查询结果
-    * @param string $field 排序的字段名
-    * @param array $sortby 排序类型 asc正向排序 desc逆向排序 nat自然排序
-    * @return array
-    */
-    public function list_sort_by($list, $field, $sortby = 'asc') {
+     * 对查询结果集进行排序
+     * @access public
+     * @param array $list 查询结果
+     * @param string $field 排序的字段名
+     * @param array $sortby 排序类型 asc正向排序 desc逆向排序 nat自然排序
+     * @return array
+     */
+    public function list_sort_by($list, $field, $sortby = 'asc')
+    {
         if (is_array($list)) {
             $refer = $resultSet = array();
             foreach ($list as $i => $data) {
@@ -135,14 +142,14 @@ class Tree {
                 case 'asc': // 正向排序
                     asort($refer);
                     break;
-                case 'desc':// 逆向排序
+                case 'desc': // 逆向排序
                     arsort($refer);
                     break;
                 case 'nat': // 自然排序
                     natcasesort($refer);
                     break;
             }
-            foreach ($refer as $key=> $val) {
+            foreach ($refer as $key => $val) {
                 $resultSet[] = &$list[$key];
             }
             return $resultSet;
@@ -158,19 +165,20 @@ class Tree {
      * 支持 array('name'=>$value) 或者 name=$value
      * @return array
      */
-    function list_search($list, $condition) {
-        if(is_string($condition)) {
+    public function list_search($list, $condition)
+    {
+        if (is_string($condition)) {
             parse_str($condition, $condition);
         }
         // 返回的结果集合
         $resultSet = array();
         foreach ($list as $key => $data) {
             $find = false;
-            foreach ($condition as $field=>$value){
+            foreach ($condition as $field => $value) {
                 if (isset($data[$field])) {
-                    if (0 === strpos($value,'/')) {
-                        $find = preg_match($value,$data[$field]);
-                    } else if ($data[$field]==$value) {
+                    if (0 === strpos($value, '/')) {
+                        $find = preg_match($value, $data[$field]);
+                    } else if ($data[$field] == $value) {
                         $find = true;
                     }
                 }

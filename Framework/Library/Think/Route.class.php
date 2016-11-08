@@ -39,9 +39,9 @@ class Route
         }
         // 静态路由检查
         if (isset($rules[0][$regx])) {
-            $route = $rules[0][$regx];
+            $route                = $rules[0][$regx];
             $_SERVER['PATH_INFO'] = $route[0];
-            $args = array_pop($route);
+            $args                 = array_pop($route);
             if (!empty($route[1])) {
                 $args = array_merge($args, $route[1]);
             }
@@ -67,7 +67,7 @@ class Route
                     } else {
                         // 存在动态变量
                         if (strpos($route[0], ':')) {
-                            $matches = array_values($matches);
+                            $matches  = array_values($matches);
                             $route[0] = preg_replace_callback('/:(\d+)/', function ($match) use (&$matches) {
                                 return $matches[$match[1] - 1];
                             }, $route[0]);
@@ -75,14 +75,11 @@ class Route
                         // 路由参数关联$matches
                         if ('/' == substr($rule, 0, 1)) {
                             $rule_params = array();
-                            foreach($route[1] as $param_key => $param)
-                            {
-                                list($param_name,$param_value) = explode('=', $param,2);
-                                if(!is_null($param_value))
-                                {
-                                    if(preg_match('/^:(\d*)$/',$param_value, $match_index))
-                                    {
-                                        $match_index = $match_index[1]-1;
+                            foreach ($route[1] as $param_key => $param) {
+                                list($param_name, $param_value) = explode('=', $param, 2);
+                                if (!is_null($param_value)) {
+                                    if (preg_match('/^:(\d*)$/', $param_value, $match_index)) {
+                                        $match_index = $match_index[1] - 1;
                                         $param_value = $matches[$match_index];
                                     }
                                     $rule_params[$param_name] = $param_value;
@@ -146,7 +143,7 @@ class Route
         }
         if (isset($_rules[1][$path])) {
             foreach ($_rules[1][$path] as $rule => $route) {
-                $args = array_pop($route);
+                $args  = array_pop($route);
                 $array = array();
                 if (isset($route[2])) {
                     // 路由参数检查
@@ -168,7 +165,7 @@ class Route
                             if (!empty($val[2])) {
                                 if ($val[2] == 'int') {
                                     // 是否为数字
-                                    if (!is_numeric($vars[$key]) || !preg_match('/^\d*$/',$vars[$key])) {
+                                    if (!is_numeric($vars[$key]) || !preg_match('/^\d*$/', $vars[$key])) {
                                         break;
                                     }
                                 } else {
@@ -178,7 +175,7 @@ class Route
                                     }
                                 }
                             }
-                            $flag = true;
+                            $flag        = true;
                             $array[$key] = $vars[$key];
                         } elseif ($val[0] == 1) {
                             // 如果是必选项
@@ -195,13 +192,12 @@ class Route
                     }
                 } else {
                     // 正则路由
-                    $keys = !empty($args) ? array_keys($args) : array_keys($vars);
+                    $keys      = !empty($args) ? array_keys($args) : array_keys($vars);
                     $temp_vars = $vars;
-                    $str = preg_replace_callback('/\(.*?\)/', function ($match) use (&$temp_vars, &$keys) {
-                        $k = array_shift($keys);
+                    $str       = preg_replace_callback('/\(.*?\)/', function ($match) use (&$temp_vars, &$keys) {
+                        $k      = array_shift($keys);
                         $re_var = '';
-                        if(isset($temp_vars[$k]))
-                        {
+                        if (isset($temp_vars[$k])) {
                             $re_var = $temp_vars[$k];
                             unset($temp_vars[$k]);
                         }
@@ -266,7 +262,7 @@ class Route
                         // 额外参数
                         parse_str($route[1], $route[1]);
                     }
-                    $route[] = $args;
+                    $route[]          = $args;
                     $result[0][$rule] = $route;
                 }
             }
@@ -300,7 +296,7 @@ class Route
                                         foreach (explode('&', $params) as $key => $val) {
                                             if (0 === strpos($val, ':')) {
                                                 // 动态参数
-                                                $val = substr($val, 1);
+                                                $val        = substr($val, 1);
                                                 $args[$key] = strpos($val, '|') ? explode('|', $val, 2) : array($val);
                                             } else {
                                                 $route[1][$key] = $val;
@@ -314,7 +310,7 @@ class Route
                             // 规则路由
                             foreach (explode('/', rtrim($rule, '$')) as $item) {
                                 $filter = $fun = '';
-                                $type = 0;
+                                $type   = 0;
                                 if (0 === strpos($item, '[:')) {
                                     // 可选变量
                                     $type = 2;
@@ -325,13 +321,13 @@ class Route
                                     $type = $type ?: 1;
                                     if ($pos = strpos($item, '|')) {
                                         // 支持函数过滤
-                                        $fun = substr($item, $pos + 1);
+                                        $fun  = substr($item, $pos + 1);
                                         $item = substr($item, 1, $pos - 1);
                                     }
                                     if ($pos = strpos($item, '^')) {
                                         // 排除项
                                         $filter = explode('-', substr($item, $pos + 1));
-                                        $item = substr($item, 1, $pos - 1);
+                                        $item   = substr($item, 1, $pos - 1);
                                     } elseif (strpos($item, '\\')) {
                                         // \d表示限制为数字
                                         if ('d' == substr($item, -1)) {
@@ -345,7 +341,7 @@ class Route
                                 $args[$item] = array($type, $fun, $filter);
                             }
                         }
-                        $route[] = $args;
+                        $route[]          = $args;
                         $result[1][$rule] = $route;
                     } else {
                         unset($result[1][$rule]);
@@ -432,7 +428,7 @@ class Route
                         // 设置了过滤条件
                         if ($val[2] == 'int') {
                             // 如果值不为整数
-                            if (!preg_match('/^\d*$/',$var)) {
+                            if (!preg_match('/^\d*$/', $var)) {
                                 return false;
                             }
                         } else {
@@ -451,7 +447,7 @@ class Route
                 }
             }
             $matches = $params;
-            $regx = implode('/', $paths);
+            $regx    = implode('/', $paths);
         }
         // 解析剩余的URL参数
         if ($regx) {
@@ -474,8 +470,8 @@ class Route
     private static function invoke($closure, $var = array())
     {
         $reflect = new \ReflectionFunction($closure);
-        $params = $reflect->getParameters();
-        $args = array();
+        $params  = $reflect->getParameters();
+        $args    = array();
         foreach ($params as $i => $param) {
             $name = $param->getName();
             if (isset($var[$name])) {

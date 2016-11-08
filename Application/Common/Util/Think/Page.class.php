@@ -50,8 +50,8 @@ class Page
         $this->nowPage   = $this->nowPage > 0 ? $this->nowPage : 1;
         $this->firstRow  = $this->listRows * ($this->nowPage - 1);
         if (\Common\Util\Device::isWap()) {
-            $this->rollPage  = 3;
-            $this->config['theme']  = '%UP_PAGE%%LINK_PAGE%%DOWN_PAGE%';
+            $this->rollPage        = 3;
+            $this->config['theme'] = '%UP_PAGE%%LINK_PAGE%%DOWN_PAGE%';
         }
     }
 

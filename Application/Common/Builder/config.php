@@ -33,5 +33,5 @@ return array(
         'picture'    => array('单张图片', 'int(11) UNSIGNED NOT NULL'),
         'pictures'   => array('多张图片', 'varchar(32) NOT NULL'),
         'kindeditor' => array('HTML编辑器 kindeditor', 'text'),
-    )
+    ),
 );

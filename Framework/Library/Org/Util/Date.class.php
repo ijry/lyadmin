@@ -20,6 +20,7 @@ namespace Org\Util;
  * @version   $Id: Date.class.php 2662 2012-01-26 06:32:50Z liu21st $
  */
 use Org\Util\Date as Date;
+
 class Date
 {
 

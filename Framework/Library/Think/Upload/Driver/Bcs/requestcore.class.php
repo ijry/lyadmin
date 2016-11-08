@@ -12,6 +12,7 @@ namespace Think\Upload\Driver\Bcs;
  * @license http://opensource.org/licenses/bsd-license.php Simplified BSD License
  */
 use Think\Upload\Driver\Bcs\BCS_RequestCore_Exception as BCS_RequestCore_Exception;
+
 class BcsRequestcore
 {
     /**

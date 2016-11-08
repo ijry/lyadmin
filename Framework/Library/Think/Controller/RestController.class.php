@@ -123,10 +123,12 @@ class RestController extends Controller
         foreach ($type as $key => $val) {
             $array = explode(',', $val);
             foreach ($array as $k => $v) {
-            	if(array_key_exists('HTTP_ACCEPT',$_SERVER))
-	                if (stristr($_SERVER['HTTP_ACCEPT'], $v)) {
-	                    return $key;
-	                }
+                if (array_key_exists('HTTP_ACCEPT', $_SERVER)) {
+                    if (stristr($_SERVER['HTTP_ACCEPT'], $v)) {
+                        return $key;
+                    }
+                }
+
             }
         }
         return false;
@@ -204,13 +206,13 @@ class RestController extends Controller
             return '';
         }
 
-        if('json' == $type) {
+        if ('json' == $type) {
             // 返回JSON数据格式到客户端 包含状态信息
-            if(version_compare(PHP_VERSION,'5.4.0','<')) {
+            if (version_compare(PHP_VERSION, '5.4.0', '<')) {
                 $this->arrayRecursive($data, 'urlencode', true);
                 $data = urldecode(json_encode($data));
             } else {
-                $data = json_encode($data,JSON_UNESCAPED_UNICODE);
+                $data = json_encode($data, JSON_UNESCAPED_UNICODE);
             }
         } elseif ('xml' == $type) {
             // 返回xml格式数据
@@ -241,7 +243,7 @@ class RestController extends Controller
         foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $this->arrayRecursive($array[$key], $function, $apply_to_keys_also);
-            } elseif(is_string($value)) {
+            } elseif (is_string($value)) {
                 $array[$key] = $function($value);
             }
 

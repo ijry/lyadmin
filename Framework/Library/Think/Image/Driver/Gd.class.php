@@ -315,7 +315,7 @@ class Gd
 
                     //裁剪
                     imagecopyresampled($img, $this->img, $posx, $posy, $x, $y, $neww, $newh, $w, $h);
-                    imagedestroy($this->img);     //销毁原图
+                    imagedestroy($this->img); //销毁原图
                     $this->img = $img;
                 } while (!empty($this->gif) && $this->gifNext());
 
@@ -422,7 +422,7 @@ class Gd
                 break;
 
             default:
-            /* 自定义水印坐标 */
+                /* 自定义水印坐标 */
                 if (is_array($locate)) {
                     list($x, $y) = $locate;
                 } else {
@@ -535,7 +535,7 @@ class Gd
                 break;
 
             default:
-            /* 自定义文字坐标 */
+                /* 自定义文字坐标 */
                 if (is_array($locate)) {
                     list($posx, $posy) = $locate;
                     $x += $posx;

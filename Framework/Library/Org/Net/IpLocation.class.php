@@ -54,7 +54,7 @@ class IpLocation
     public function __construct($filename = "UTFWry.dat")
     {
         $this->fp = 0;
-        if(!is_file($filename)) {
+        if (!is_file($filename)) {
             $filename = dirname(__FILE__) . '/' . $filename;
         }
         if (($this->fp = fopen($filename, 'rb')) !== false) {

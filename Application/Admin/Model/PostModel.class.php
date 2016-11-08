@@ -7,12 +7,15 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Admin\Model;
+
 use Common\Model\ModelModel;
+
 /**
  * 文章模型
  * @author jry <598821125@qq.com>
  */
-class PostModel extends ModelModel {
+class PostModel extends ModelModel
+{
     /**
      * 数据库真实表名
      * 一般为了数据库的整洁，同时又不影响Model和Controller的名称
@@ -45,18 +48,20 @@ class PostModel extends ModelModel {
      * 查找后置操作
      * @author jry <598821125@qq.com>
      */
-    protected function _after_find(&$result, $options) {
-       if ($result['cover'] >= 0) {
-           $result['cover_url'] = get_cover($result['cover'], 'default');
-       }
+    protected function _after_find(&$result, $options)
+    {
+        if ($result['cover'] >= 0) {
+            $result['cover_url'] = get_cover($result['cover'], 'default');
+        }
     }
 
     /**
      * 查找后置操作
      * @author jry <598821125@qq.com>
      */
-    protected function _after_select(&$result, $options) {
-        foreach($result as &$record){
+    protected function _after_select(&$result, $options)
+    {
+        foreach ($result as &$record) {
             $this->_after_find($record, $options);
         }
     }
@@ -65,7 +70,8 @@ class PostModel extends ModelModel {
      * 获取列表
      * @author jry <598821125@qq.com>
      */
-    public function getList($cid, $limit = 10, $page = 1, $order = null, $map = null) {
+    public function getList($cid, $limit = 10, $page = 1, $order = null, $map = null)
+    {
         $con["status"] = array("eq", '1');
         $con["cid"]    = array("eq", $cid);
         if ($map) {
@@ -75,9 +81,9 @@ class PostModel extends ModelModel {
             $order = 'sort desc, id desc';
         }
         $list = $this->page($page, $limit)
-                          ->order($order)
-                          ->where($map)
-                          ->select();
+            ->order($order)
+            ->where($map)
+            ->select();
 
         return $list;
     }

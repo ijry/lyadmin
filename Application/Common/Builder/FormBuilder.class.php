@@ -111,7 +111,7 @@ class FormBuilder extends ControllerController
             $item['extra']['class'] = $extra;
         }
         $item['extra']['attr'] = $extra_attr;
-        $item['value']       = '';
+        $item['value']         = '';
         $this->_form_items[]   = $item;
         return $this;
     }

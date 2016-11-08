@@ -149,7 +149,7 @@ class MongoModel extends Model
             $pk = $this->getPk();
         }
         $options = $this->_parseOptions();
-        return $this->db->getMongoNextId($pk,$options);
+        return $this->db->getMongoNextId($pk, $options);
     }
 
     /**
@@ -246,35 +246,34 @@ class MongoModel extends Model
      */
     public function select($options = array())
     {
-        if( is_numeric($options) || is_string($options)) {
-            $id = $this->getPk();
-            $where[$id] = $options;
-            $options = array();
+        if (is_numeric($options) || is_string($options)) {
+            $id               = $this->getPk();
+            $where[$id]       = $options;
+            $options          = array();
             $options['where'] = $where;
         }
         // 分析表达式
         $options = $this->_parseOptions($options);
-        $result = $this->db->select($options);
-        if(false === $result) {
+        $result  = $this->db->select($options);
+        if (false === $result) {
             return false;
         }
-        
-        if(empty($result)) {// 查询结果为空
+
+        if (empty($result)) { // 查询结果为空
             return null;
-        }
-        else{
+        } else {
             $this->checkMongoId($result);
         }
-        
+
         //$result是以主键为key的，所以需要处理一下
         $data = array();
-        foreach($result as $v){
+        foreach ($result as $v) {
             $data[] = $v;
         }
-        
+
         $this->data = $data;
         $this->_after_select($this->data, $options);
-        
+
         return $this->data;
     }
 

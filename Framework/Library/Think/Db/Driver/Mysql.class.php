@@ -197,10 +197,10 @@ class Mysql extends Driver
                 }
 
                 switch ($val[0]) {
-                    case 'exp':    // 表达式
+                    case 'exp': // 表达式
                         $updates[] = $this->parseKey($key) . "=($val[1])";
                         break;
-                    case 'value':// 值
+                    case 'value': // 值
                     default:
                         $name      = count($this->bind);
                         $updates[] = $this->parseKey($key) . "=:" . $name;

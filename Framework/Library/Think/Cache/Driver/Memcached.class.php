@@ -71,7 +71,7 @@ class Memcached extends Cache
         if (is_null($expire)) {
             $expire = $this->options['expire'];
         }
-        $name = $this->options['prefix'] . $name;
+        $name   = $this->options['prefix'] . $name;
         $expire = $expire == 0 ? 0 : time() + $expire;
         if ($this->handler->set($name, $value, $expire)) {
             if ($this->options['length'] > 0) {

@@ -9,7 +9,9 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 namespace Think\Session\Driver;
+
 use PDO;
+
 /**
  * 数据库方式Session驱动
  *    CREATE TABLE think_session (
@@ -19,7 +21,8 @@ use PDO;
  *      UNIQUE KEY `session_id` (`session_id`)
  *    );.
  */
-class Sql {
+class Sql
+{
     /**
      * Session有效时间.
      */
@@ -49,17 +52,18 @@ class Sql {
      *
      * @return string
      */
-    protected function parseDsn($name, $host = '127.0.0.1', $port = '', $socket = '', $charset = '') {
+    protected function parseDsn($name, $host = '127.0.0.1', $port = '', $socket = '', $charset = '')
+    {
         $dsn = 'mysql:dbname=' . $name . ';host=' . $host;
         if (!empty($port)) {
-            $dsn.= ';port=' . $port;
+            $dsn .= ';port=' . $port;
         } elseif (!empty($socket)) {
-            $dsn.= ';unix_socket=' . $socket;
+            $dsn .= ';unix_socket=' . $socket;
         }
         if (!empty($charset)) {
             //为兼容各版本PHP,用两种方式设置编码
             $this->options[\PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $charset;
-            $dsn.= ';charset=' . $charset;
+            $dsn .= ';charset=' . $charset;
         }
         return $dsn;
     }
@@ -70,15 +74,16 @@ class Sql {
      * @param string $savePath
      * @param mixed $sessName
      */
-    public function open($savePath, $sessName) {
-        $this->lifeTime = C('SESSION_EXPIRE') ? C('SESSION_EXPIRE') : ini_get('session.gc_maxlifetime');
+    public function open($savePath, $sessName)
+    {
+        $this->lifeTime     = C('SESSION_EXPIRE') ? C('SESSION_EXPIRE') : ini_get('session.gc_maxlifetime');
         $this->sessionTable = C('SESSION_TABLE') ? C('SESSION_TABLE') : C('DB_PREFIX') . 'session';
         //分布式数据库
         $host = explode(',', C('DB_HOST'));
         $port = explode(',', C('DB_PORT'));
         $name = explode(',', C('DB_NAME'));
         $user = explode(',', C('DB_USER'));
-        $pwd = explode(',', C('DB_PWD'));
+        $pwd  = explode(',', C('DB_PWD'));
         if (1 == C('DB_DEPLOY_TYPE')) {
             //读写分离
             if (C('DB_RW_SEPARATE')) {
@@ -89,14 +94,14 @@ class Sql {
                     $r = floor(mt_rand(C('DB_MASTER_NUM'), count($host) - 1));
                 }
                 //主数据库链接
-                $dsn = $this->parseDsn((isset($name[$w]) ? $name[$w] : $name[0]), $host[$w], (isset($port[$w]) ? $port[$w] : $port[0]));
+                $dsn    = $this->parseDsn((isset($name[$w]) ? $name[$w] : $name[0]), $host[$w], (isset($port[$w]) ? $port[$w] : $port[0]));
                 $hander = new PDO($dsn, (isset($user[$w]) ? $user[$w] : $user[0]), (isset($pwd[$w]) ? $pwd[$w] : $pwd[0]));
                 if (!$hander) {
                     return false;
                 }
                 $this->hander[0] = $hander;
                 //从数据库链接
-                $dsn = $this->parseDsn((isset($name[$r]) ? $name[$r] : $name[0]), $host[$r], (isset($port[$r]) ? $port[$r] : $port[0]));
+                $dsn    = $this->parseDsn((isset($name[$r]) ? $name[$r] : $name[0]), $host[$r], (isset($port[$r]) ? $port[$r] : $port[0]));
                 $hander = new PDO($dsn, (isset($user[$r]) ? $user[$r] : $user[0]), (isset($pwd[$r]) ? $pwd[$r] : $pwd[0]));
                 if (!$hander) {
                     return false;
@@ -106,8 +111,8 @@ class Sql {
             }
         }
         //从数据库链接
-        $r = floor(mt_rand(0, count($host) - 1));
-        $dsn = $this->parseDsn((isset($name[$r]) ? $name[$r] : $name[0]), $host[$r], (isset($port[$r]) ? $port[$r] : $port[0]));
+        $r      = floor(mt_rand(0, count($host) - 1));
+        $dsn    = $this->parseDsn((isset($name[$r]) ? $name[$r] : $name[0]), $host[$r], (isset($port[$r]) ? $port[$r] : $port[0]));
         $hander = new PDO($dsn, (isset($user[$r]) ? $user[$r] : $user[0]), (isset($pwd[$r]) ? $pwd[$r] : $pwd[0]));
         if (!$hander) {
             return false;
@@ -119,7 +124,8 @@ class Sql {
     /**
      * 关闭Session.
      */
-    public function close() {
+    public function close()
+    {
         if (is_array($this->hander)) {
             $this->gc($this->lifeTime);
             return ($this->hander[0] = null) && ($this->hander[1] = null);
@@ -133,9 +139,10 @@ class Sql {
      *
      * @param string $sessID
      */
-    public function read($sessID) {
+    public function read($sessID)
+    {
         $hander = is_array($this->hander) ? $this->hander[1] : $this->hander;
-        $res = $hander->prepare('SELECT session_data AS data FROM ' . $this->sessionTable . " WHERE session_id = '$sessID'   AND session_expire >" . time());
+        $res    = $hander->prepare('SELECT session_data AS data FROM ' . $this->sessionTable . " WHERE session_id = '$sessID'   AND session_expire >" . time());
         $res->execute();
         if ($result = $res->fetch(PDO::FETCH_ASSOC)) {
             return $result['data'];
@@ -149,11 +156,12 @@ class Sql {
      * @param string $sessID
      * @param string $sessData
      */
-    public function write($sessID, $sessData) {
-        $hander = is_array($this->hander) ? $this->hander[0] : $this->hander;
-        $expire = time() + $this->lifeTime;
+    public function write($sessID, $sessData)
+    {
+        $hander   = is_array($this->hander) ? $this->hander[0] : $this->hander;
+        $expire   = time() + $this->lifeTime;
         $sessData = addslashes($sessData);
-        $res = $hander->prepare("SELECT COUNT(*) FROM " . $this->sessionTable . " WHERE `session_id` = '$sessID'");
+        $res      = $hander->prepare("SELECT COUNT(*) FROM " . $this->sessionTable . " WHERE `session_id` = '$sessID'");
         $res->execute();
         $result = $res->fetch(PDO::FETCH_ASSOC);
         if ($result['COUNT(*)'] === '1') {
@@ -172,9 +180,10 @@ class Sql {
      *
      * @param string $sessID
      */
-    public function destroy($sessID) {
+    public function destroy($sessID)
+    {
         $hander = is_array($this->hander) ? $this->hander[0] : $this->hander;
-        $res = $hander->exec('DELETE FROM ' . $this->sessionTable . " WHERE session_id = '$sessID'");
+        $res    = $hander->exec('DELETE FROM ' . $this->sessionTable . " WHERE session_id = '$sessID'");
         if ($res) {
             return true;
         }
@@ -186,7 +195,8 @@ class Sql {
      *
      * @param string $sessMaxLifeTime
      */
-    public function gc($sessMaxLifeTime) {
+    public function gc($sessMaxLifeTime)
+    {
         $hander = is_array($this->hander) ? $this->hander[0] : $this->hander;
         return $hander->exec('DELETE FROM ' . $this->sessionTable . ' WHERE session_expire < ' . time());
     }

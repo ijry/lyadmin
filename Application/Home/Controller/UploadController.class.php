@@ -7,16 +7,19 @@
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
 namespace Home\Controller;
+
 /**
  * 上传控制器
  * @author jry <598821125@qq.com>
  */
-class UploadController extends HomeController {
+class UploadController extends HomeController
+{
     /**
      * 上传
      * @author jry <598821125@qq.com>
      */
-    public function upload() {
+    public function upload()
+    {
         if (is_login() || (C('AUTH_KEY') === $_SERVER['HTTP_UPLOADTOKEN'])) {
             $return = json_encode(D('Admin/Upload')->upload());
             exit($return);
@@ -27,7 +30,8 @@ class UploadController extends HomeController {
      * 下载
      * @author jry <598821125@qq.com>
      */
-    public function download($token) {
+    public function download($token)
+    {
         if (empty($token)) {
             $this->error('token参数错误！');
         }
@@ -39,7 +43,7 @@ class UploadController extends HomeController {
         }
 
         $upload_object = D('Admin/Upload');
-        $file_id = $upload_object->getFieldByMd5($file_md5, 'id');
+        $file_id       = $upload_object->getFieldByMd5($file_md5, 'id');
         if (!$upload_object->download($file_id)) {
             $this->error($upload_object->getError());
         }
