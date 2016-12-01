@@ -237,10 +237,7 @@ CREATE TABLE `ly_admin_upload` (
   `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
   `sort` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `url` (`url`),
-  UNIQUE KEY `md5` (`md5`),
-  UNIQUE KEY `sha1` (`sha1`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件上传表';
 
 #
