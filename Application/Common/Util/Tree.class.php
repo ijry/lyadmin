@@ -4,13 +4,12 @@
 // +----------------------------------------------------------------------
 // | Copyright (c) 2016 http://www.lingyun.net All rights reserved.
 // +----------------------------------------------------------------------
-// | Author: jry <59821125@qq.com> <http://www.corethink.cn>
+// | Author: jry <59821125@qq.com>
 // +----------------------------------------------------------------------
-namespace Common\Util;
+namespace Util;
 
 /**
  * 列表树生成工具类
- * 该类里的方法一部分来自OneThink，一部分来自网络，最后加上作者的修改形成完善的Tree类
  * @author jry <598821125@qq.com>
  */
 class Tree
@@ -22,11 +21,11 @@ class Tree
     private $formatTree;
 
     /**
-     * 将格式数组转换为基于标题的树（实际还是列表，只是通过在相应字段加前缀实现类似树状结构）
+     * 将格式数组转换为基于标题前缀的树（实际还是列表，只是通过在相应字段加前缀实现类似树状结构）
      * @param array $list
      * @param integer $level 进行递归时传递用的参数
      */
-    private function _toFormatTree($list, $level = 0, $title = 'title')
+    private function _array2tree($list, $level = 0, $title = 'title')
     {
         foreach ($list as $key => $val) {
             $title_prefix = str_repeat("&nbsp;", $level * 4);
@@ -40,22 +39,22 @@ class Tree
                 $child = $val['_child'];
                 unset($val['_child']);
                 array_push($this->formatTree, $val);
-                $this->_toFormatTree($child, $level + 1, $title); //进行下一层递归
+                $this->_array2tree($child, $level + 1, $title); //进行下一层递归
             }
         }
         return;
     }
 
     /**
-     * 将格式数组转换为树
+     * 将格式数组(真正的Tree结构)转换为基于标题前缀的树
      * @param array $list
      * @param integer $level 进行递归时传递用的参数
      */
-    public function toFormatTree($list, $title = 'title', $pk = 'id', $pid = 'pid', $root = 0, $strict = true)
+    public function array2tree($list, $title = 'title', $pk = 'id', $pid = 'pid', $root = 0, $strict = true)
     {
-        $list             = $this->list_to_tree($list, $pk, $pid, '_child', $root, $strict);
+        $list             = $this->list2tree($list, $pk, $pid, '_child', $root, $strict);
         $this->formatTree = array();
-        $this->_toFormatTree($list, 0, $title);
+        $this->_array2tree($list, 0, $title);
         return $this->formatTree;
     }
 
@@ -69,7 +68,7 @@ class Tree
      * @param string $strict 默认严格模式
      * @return array
      */
-    public function list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0, $strict = true)
+    public function list2tree($list, $pk = 'id', $pid = 'pid', $child = '_child', $root = 0, $strict = true)
     {
         // 创建Tree
         $tree = array();
@@ -100,25 +99,25 @@ class Tree
     }
 
     /**
-     * 将list_to_tree的树还原成列表
+     * 将list2tree的树还原成列表
      * @param    array $tree    原来的树
      * @param    string $child 孩子节点的键
      * @param    string $order 排序显示的键，一般是主键 升序排列
      * @param    array $list 过渡用的中间数组，
      * @return array 返回排过序的列表数组
      */
-    public function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
+    public function tree2list($tree, $child = '_child', $order = 'id', &$list = array())
     {
         if (is_array($tree)) {
             foreach ($tree as $key => $value) {
                 $reffer = $value;
                 if (isset($reffer[$child])) {
                     unset($reffer[$child]);
-                    $this->tree_to_list($value[$child], $child, $order, $list);
+                    $this->tree2list($value[$child], $child, $order, $list);
                 }
                 $list[] = $reffer;
             }
-            $list = $this->list_sort_by($list, $order, $sortby = 'asc');
+            $list = $this->listSortBy($list, $order, $sortby = 'asc');
         }
         return $list;
     }
@@ -131,7 +130,7 @@ class Tree
      * @param array $sortby 排序类型 asc正向排序 desc逆向排序 nat自然排序
      * @return array
      */
-    public function list_sort_by($list, $field, $sortby = 'asc')
+    public function listSortBy($list, $field, $sortby = 'asc')
     {
         if (is_array($list)) {
             $refer = $resultSet = array();
@@ -165,7 +164,7 @@ class Tree
      * 支持 array('name'=>$value) 或者 name=$value
      * @return array
      */
-    public function list_search($list, $condition)
+    public function listSearch($list, $condition)
     {
         if (is_string($condition)) {
             parse_str($condition, $condition);

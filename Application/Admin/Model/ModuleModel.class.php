@@ -9,8 +9,8 @@
 namespace Admin\Model;
 
 use Common\Model\ModelModel;
-use Common\Util\Tree;
 use Think\Storage;
+use Util\Tree;
 
 /**
  * 功能模块模型
@@ -71,7 +71,7 @@ class ModuleModel extends ModelModel
 
         // 转换成树结构
         $tree = new tree();
-        return $tree->list_to_tree($_side_menu_list);
+        return $tree->list2tree($_side_menu_list);
     }
 
     /**
@@ -80,62 +80,14 @@ class ModuleModel extends ModelModel
      */
     public function getCurrentMenu($module_name = MODULE_NAME)
     {
-        static $module_names = [];
-        if (isset($module_names[$module_name])) {
-            return $module_names[$module_name];
-        }
         $admin_menu = $this->getFieldByName($module_name, 'admin_menu');
         $admin_menu = json_decode($admin_menu, true);
-        $result     = null;
         foreach ($admin_menu as $key => $val) {
             if (isset($val['url'])) {
-                $dirCont = count(explode('/', $val['url']));
-                switch ($dirCont) {
-                    case 3: //【Cms/Index/index(文章管理)】
-                        $config_url  = U($val['url']);
-                        $current_url = U(MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME);
-                        if ($config_url === $current_url) {
-                            $result = $val;
-                        }
-                        break;
-                    case 5: //【Cms/Index/setStatus/status/delete(彻底删除文章)】
-                        $selfQueryStr = $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING'];
-                        if (strpos(strtolower($selfQueryStr), strtolower($val['url'])) !== false) {
-                            $result = $val;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-        $module_names[$module_name] = $result;
-        return $result;
-    }
-
-    public function getCurrentBtn($module_name, $url)
-    {
-        $admin_menu = $this->getFieldByName($module_name, 'admin_menu');
-        $admin_menu = json_decode($admin_menu, true);
-        $result     = null;
-        foreach ($admin_menu as $key => $val) {
-            if (isset($val['url'])) {
-                $dirCont = count(explode('/', $val['url']));
-                switch ($dirCont) {
-                    case 3: //【Cms/Index/index(文章管理)】
-                        $config_url  = U($val['url']);
-                        $current_url = U($url);
-                        if ($config_url === $current_url) {
-                            $result = $val;
-                        }
-                        break;
-                    case 5: //【Cms/Index/setStatus/status/delete(彻底删除文章)】
-                        if (stripos($url, $val['url']) !== false) {
-                            $result = $val;
-                        }
-                        break;
-                    default:
-                        break;
+                $config_url  = U($val['url']);
+                $current_url = U(MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME);
+                if ($config_url === $current_url) {
+                    $result = $val;
                 }
             }
         }
@@ -162,16 +114,8 @@ class ModuleModel extends ModelModel
             $tree               = new tree();
             $menu_list          = array();
             foreach ($system_module_list as $key => &$module) {
-                $menu = json_decode($module['admin_menu'], true);
-                if ($user_group !== '1') {
-                    // 检测非超级管理员菜单的权限
-                    foreach ($menu as $key => $value) {
-                        if (!in_array($key, $group_auth[$module['name']])) {
-                            unset($menu[$key]);
-                        }
-                    }
-                }
-                $temp                               = $tree->list_to_tree($menu);
+                $menu                               = json_decode($module['admin_menu'], true);
+                $temp                               = $tree->list2tree($menu);
                 $menu_list[$module['name']]         = $temp[0];
                 $menu_list[$module['name']]['id']   = $module['id'];
                 $menu_list[$module['name']]['name'] = $module['name'];
@@ -201,8 +145,6 @@ class ModuleModel extends ModelModel
         $pid        = $current_menu['pid'];
         $temp       = array();
         $result[]   = $current_menu;
-        // dump($current_menu);
-        // die;
         while (true) {
             foreach ($admin_menu as $key => $val) {
                 if ($val['id'] == $pid) {

@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Tree;
+use Util\Tree;
 
 /**
  * 部门控制器
@@ -40,7 +40,7 @@ class GroupController extends AdminController
 
         // 转换成树状列表
         $tree      = new Tree();
-        $data_list = $tree->toFormatTree($data_list);
+        $data_list = $tree->array2tree($data_list);
 
         $right_button['no']['title']     = '超级管理员无需操作';
         $right_button['no']['attribute'] = 'class="label label-warning" href="#"';
@@ -103,7 +103,7 @@ class GroupController extends AdminController
             $all_module_menu_list = array();
             foreach ($moule_list as $key => $val) {
                 $temp                               = json_decode($val['admin_menu'], true);
-                $menu_list_item                     = $tree->list_to_tree($temp);
+                $menu_list_item                     = $tree->list2tree($temp);
                 $all_module_menu_list[$val['name']] = $menu_list_item[0];
             }
 
@@ -152,7 +152,7 @@ class GroupController extends AdminController
             $all_module_menu_list = array();
             foreach ($moule_list as $key => $val) {
                 $temp                               = json_decode($val['admin_menu'], true);
-                $menu_list_item                     = $tree->list_to_tree($temp);
+                $menu_list_item                     = $tree->list2tree($temp);
                 $all_module_menu_list[$val['name']] = $menu_list_item[0];
             }
 

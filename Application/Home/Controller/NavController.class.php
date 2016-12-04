@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Home\Controller;
 
-use Common\Util\Think\Page;
+use Think\Page;
 
 /**
  * 导航控制器

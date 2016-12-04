@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Sql;
+use Util\Sql;
 
 /**
  * 功能模块控制器

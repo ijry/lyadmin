@@ -8,10 +8,10 @@
 // +----------------------------------------------------------------------
 namespace Install\Controller;
 
-use Common\Util\Think\Str;
 use Think\Controller;
 use Think\Db;
 use Think\Storage;
+use Util\Str;
 
 /**
  * 安装控制器

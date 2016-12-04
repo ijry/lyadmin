@@ -1,5 +1,5 @@
 <?php
-namespace Common\Util;
+namespace Util;
 
 /**
  * 文件压缩解压类

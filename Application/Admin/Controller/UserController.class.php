@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Think\Page;
+use Think\Page;
 
 /**
  * 用户控制器
@@ -34,18 +34,11 @@ class UserController extends AdminController
             '_multi' => true,
         );
 
-        $email_bind = I('email_bind', '');
-        if ($email_bind) {
-            $map['email_bind'] = (int) $email_bind;
-        }
-
         // 获取所有用户
         $map['status'] = array('egt', '0'); // 禁用和正常状态
-        $this->extendDates($map, 'create_time', 'timestamp');
-
-        $p           = !empty($_GET["p"]) ? $_GET['p'] : 1;
-        $user_object = D('User');
-        $data_list   = $user_object
+        $p             = !empty($_GET["p"]) ? $_GET['p'] : 1;
+        $user_object   = D('User');
+        $data_list     = $user_object
             ->page($p, C('ADMIN_PAGE_ROWS'))
             ->where($map)
             ->order('id desc')
@@ -62,11 +55,7 @@ class UserController extends AdminController
             ->addTopButton('resume') // 添加启用按钮
             ->addTopButton('forbid') // 添加禁用按钮
             ->addTopButton('delete') // 添加删除按钮
-        // ->setSearch('请输入ID/用户名／邮箱／手机号', U('index'))
-        // ->setSearch('请输入ID/用户名', U('index'))
-            ->addSearchItem('keyword', 'text', '', '请输入ID/用户名')
-            ->addSearchItem('email_bind', 'select', '', '', ['' => '是否验证邮箱', '0' => '未验证', '1' => '已验证'])
-            ->addSearchItem('dates', 'dateranger', '', '创建时间', 365)
+            ->setSearch('请输入ID/用户名／邮箱／手机号', U('index'))
             ->addTableColumn('id', 'UID')
             ->addTableColumn('avatar', '头像', 'picture')
             ->addTableColumn('nickname', '昵称')
@@ -176,7 +165,7 @@ class UserController extends AdminController
      * 设置一条或者多条数据的状态
      * @author jry <598821125@qq.com>
      */
-    public function setStatus($model = CONTROLLER_NAME, $script = false)
+    public function setStatus($model = CONTROLLER_NAME)
     {
         $ids = I('request.ids');
         if (is_array($ids)) {

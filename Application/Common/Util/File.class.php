@@ -1,10 +1,16 @@
 <?php
 // +----------------------------------------------------------------------
-// 文件及文件夹处理类
+// | 零云 [ 简单 高效 卓越 ]
 // +----------------------------------------------------------------------
-namespace Common\Util;
+// | Copyright (c) 2016 http://www.lingyun.net All rights reserved.
+// +----------------------------------------------------------------------
+// | Author: jry <59821125@qq.com>
+// +----------------------------------------------------------------------
+namespace Util;
 
-//文件处理类
+/**
+ * 文件及文件夹处理类
+ */
 class File
 {
     /**
@@ -16,7 +22,7 @@ class File
     {
         $dir = rtrim($dir, '/') . '/';
         if (!is_dir($dir)) {
-            if (mkdir($dir, 0755, true) == false) {
+            if (mkdir($dir, 0700) == false) {
                 return false;
             }
             return true;
@@ -32,7 +38,7 @@ class File
     {
         foreach ($files as $key => $value) {
             if (substr($value, -1) == '/') {
-                mkdir($value, 0755, true);
+                mkdir($value);
             } else {
                 @file_put_contents($value, '');
             }

@@ -8,8 +8,8 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Think\Page;
 use Think\Controller;
+use Think\Page;
 
 /**
  * 后台上传控制器

@@ -76,14 +76,14 @@ abstract class Addon
                 if (is_file($template)) {
                     $file = $template;
                 }
-                if (\Common\Util\Device::isWap()) {
+                if (IS_WAP) {
                     $wap_template = './Theme/' . C('CURRENT_THEME') . '/Home/Wap/Addons/' . $this->getName() . '/' . $file . '.html';
                     if (is_file($wap_template)) {
                         $file = $wap_template;
                     }
                 }
             } else {
-                if (\Common\Util\Device::isWap()) {
+                if (IS_WAP) {
                     $wap_template = './Addons/' . $this->getName() . '/Wap/' . $file . '.html';
                     if (is_file($wap_template)) {
                         $file = $wap_template;

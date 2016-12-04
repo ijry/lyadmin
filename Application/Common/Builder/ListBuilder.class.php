@@ -19,7 +19,6 @@ class ListBuilder extends ControllerController
     private $_meta_title; // 页面标题
     private $_top_button_list     = array(); // 顶部工具栏按钮组
     private $_search              = array(); // 搜索参数配置
-    private $_search_form_items   = [];
     private $_tab_nav             = array(); // 页面Tab导航
     private $_table_column_list   = array(); // 表格标题字段
     private $_table_data_list     = array(); // 表格数据列表
@@ -222,46 +221,7 @@ class ListBuilder extends ControllerController
      */
     public function setSearch($title, $url)
     {
-        $this->_search            = array('title' => $title, 'url' => $url);
-        $this->_search_form_items = [];
-        return $this;
-    }
-
-    /**
-     * 加入一个搜索表单项
-     * @param $type 表单类型(取值参考系统配置FORM_ITEM_TYPE)
-     * @param $title 表单标题
-     * @param $tip 表单提示说明
-     * @param $name 表单名
-     * @param $options 表单options
-     * @param $extra_class 表单项是否隐藏
-     * @param $extra_attr 表单项额外属性
-     * @return $this
-     * @author jry <598821125@qq.com>
-     */
-    public function addSearchItem($name, $type, $title, $tip, $options = array(), $extra_class = '', $extra_attr = '')
-    {
-        $item['name']        = $name;
-        $item['type']        = $type;
-        $item['title']       = $title;
-        $item['tip']         = $tip;
-        $item['options']     = $options;
-        $item['extra_class'] = $extra_class;
-        $item['extra_attr']  = $extra_attr;
-        $item['value']       = I("request.{$name}", '');
-        if ($type == 'dateranger') {
-            $dates = I('dates', '', 'trim');
-            if ($dates) {
-                $start_date = substr($dates, 0, 10);
-                $end_date   = substr($dates, 11, 10);
-            } else {
-                $start_date = datetime("-{$options} days", 'Y-m-d');
-                $end_date   = datetime('now', 'Y-m-d');
-            }
-            $this->assign('start_date', $start_date);
-            $this->assign('end_date', $end_date);
-        }
-        $this->_search_form_items[] = $item;
+        $this->_search = array('title' => $title, 'url' => $url);
         return $this;
     }
 
@@ -473,7 +433,7 @@ class ListBuilder extends ControllerController
                 $my_attribute['name']  = 'delete';
                 $my_attribute['title'] = '删除';
                 $my_attribute['class'] = 'label label-danger-outline label-pill ajax-get confirm';
-                $my_attribute['model'] = isset($attribute['model']) ? $attribute['model'] : CONTROLLER_NAME;
+                $my_attribute['model'] = $attribute['model'] ?: CONTROLLER_NAME;
                 $my_attribute['href']  = U(
                     MODULE_NAME . '/' . CONTROLLER_NAME . '/setStatus',
                     array(
@@ -555,19 +515,18 @@ class ListBuilder extends ControllerController
      * 显示页面
      * @author jry <598821125@qq.com>
      */
-    public function display($template = '', $charset = '', $contentType = '', $content = '', $prefix = '')
+    public function display()
     {
-        $groupModel = D('Admin/Group');
         // 编译data_list中的值
         foreach ($this->_table_data_list as &$data) {
             // 编译表格右侧按钮
             if ($this->_right_button_list) {
                 foreach ($this->_right_button_list as $right_button) {
                     // 禁用按钮与隐藏比较特殊，它需要根据数据当前状态判断是显示禁用还是启用
-                    if (isset($right_button['type']) && $right_button['type'] === 'forbid') {
+                    if ($right_button['type'] === 'forbid') {
                         $right_button = $right_button['forbid' . $data['status']];
                     }
-                    if (isset($right_button['type']) && $right_button['type'] === 'recycle') {
+                    if ($right_button['type'] === 'recycle') {
                         if ($data['status'] === '0' || $data['status'] === '1') {
                             $right_button = $right_button['recycle1'];
                         } else {
@@ -582,18 +541,9 @@ class ListBuilder extends ControllerController
                         $right_button['href']
                     );
 
-                    if (isset($right_button['href'])) {
-                        $res = $groupModel->checkBtnAuth($right_button['href']);
-                    } else {
-                        $res = false;
-                    }
-                    if (!$res || empty($right_button)) {
-                        $right_button = [];
-                    } else {
-                        // 编译按钮属性
-                        $right_button['attribute']                   = $this->compileHtmlAttr($right_button);
-                        $data['right_button'][$right_button['name']] = $right_button;
-                    }
+                    // 编译按钮属性
+                    $right_button['attribute']                   = $this->compileHtmlAttr($right_button);
+                    $data['right_button'][$right_button['name']] = $right_button;
                 }
             }
 
@@ -642,11 +592,7 @@ class ListBuilder extends ControllerController
                         $data[$column['name']] = $this->formatBytes($data[$column['name']]);
                         break;
                     case 'icon':
-                        if (isset($data[$column['name']])) {
-                            $data[$column['name']] = '<i class="fa ' . $data[$column['name']] . '"></i>';
-                        } else {
-                            $data[$column['name']] = '';
-                        }
+                        $data[$column['name']] = '<i class="fa ' . $data[$column['name']] . '"></i>';
                         break;
                     case 'date':
                         $data[$column['name']] = time_format($data[$column['name']], 'Y-m-d');
@@ -681,7 +627,7 @@ class ListBuilder extends ControllerController
                         }
                         break;
                 }
-                if (isset($data[$column['name']]) && is_array($data[$column['name']]) && $column['name'] !== 'right_button') {
+                if (is_array($data[$column['name']]) && $column['name'] !== 'right_button') {
                     $data[$column['name']] = implode(',', $data[$column['name']]);
                 }
             }
@@ -689,14 +635,7 @@ class ListBuilder extends ControllerController
 
         //编译top_button_list中的HTML属性
         if ($this->_top_button_list) {
-            foreach ($this->_top_button_list as $key => &$button) {
-                if (isset($button['href'])) {
-                    $res = $groupModel->checkBtnAuth($button['href']);
-                    if (!$res) {
-                        unset($this->_top_button_list[$key]);
-                        $button = [];
-                    }
-                }
+            foreach ($this->_top_button_list as &$button) {
                 $button['attribute'] = $this->compileHtmlAttr($button);
             }
         }
@@ -704,12 +643,6 @@ class ListBuilder extends ControllerController
         $this->assign('meta_title', $this->_meta_title); // 页面标题
         $this->assign('top_button_list', $this->_top_button_list); // 顶部工具栏按钮
         $this->assign('search', $this->_search); // 搜索配置
-        if ($this->_search && $this->_search['url']) {
-            $this->assign('search_url', $this->_search['url']);
-        } else {
-            $this->assign('search_url', U(ACTION_NAME, '', false, true));
-        }
-        $this->assign('search_form_items', $this->_search_form_items);
         $this->assign('tab_nav', $this->_tab_nav); // 页面Tab导航
         $this->assign('table_column_list', $this->_table_column_list); // 表格的列
         $this->assign('table_data_list', $this->_table_data_list); // 表格数据

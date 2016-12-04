@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Think\Page;
+use Think\Page;
 
 /**
  * 管理员控制器

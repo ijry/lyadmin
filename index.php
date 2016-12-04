@@ -85,4 +85,4 @@ if (is_file('./Data/install.lock') === false && @$_SERVER[ENV_PRE . 'DEV_MODE'] 
  * 引入核心入口
  * ThinkPHP亦可移动到WEB以外的目录
  */
-require './Framework/LingYun.php';
+require './ThinkPHP/ThinkPHP.php';

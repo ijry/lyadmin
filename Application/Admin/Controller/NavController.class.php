@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use \Common\Util\Tree;
+use \Util\Tree;
 
 /**
  * 导航控制器
@@ -48,7 +48,7 @@ class NavController extends AdminController
 
         // 转换成树状列表
         $tree      = new Tree();
-        $data_list = $tree->toFormatTree($data_list);
+        $data_list = $tree->array2tree($data_list);
 
         // 设置Tab导航数据列表
         $nav_group_list = C('NAV_GROUP_LIST'); // 获取分类分组

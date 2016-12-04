@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Think\Page;
+use Think\Page;
 
 /**
  * 系统配置控制器
@@ -191,7 +191,7 @@ class ConfigController extends AdminController
         // 构造表单名、解析options
         foreach ($data_list as &$data) {
             $data['name']    = 'config[' . $data['name'] . ']';
-            $data['options'] = \Common\Util\Think\Str::parseAttr($data['options']);
+            $data['options'] = \Util\Str::parseAttr($data['options']);
         }
 
         // 使用FormBuilder快速建立表单页面。

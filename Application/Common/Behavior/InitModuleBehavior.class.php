@@ -57,6 +57,20 @@ class InitModuleBehavior extends Behavior
             C('DEFAULT_MODULE', 'Admin');
         }
 
+        // 设置WAP和微信标记
+        define('IS_WAP', is_wap() ? true : false);
+        define('IS_WEIXIN', is_weixin() ? true : false);
+
+        // 获取不带端口的域名
+        $_host = explode(':', $_SERVER['HTTP_HOST']);
+        define('HTTP_HOST', $_host[0]);
+
+        // 获取scheme
+        define('HTTP_SCHEME', (is_ssl() ? 'https' : 'http'));
+
+        // 获取域名
+        define('HTTP_DOMAIN', HTTP_SCHEME . '://' . $_SERVER['HTTP_HOST']);
+
         C($config);
     }
 }

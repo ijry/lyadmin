@@ -59,7 +59,7 @@ class ConfigModel extends ModelModel
         foreach ($list as $key => $val) {
             switch ($val['type']) {
                 case 'array':
-                    $config[$val['name']] = \Common\Util\Think\Str::parseAttr($val['value']);
+                    $config[$val['name']] = \Util\Str::parseAttr($val['value']);
                     break;
                 case 'checkbox':
                     $config[$val['name']] = explode(',', $val['value']);

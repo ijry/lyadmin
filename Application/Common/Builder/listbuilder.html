@@ -16,36 +16,36 @@
     </notempty>
 
     <!-- 顶部工具栏按钮 -->
-    <if condition="($top_button_list || $search || $search_form_items)">
-        <div class="builder-toolbar">
-            <div class="row">
-                <!-- 工具栏按钮 -->
-                <empty name="top_button_list">
-                    <div class="col-xs-12 col-sm-12 clearfix">
-                        <include file="./Application/Common/Builder/search.html" />
+    <div class="builder-toolbar">
+        <div class="row">
+            <!-- 工具栏按钮 -->
+            <notempty name="top_button_list">
+                <div class="col-xs-12 col-sm-8 button-list clearfix">
+                    <div class="form-group">
+                        <volist name="top_button_list" id="button">
+                            <a {$button.attribute}>{$button.title}</a>&nbsp;
+                        </volist>
                     </div>
-                <else />
-                    <php>$search_col_sm_size = 12</php>
-                    <if condition="($search || $search_form_items )">
-                        <php> $search_col_sm_size = count($top_button_list)+1;</php>
-                    </if>
-                    <div class="col-xs-12 col-sm-{$search_col_sm_size} button-list clearfix">
-                        <div class="form-group">
-                            <volist name="top_button_list" id="button">
-                                <a {$button.attribute}>{$button.title}</a>&nbsp;
-                            </volist>
-                        </div>
+                </div>
+            </notempty>
+
+            <!-- 搜索框 -->
+            <notempty name="search">
+                <empty name="search_form_items">
+                    <div class="col-xs-12 col-sm-4 clearfix">
+                        <form class="form" method="get" action="{$search.url}">
+                            <div class="form-group">
+                                <div class="input-group search-form">
+                                    <input type="text" name="keyword" class="search-input form-control" value="{$_GET.keyword}" placeholder="{$search.title}">
+                                    <span class="input-group-btn"><a class="btn btn-default search-btn"><i class="fa fa-search"></i></a></span>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <!-- 搜索框 -->
-                    <if condition="($search || $search_form_items )">
-                        <div class="col-xs-12 col-sm-{:11 - count($top_button_list)} clearfix">
-                            <include file="./Application/Common/Builder/search.html" />
-                        </div>
-                    </if>
                 </empty>
-            </div>
+            </notempty>
         </div>
-    </if>
+    </div>
 
     <!-- 数据列表 -->
     <div class="builder-container">
@@ -66,16 +66,14 @@
                                 <volist name="table_data_list" id="data">
                                     <tr>
                                         <td>
-                                            <input class="ids" type="checkbox" value="{$data[$table_data_list_key]|default=''}" name="ids[]">
+                                            <input class="ids" type="checkbox" value="{$data[$table_data_list_key]}" name="ids[]">
                                         </td>
                                         <?php foreach ($table_column_list as $column) :?>
                                             <td>
                                                 <?php if ($column['name'] === 'right_button') : ?>
-                                                    <notempty name="data['right_button']">
                                                     <?php foreach ($data['right_button'] as $rb) : ?>
                                                         <a {$rb['attribute']}>{$rb['title']}</a>
                                                     <?php endforeach; ?>
-                                                    </notempty>
                                                 <?php else: ?>
                                                     {$data[$column['name']]}
                                                 <?php endif; ?>

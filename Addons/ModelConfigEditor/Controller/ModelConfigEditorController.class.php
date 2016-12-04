@@ -2,8 +2,8 @@
 
 namespace Addons\ModelConfigEditor\Controller;
 
-use Common\Util\Tree;
 use Home\Controller\AddonController;
+use Util\Tree;
 
 class ModelConfigEditorController extends AddonController
 {
@@ -21,7 +21,7 @@ class ModelConfigEditorController extends AddonController
             $menus = $this->getMenus($module_id);
             // 转换成树状列表
             $tree      = new Tree();
-            $data_list = $tree->toFormatTree($menus);
+            $data_list = $tree->array2tree($menus);
 
             // 使用Builder快速建立列表页面。
             $builder = new \Common\Builder\ListBuilder();
@@ -74,7 +74,7 @@ class ModelConfigEditorController extends AddonController
             $builder = new \Common\Builder\FormBuilder();
             $builder->setMetaTitle('新增链接') // 设置页面标题
                 ->setPostUrl(addons_url('ModelConfigEditor://ModelConfigEditor/add', ['module_id' => $module_id])) // 设置表单提交地址
-                ->addFormItem('pid', 'select', '上级链接', '上级链接', list_as_tree($menus, '顶级链接'))
+                ->addFormItem('pid', 'select', '上级链接', '上级链接', $this->list_as_tree($menus, '顶级链接'))
                 ->addFormItem('title', 'text', '链接标题', '链接前台显示标题')
                 ->addFormItem('url', 'text', '请填写外链URL地址', '支持http://格式或者TP的U函数解析格式')
                 ->addFormItem('icon', 'icon', '图标', '链接图标')
@@ -110,7 +110,7 @@ class ModelConfigEditorController extends AddonController
             $builder->setMetaTitle('编辑链接') // 设置页面标题
                 ->setPostUrl(addons_url('ModelConfigEditor://ModelConfigEditor/edit', ['id' => $id, 'module_id' => $module_id])) // 设置表单提交地址
                 ->addFormItem('id', 'hidden', 'ID', 'ID')
-                ->addFormItem('pid', 'select', '上级链接', '上级链接', list_as_tree($menus, '顶级链接'))
+                ->addFormItem('pid', 'select', '上级链接', '上级链接', $this->list_as_tree($menus, '顶级链接'))
                 ->addFormItem('title', 'text', '链接标题', '链接前台显示标题')
                 ->addFormItem('url', 'text', '请填写外链URL地址', '支持http://格式或者TP的U函数解析格式')
                 ->addFormItem('icon', 'icon', '图标', '链接图标')
@@ -149,9 +149,9 @@ class ModelConfigEditorController extends AddonController
                     $config_file_str = <<<PHP
 <?php
 // +----------------------------------------------------------------------
-// | OpenCMF [ Simple Efficient Excellent ]
+// | 零云 [ 简单 高效 卓越 ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2014 http://www.opencmf.cn All rights reserved.
+// | Copyright (c) 2016 http://www.lingyun.net All rights reserved.
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
@@ -293,5 +293,23 @@ PHP;
         } else {
             return $module_object->getError();
         }
+    }
+
+    // 将树形列表转换为树
+    public function list_as_tree($list, $extra = null, $key = 'id', $title_field = 'title')
+    {
+        //转换成树状列表(非严格模式)
+        $tree = new \Util\Tree();
+        $list = $tree->array2tree($list, $title_field, 'id', 'pid', 0, false);
+
+        if ($extra) {
+            $result[0] = $extra;
+        }
+
+        //转换成一维数组
+        foreach ($list as $val) {
+            $result[$val[$key]] = $val['title_show'];
+        }
+        return $result;
     }
 }

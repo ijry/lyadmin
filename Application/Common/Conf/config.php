@@ -13,9 +13,9 @@
 $_config = array(
     'PRODUCT_NAME'         => 'lyadmin', // 产品名称
     'PRODUCT_LOGO'         => '<b><span style="color: #2699ed;">lyadmin</span></b>', // 产品Logo
-    'CURRENT_VERSION'      => '1.0.0', // 当前版本号
-    'DEVELOP_VERSION'      => 'release', // 开发版本号
-    'BUILD_VERSION'        => '201610151650', // 编译标记
+    'CURRENT_VERSION'      => '1.1.0', // 当前版本号
+    'DEVELOP_VERSION'      => 'beta1', // 开发版本号
+    'BUILD_VERSION'        => '201612041650', // 编译标记
     'PRODUCT_MODEL'        => 'lyadmin', // 产品型号
     'PRODUCT_TITLE'        => '零云', // 产品标题
     'WEBSITE_DOMAIN'       => 'http://www.lingyun.net', // 官方网址
@@ -38,6 +38,11 @@ $_config = array(
 
     // 预先加载的标签库
     'TAGLIB_PRE_LOAD'      => 'Home\\TagLib\\Lingyun',
+
+    // 全局命名空间
+    'AUTOLOAD_NAMESPACE'   => array(
+        'Util' => APP_PATH . 'Common/Util/',
+    ),
 
     // URL配置
     'URL_CASE_INSENSITIVE' => true, // 不区分大小写

@@ -71,7 +71,7 @@ function format_data($data = null)
     if (!$data) {
         $data = $_POST;
     }
-    $data_object = new \Common\Util\Think\Date;
+    $data_object = new \Util\Page;
     foreach ($data as $key => $val) {
         if (!is_array($val)) {
             $val = trim($val);
@@ -110,8 +110,8 @@ function select_list_as_tree($model, $map = null, $extra = null, $key = 'id')
     }
 
     //转换成树状列表(非严格模式)
-    $tree = new \Common\Util\Tree();
-    $list = $tree->toFormatTree($list, 'title', 'id', 'pid', 0, false);
+    $tree = new \Util\Tree();
+    $list = $tree->array2tree($list, 'title', 'id', 'pid', 0, false);
 
     if ($extra) {
         $result[0] = $extra;
@@ -157,7 +157,7 @@ function parse_content($str)
  */
 function cut_str($str, $start, $length, $charset = 'utf-8', $suffix = true)
 {
-    return \Common\Util\Think\Str::cutStr(
+    return \Util\Str::cutStr(
         $str, $start, $length, $charset, $suffix
     );
 }
@@ -170,7 +170,7 @@ function cut_str($str, $start, $length, $charset = 'utf-8', $suffix = true)
  */
 function html2text($str)
 {
-    return \Common\Util\Think\Str::html2text($str);
+    return \Util\Str::html2text($str);
 }
 
 /**
@@ -183,7 +183,7 @@ function html2text($str)
  */
 function friendly_date($sTime, $type = 'mohu', $alt = 'false')
 {
-    $date = new \Common\Util\Think\Date((int) $sTime);
+    $date = new \Util\Page((int) $sTime);
     return $date->friendlyDate($type, $alt);
 }
 
@@ -291,20 +291,36 @@ function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
     }
 }
 
-// 将树形列表转换为树
-function list_as_tree($list, $extra = null, $key = 'id', $title_field = 'title')
+/**
+ * 检测是否使用手机访问
+ * @access public
+ * @return bool
+ */
+function is_wap()
 {
-    //转换成树状列表(非严格模式)
-    $tree = new \Common\Util\Tree();
-    $list = $tree->toFormatTree($list, $title_field, 'id', 'pid', 0, false);
-
-    if ($extra) {
-        $result[0] = $extra;
+    if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], "wap")) {
+        return true;
+    } elseif (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtoupper($_SERVER['HTTP_ACCEPT']), "VND.WAP.WML")) {
+        return true;
+    } elseif (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) {
+        return true;
+    } elseif (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up.browser|up.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) {
+        return true;
+    } else {
+        return false;
     }
+}
 
-    //转换成一维数组
-    foreach ($list as $val) {
-        $result[$val[$key]] = $val['title_show'];
+/**
+ * 是否微信访问
+ * @return bool
+ * @author jry <598821125@qq.com>
+ */
+function is_weixin()
+{
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+        return true;
+    } else {
+        return false;
     }
-    return $result;
 }

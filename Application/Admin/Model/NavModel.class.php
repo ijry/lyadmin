@@ -9,7 +9,7 @@
 namespace Admin\Model;
 
 use Common\Model\ModelModel;
-use Common\Util\Tree;
+use Util\Tree;
 
 /**
  * 导航模型
@@ -185,7 +185,7 @@ class NavModel extends ModelModel
         $list          = $this->field($field)->where($map)->order('sort asc,id asc')->select();
 
         // 返回当前导航的子导航树
-        $list = $tree->list_to_tree(
+        $list = $tree->list2tree(
             $list,
             $pk = 'id',
             $pid = 'pid',

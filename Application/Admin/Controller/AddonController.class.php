@@ -8,8 +8,8 @@
 // +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Util\Sql;
-use Common\Util\Think\Page;
+use Think\Page;
+use Util\Sql;
 
 /**
  * 扩展后台管理页面

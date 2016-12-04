@@ -30,7 +30,7 @@ class IndexController extends AdminController
      */
     public function removeRuntime()
     {
-        $file   = new \Common\Util\File();
+        $file   = new \Util\File();
         $result = $file->del_dir(RUNTIME_PATH);
         if ($result) {
             $this->success("缓存清理成功");
