@@ -153,7 +153,6 @@ class IndexController extends Controller
         //根据加密字符串更新admin密码的加密结果
         $new_admin_password = user_md5('admin', $auth);
         $sql                = <<<SQL
-        UPDATE `{$db_config["DB_PREFIX"]}admin_config` SET `value`='{$auth}' WHERE `name` = 'AUTH_KEY';
         UPDATE `{$db_config["DB_PREFIX"]}admin_user` SET `password`='{$new_admin_password}' WHERE `id` = 1;
 SQL;
         $result = $db_instance->execute($sql);
