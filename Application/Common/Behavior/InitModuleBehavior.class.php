@@ -57,6 +57,11 @@ class InitModuleBehavior extends Behavior
             C('DEFAULT_MODULE', 'Admin');
         }
 
+        // 设置默认模块
+        if ($database_config['DEFAULT_MODULE']) {
+            $config['DEFAULT_MODULE'] = $database_config['DEFAULT_MODULE'];
+        }
+
         // 设置WAP和微信标记
         define('IS_WAP', is_wap() ? true : false);
         define('IS_WEIXIN', is_weixin() ? true : false);

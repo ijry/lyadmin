@@ -141,6 +141,16 @@ class InitConfigBehavior extends Behavior
         $system_config['TMPL_PARSE_STRING']['__JS__']   = $current_domain . '/' . APP_PATH . MODULE_NAME . '/View/Public/js';
         $system_config['TMPL_PARSE_STRING']['__LIBS__'] = $current_domain . '/' . APP_PATH . MODULE_NAME . '/View/Public/libs';
 
+        // 前台默认模块静态资源路径及模板继承基本模板
+        $default_public_path = APP_PATH . C('DEFAULT_MODULE') . '/View/Public';
+        if (is_dir($default_public_path)) {
+            $system_config['DEFAULT_PUBLIC_LAYOUT']                 = $default_public_path . '/layout.html';
+            $system_config['TMPL_PARSE_STRING']['__DEFAULT_IMG__']  = $system_config['TOP_HOME_PAGE'] . ltrim($default_public_path, '.') . '/img';
+            $system_config['TMPL_PARSE_STRING']['__DEFAULT_CSS__']  = $system_config['TOP_HOME_PAGE'] . ltrim($default_public_path, '.') . '/css';
+            $system_config['TMPL_PARSE_STRING']['__DEFAULT_JS__']   = $system_config['TOP_HOME_PAGE'] . ltrim($default_public_path, '.') . '/js';
+            $system_config['TMPL_PARSE_STRING']['__DEFAULT_LIBS__'] = $system_config['TOP_HOME_PAGE'] . ltrim($default_public_path, '.') . '/libs';
+        }
+
         C($system_config); // 添加配置
     }
 }

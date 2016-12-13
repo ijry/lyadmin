@@ -106,7 +106,9 @@ VALUES
   (18,'开发模式','DEVELOP_MODE','1',3,'select','1:开启\r\n0:关闭','开发模式下会显示菜单管理、配置管理、数据字典等开发者工具',1432393583,1432393583,1,1),
   (19,'是否显示页面Trace','SHOW_PAGE_TRACE','0',3,'select','0:关闭\r\n1:开启','是否显示页面Trace信息',1387165685,1387165685,2,1),
   (20,'系统加密KEY','AUTH_KEY','KMDmD$~[x/JC*|eGv$b(UdemOy}*>EZ!lu{IeKRRsNS}l!V#Oj`O]U+f$a-Db|}H',3,'textarea','','轻易不要修改此项，否则容易造成用户无法登录；如要修改，务必备份原key',1438647773,1438647815,3,1),
-  (21,'URL模式','URL_MODEL','3',4,'select','1:PATHINFO模式\r\n2:REWRITE模式\r\n3:兼容模式','',1438423248,1438423248,1,1);
+  (21,'URL模式','URL_MODEL','3',4,'select','1:PATHINFO模式\r\n2:REWRITE模式\r\n3:兼容模式','',1438423248,1438423248,1,1)
+  (22, '默认模块', 'DEFAULT_MODULE', '', 4, 'select', 'callback:D(\'Admin/Module\')->getNameList', '', 1471458914, 1471458914, 4, 1),
+  (23, '默认模块布局', 'DEFAULT_MODULE_LAYOUT', '0', 4, 'radio', '1:开启\r\n0:关闭', '启用默认模块的布局layout全局生效', 1481267362, 1481267389, 4, 1);
 
 /*!40000 ALTER TABLE `ly_admin_config` ENABLE KEYS */;
 UNLOCK TABLES;

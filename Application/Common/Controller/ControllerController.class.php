@@ -52,6 +52,11 @@ class ControllerController extends \Think\Controller
             }
         }
 
+        // 开启默认模块并且开启默认布局
+        if (C('DEFAULT_MODULE_LAYOUT') && C('DEFAULT_PUBLIC_LAYOUT') && is_file(C('DEFAULT_PUBLIC_LAYOUT'))) {
+            C('HOME_PUBLIC_LAYOUT', C('DEFAULT_PUBLIC_LAYOUT'));
+        }
+
         $this->assign('meta_keywords', C('WEB_SITE_KEYWORD'));
         $this->assign('meta_description', C('WEB_SITE_DESCRIPTION'));
         $this->assign('_user_auth', session('user_auth')); // 用户登录信息
