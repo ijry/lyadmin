@@ -27,6 +27,7 @@ class ListBuilder extends ControllerController
     private $_right_button_list = array(); // 表格右侧操作按钮组
     private $_alter_data_list   = array(); // 表格数据列表重新修改的项目
     private $_extra_html; // 额外功能代码
+    private $_template; // 模版
 
     /**
      * 初始化方法
@@ -512,6 +513,18 @@ class ListBuilder extends ControllerController
     }
 
     /**
+     * 设置页面模版
+     * @param $template 模版
+     * @return $this
+     * @author jry <598821125@qq.com>
+     */
+    public function setTemplate($template)
+    {
+        $this->_template = $template;
+        return $this;
+    }
+
+    /**
      * 显示页面
      * @author jry <598821125@qq.com>
      */
@@ -653,8 +666,13 @@ class ListBuilder extends ControllerController
         $this->assign('extra_html', $this->_extra_html); //是否ajax提交
 
         // 显示页面
-        $this->assign('is_builder', 'list'); // Builder标记
-        parent::display($this->_template);
+        $template = CONTROLLER_NAME . '/' . ACTION_NAME;
+        if (is_file($this->view->parseTemplate($template))) {
+            parent::display();
+        } else {
+            $this->assign('is_builder', 'list'); // Builder标记
+            parent::display($this->_template);
+        }
     }
 
     //编译HTML属性
