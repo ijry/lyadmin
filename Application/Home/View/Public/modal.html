@@ -1,0 +1,233 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/bootstrap_validator/css/bootstrapValidator.min.css">
+<style type="text/css">
+    /* 验证码样式 */
+    .verifyimg-box {
+        padding: 0px;
+    }
+    .verifyimg-box .verifyimg {
+        width: 138px;
+        height: 42px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+</style>
+
+<div class="modal fade" id="login-modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">用户登录</h4>
+            </div>
+            <div class="modal-body">
+                <form action="{:U('User/User/login', '', true, true)}" method="POST" class="form login-form-model" role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control input-lg" placeholder="邮箱/手机号/用户名" name="username">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control input-lg" placeholder="请输入密码" name="password">
+                    </div>
+                    <div class="form-group clearfix">
+                        <label class="checkbox-inline" for="remember-login">
+                            <input id="remember-login" type="checkbox" name="remember_login" checked="checked">
+                            <span>保持登录</span>
+                        </label>
+                        <span class="pull-right">
+                            <a class="text-muted" href="{:U('User/User/reset_password', '', true, true)}">忘记密码</a>
+                            <a class="text-muted" data-toggle="modal" href="#register-modal">注册帐号</a>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary-outline btn-lg btn-block submit ajax-post" target-form="login-form-model">登录</button>
+                    </div>
+                    <div class="form-group">
+                        {:hook('SyncLogin')} <!-- 第三方登陆钩子 -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="register-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">用户注册</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 后台管理员允许注册方式才会显示 -->
+                <php>
+                    if (D('Admin/Module')->where('name="User"')->find() && is_dir(APP_PATH . 'User/')) {
+                        $allow_reg_type = C('user_config.allow_reg_type');
+                        $user_type_list = D('User/Type')->where('status = 1')->select();
+                    } else {
+                        $allow_reg_type = array('username', 'email', 'mobile');
+                        $user_type_list = array();
+                    }
+                </php>
+                <?php if(count($allow_reg_type) !== 1): ?>
+                    <ul class="nav nav-pills nav-justified nav-justified-xs">
+                        <php>if(in_array('username', $allow_reg_type)):</php>
+                            <li data-tab="modal-reg1" <php>if($allow_reg_type[0] === 'username') echo 'class="active"';</php>>
+                                <a href="#modal-reg1" data-toggle="tab">用户名注册</a>
+                            </li>
+                        <php>endif;</php>
+                        <php>if(in_array('email', $allow_reg_type)):</php>
+                            <li data-tab="modal-reg2" <php>if($allow_reg_type[0] === 'email') echo 'class="active"';</php>>
+                                <a href="#modal-reg2" data-toggle="tab">邮箱注册</a>
+                            </li>
+                        <php>endif;</php>
+                        <php>if(in_array('mobile', $allow_reg_type)):</php>
+                            <li data-tab="modal-reg3" <php>if($allow_reg_type[0] === 'mobile') echo 'class="active"';</php>>
+                                <a href="#modal-reg3" data-toggle="tab">手机号注册</a>
+                            </li>
+                        <php>endif;</php>
+                    </ul>
+                <?php endif; ?>
+                <div class="form-group"></div>
+                <div class="tab-content">
+                    <php>if(in_array('username', $allow_reg_type)):</php>
+                        <div id="modal-reg1" class="tab-pane <?php if($allow_reg_type[0] === 'username') echo "active"; ?>">
+                            <form action="{:U('User/User/register', '', true, true)}" method="post" class="form reg-form-username-modal">
+                                <fieldset>
+                                    <?php if(count($user_type_list) !== 1): ?>
+                                        <div class="form-group">
+                                            <volist name="user_type_list" id="utype">
+                                                <label class="radio-inline">
+                                                    <input type="radio" class="radio" name="user_type" value="{$utype.id}"> {$utype.title}
+                                                </label>
+                                            </volist>
+                                        </div>
+                                    <?php else: ?>
+                                        <input type="hidden" name="user_type" value="{$user_type_list[0]['id']}">
+                                    <?php endif; ?>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control input-lg" name="username" placeholder="请输入用户名">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control input-lg" name="password" placeholder="请输入密码">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-lg" name="verify" placeholder="请输入验证码">
+                                            <span class="input-group-addon verifyimg-box">
+                                                <img class="verifyimg reload-verify" alt="验证码" src="{:U('User/User/verify', '', true, true)}" title="点击刷新">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <span>点击下一步表示同意<a data-toggle="modal" href='#user_protocol-modal'>用户协议</a></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="reg_type" value="username">
+                                        <button class="btn btn-primary btn-pill btn-block btn-lg submit ajax-post" type="submit" target-form="reg-form-username-modal">下 一 步</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    <php>endif;</php>
+                    <php>if(in_array('email', $allow_reg_type)):</php>
+                        <div id="modal-reg2" class="tab-pane <?php if($allow_reg_type[0] === 'email') echo "active"; ?>">
+                            <form action="{:U('User/User/register', '', true, true)}" method="post" class="form reg-form-email-modal">
+                                <fieldset>
+                                   <?php if(count($user_type_list) !== 1): ?>
+                                        <div class="form-group">
+                                            <volist name="user_type_list" id="utype">
+                                                <label class="radio-inline">
+                                                    <input type="radio" class="radio" name="user_type" value="{$utype.id}"> {$utype.title}
+                                                </label>
+                                            </volist>
+                                        </div>
+                                    <?php else: ?>
+                                        <input type="hidden" name="user_type" value="{$user_type_list[0]['id']}">
+                                    <?php endif; ?>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control input-lg" name="email" placeholder="请输入邮箱">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-lg" name="verify" placeholder="请输入验证码">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default btn-lg send-mail-verify" data-title="用户注册">发送邮件验证码</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control input-lg" name="password" placeholder="请输入密码">
+                                    </div>
+                                    <div class="form-group">
+                                        <span>点击下一步表示同意<a data-toggle="modal" href='#user_protocol-modal'>用户协议</a></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="reg_type" value="email">
+                                        <button class="btn btn-primary btn-pill btn-block btn-lg submit ajax-post" type="submit" target-form="reg-form-email-modal">下 一 步</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    <php>endif;</php>
+                    <php>if(in_array('mobile', $allow_reg_type)):</php>
+                        <div id="modal-reg3" class="tab-pane <?php if($allow_reg_type[0] === 'mobile') echo "active"; ?>">
+                            <form action="{:U('User/User/register', '', true, true)}" method="post" class="form reg-form-mobile-modal">
+                                <fieldset>
+                                    <?php if(count($user_type_list) !== 1): ?>
+                                        <div class="form-group">
+                                            <volist name="user_type_list" id="utype">
+                                                <label class="radio-inline">
+                                                    <input type="radio" class="radio" name="user_type" value="{$utype.id}"> {$utype.title}
+                                                </label>
+                                            </volist>
+                                        </div>
+                                    <?php else: ?>
+                                        <input type="hidden" name="user_type" value="{$user_type_list[0]['id']}">
+                                    <?php endif; ?>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control input-lg" name="mobile" placeholder="请输入手机号">
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control input-lg" name="verify" placeholder="请输入验证码">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-default btn-lg send-mobile-verify" data-title="用户注册">发送短信验证码</button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control input-lg" name="password" placeholder="请输入密码">
+                                    </div>
+                                    <div class="form-group">
+                                        <span>点击下一步表示同意<a data-toggle="modal" href='#user_protocol-modal'>用户协议</a></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="reg_type" value="mobile">
+                                        <button class="btn btn-primary btn-pill btn-block btn-lg submit ajax-post" type="submit" target-form="reg-form-mobile-modal">下 一 步</button>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    <php>endif;</php>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 用户协议弹窗 -->
+<div class="modal fade" id="user_protocol-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">用户协议</h4>
+            </div>
+            <div class="modal-body modal-body-scroller">
+                {:C('user_config.user_protocol')}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">同意</button>
+            </div>
+        </div>
+    </div>
+</div>

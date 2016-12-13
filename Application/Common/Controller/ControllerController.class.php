@@ -57,6 +57,13 @@ class ControllerController extends \Think\Controller
             C('HOME_PUBLIC_LAYOUT', C('DEFAULT_PUBLIC_LAYOUT'));
         }
 
+        // 提示页面继承模板
+        if (MODULE_MARK == 'Admin') {
+            $this->assign('_info_layout', C('ADMIN_PUBLIC_LAYOUT'));
+        } else {
+            $this->assign('_info_layout', C('HOME_PUBLIC_LAYOUT'));
+        }
+
         $this->assign('meta_keywords', C('WEB_SITE_KEYWORD'));
         $this->assign('meta_description', C('WEB_SITE_DESCRIPTION'));
         $this->assign('_user_auth', session('user_auth')); // 用户登录信息

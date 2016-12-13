@@ -247,7 +247,6 @@ function write_config($config, $auth)
         }
         $conf = str_replace('[AUTH_KEY]', $auth, $conf);
         //写入应用配置文件
-
         if (file_put_contents('./Data/db.php', $conf)) {
             show_msg('配置文件写入成功');
         } else {

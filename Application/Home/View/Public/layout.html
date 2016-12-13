@@ -25,11 +25,13 @@
     <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript">
         window.jQuery || document.write('<script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"><\/script>');
-        var OpenCMF = window.OpenCMF = {
-            "TOP_HOME_PAGE" : "{:C('TOP_HOME_PAGE')}",
-            "HOME_PAGE" : "{:C('HOME_PAGE')}",
-            "VAR_ROOT"  : "__ROOT__",
-            "DEFAULT_IMG" : "{:get_cover('', 'default')}"
+        window.lingyun = {
+            "app_debug"     : "<?php echo APP_DEBUG; ?>",
+            "app_debug_msg" : "调试模式已关闭",
+            "top_home_page" : "{:C('TOP_HOME_PAGE')}",
+            "home_page"     : "{:C('HOME_PAGE')}",
+            "var_root "     : "__ROOT__",
+            "default_img"   : "{:get_cover('', 'default')}"
         }
     </script>
 </head>
@@ -61,7 +63,7 @@
                                             </a>
                                         <php>else:</php>
                                             <a class="navbar-brand" href="{:C('HOME_PAGE')}">
-                                                <span style="font-size: 30px;">{:C('PRODUCT_LOGO')}</span>
+                                                <span style="font-size: 30px;">{:C('LOGO_DEFAULT')}</span>
                                             </a>
                                         <php>endif;</php>
                                     </div>

@@ -12,24 +12,26 @@
  */
 $_config = array(
     'PRODUCT_NAME'         => 'lyadmin', // 产品名称
-    'PRODUCT_LOGO'         => '<b><span style="color: #2699ed;">lyadmin</span></b>', // 产品Logo
+    'LOGO_DEFAULT'         => '<b><span style="color: #2699ed;">lygit</span></b>', // 产品Logo
+    'LOGO_INVERSE'         => '<b><span style="color: #fff;">lygit</span></b>', // 产品Logo深色背景
     'CURRENT_VERSION'      => '1.1.0', // 当前版本号
     'DEVELOP_VERSION'      => 'beta1', // 开发版本号
     'BUILD_VERSION'        => '201612041650', // 编译标记
     'PRODUCT_MODEL'        => 'lyadmin', // 产品型号
     'PRODUCT_TITLE'        => '零云', // 产品标题
-    'WEBSITE_DOMAIN'       => 'http://www.lingyun.net', // 官方网址
+    'WEBSITE_DOMAIN'       => 'http://lyadmin.lyunweb.com', // 官方网址
     'UPDATE_URL'           => '/appstore/home/core/update', // 官方更新网址
-    'COMPANY_NAME'         => '南京科斯克网络科技有限公司', // 公司名称
-    'COMPANY_EMAIL'        => 'admin@lingyun.net', // 公司邮箱
-    'DEVELOP_TEAM'         => '南京科斯克网络科技有限公司', // 当前项目开发团队名称
+    'TEAM_TITLE'           => '南京科斯克网络科技有限公司', // 公司名称
+    'TEAM_MEMBER'          => '江如意、赵瀚卿、张玥、潘美红、赵川', // 团队成员
+    'TEAM_ADDRESS'         => '南京市鼓楼区广东路38号', // 公司地址
+    'TEAM_EMAIL'           => 'service@lingyun.net', // 公司邮箱
+    'TEAM_PHONE'           => '15005173785', // 公司电话
+    'TEAM_QQ'              => '209216005', // 公司QQ
+    'TEAM_QQQUN'           => '252262604', // 公司QQ群
+    'AUTH_KEY'             => 'CoreThink', // 系统加密KEY，轻易不要修改此项，否则容易造成用户无法登录，如要修改，务必备份原key
 
-    // 产品简介
-    'PRODUCT_INFO'         => '零云是一套基于统一核心的通用互联网+信息化服务解决方案，追求简单、高效、卓越。可轻松实现支持多终端的WEB产品快速搭建、部署、上线。系统功能采用模块化、组件化、插件化等开放化低耦合设计，应用商城拥有丰富的功能模块、插件、主题，便于用户灵活扩展和二次开发。',
-
-    // 公司简介
-    'COMPANY_INFO'         => '南京科斯克网络科技有限公司是一家新兴的互联网+项目技术解决方案提供商。我们用敏锐的视角洞察IT市场的每一次变革,我们顶着时代变迁的浪潮站在了前沿,以开拓互联网行业新渠道为己任。',
-
+    // 不输出模板变量
+    'PARSE_VAR'            => false,
     // URL模式
     'URL_MODEL'            => '3',
 
@@ -54,21 +56,26 @@ $_config = array(
 
     // 模板相关配置
     'TMPL_PARSE_STRING'    => array(
-        '__PUBLIC__'     => __ROOT__ . '/Public',
-        '__LYUI__'       => __ROOT__ . '/Public/libs/lyui/dist',
-        '__ADMIN_IMG__'  => __ROOT__ . '/' . APP_PATH . 'Admin/View/Public/img',
-        '__ADMIN_CSS__'  => __ROOT__ . '/' . APP_PATH . 'Admin/View/Public/css',
-        '__ADMIN_JS__'   => __ROOT__ . '/' . APP_PATH . 'Admin/View/Public/js',
-        '__ADMIN_LIBS__' => __ROOT__ . '/' . APP_PATH . 'Admin/View/Public/libs',
-        '__HOME_IMG__'   => __ROOT__ . '/' . APP_PATH . 'Home/View/Public/img',
-        '__HOME_CSS__'   => __ROOT__ . '/' . APP_PATH . 'Home/View/Public/css',
-        '__HOME_JS__'    => __ROOT__ . '/' . APP_PATH . 'Home/View/Public/js',
-        '__HOME_LIBS__'  => __ROOT__ . '/' . APP_PATH . 'Home/View/Public/libs',
+        '__PUBLIC__'     => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . '/Public',
+        '__LYUI__'       => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . '/Public/libs/lyui/dist',
+        '__ADMIN_IMG__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/img',
+        '__ADMIN_CSS__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/css',
+        '__ADMIN_JS__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/js',
+        '__ADMIN_LIBS__' => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/libs',
+        '__HOME_IMG__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/img',
+        '__HOME_CSS__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/css',
+        '__HOME_JS__'    => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/js',
+        '__HOME_LIBS__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/libs',
     ),
 
     // 系统功能模板
+    'USER_CENTER_SIDE'     => APP_PATH . 'User/View/Index/side.html',
+    'USER_CENTER_INFO'     => APP_PATH . 'User/View/Index/info.html',
+    'USER_CENTER_FORM'     => APP_PATH . 'User/View/Builder/form.html',
+    'USER_CENTER_LIST'     => APP_PATH . 'User/View/Builder/list.html',
     'HOME_PUBLIC_LAYOUT'   => APP_PATH . 'Home/View/Public/layout.html',
     'ADMIN_PUBLIC_LAYOUT'  => APP_PATH . 'Admin/View/Public/layout.html',
+    'HOME_PUBLIC_MODAL'    => APP_PATH . 'Home/View/Public/modal.html',
     'LISTBUILDER_LAYOUT'   => APP_PATH . 'Common/Builder/listbuilder.html',
     'FORMBUILDER_LAYOUT'   => APP_PATH . 'Common/Builder/formbuilder.html',
 

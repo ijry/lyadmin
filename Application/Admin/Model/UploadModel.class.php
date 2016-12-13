@@ -92,20 +92,36 @@ class UploadModel extends ModelModel
      */
     public function getCover($id = null, $type = null)
     {
-        $url = '';
         if ($id) {
+            // 如果以http开头直接返回
+            if (strpos($id, "http") === 0) {
+                return $id;
+            }
             $upload_info = $this->find($id);
             $url         = $upload_info['real_path'];
         }
         if (!isset($url)) {
             switch ($type) {
-                case 'default': //默认图片
+                case 'default': // 默认图片
                     $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/default.gif';
                     break;
-                case 'avatar': //用户头像
+                case 'avatar': // 用户头像
                     $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/avatar.png';
                     break;
-                default: //文档列表默认图片
+                case 'qr_code': // qr_code
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/qr_code.png';
+                    break;
+                case 'qr_ios': // qr_ios
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/qr_ios.png';
+                    break;
+                case 'qr_android': // qr_android
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/qr_android.png';
+                    break;
+                case 'qr_weixin': // qr_weixin
+                    $url = C('TMPL_PARSE_STRING.__HOME_IMG__') . '/default/qr_weixin.png';
+                    break;
+                default:
+                    $url = '';
                     break;
             }
         }

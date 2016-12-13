@@ -6,7 +6,7 @@ $(function(){
     $('img.lazy').lazyload({
         effect         : 'fadeIn',
         data_attribute : 'src',
-        placeholder    : OpenCMF.DEFAULT_IMG
+        placeholder    : window.lingyun.default_img
     });
 
 
@@ -121,7 +121,7 @@ $(function(){
 
     // 发送邮件验证码
     $(document).on('click', '.send-mail-verify', function() {
-        var url = OpenCMF.TOP_HOME_PAGE + '/index.php?s=/user/user/send_mail_verify';
+        var url = window.lingyun.top_home_page + '/index.php?s=/user/user/send_mail_verify';
         var that = this;
         var title = $(that).attr('data-title');
         var email = $(that).closest('form').find('input[name="email"]').val();
@@ -157,7 +157,7 @@ $(function(){
 
     // 发送短信验证码
     $(document).on('click', '.send-mobile-verify', function() {
-        var url = OpenCMF.TOP_HOME_PAGE + '/index.php?s=/user/user/send_mobile_verify';
+        var url = window.lingyun.top_home_page + '/index.php?s=/user/user/send_mobile_verify';
         var that = this;
         var title = $(that).attr('data-title');
         var mobile = $(this).closest('form').find('input[name="mobile"]').val();
@@ -206,8 +206,8 @@ $(function(){
     function get_location_success(position){
         var lat = position.coords.latitude; //纬度
         var lng = position.coords.longitude; //经度
-        $.cookie('oc_latitude', lat, {path: OpenCMF.VAR_ROOT});
-        $.cookie('oc_longitude', lng, {path: OpenCMF.VAR_ROOT});
+        $.cookie('oc_latitude', lat, {path: window.lingyun.var_root});
+        $.cookie('oc_longitude', lng, {path: window.lingyun.var_root});
     }
 
     // 获取GPS定位错误提示

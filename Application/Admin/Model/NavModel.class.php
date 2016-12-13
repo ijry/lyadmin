@@ -173,6 +173,15 @@ class NavModel extends ModelModel
                 return $module_nav_tree;
             }
         }
+
+        // 开启默认模块并且使用默认模块布局
+        if (C('DEFAULT_MODULE_LAYOUT') && C('DEFAULT_PUBLIC_LAYOUT') && is_file(APP_PATH . C('DEFAULT_MODULE') . '/Model/NavModel.class.php')) {
+            $module_nav_tree = D(C('DEFAULT_MODULE') . '/Nav')->getNavTree($id, $group, $field);
+            if ($module_nav_tree) {
+                return $module_nav_tree;
+            }
+        }
+
         // 获取当前导航信息
         if ((int) $id > 0) {
             $info = $this->find($id);
