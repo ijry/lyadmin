@@ -83,16 +83,7 @@ class UserModel extends ModelModel
     {
         $result['avatar_url'] = get_cover($result['avatar'], 'avatar');
 
-        $cert_info = false;
-        // 用户识别label
-        if (D('Admin/Module')->where('name="User" and status="1"')->count()) {
-            $cert_info = D('User/Cert')->isCert($result['id']);
-        }
-        if ($cert_info) {
-            $result['label'] = $cert_info['cert_title'] . '(' . $result['id'];
-        } else {
-            $result['label'] = $result['nickname'] . '(' . $result['id'];
-        }
+        $result['label'] = $result['nickname'] . '(' . $result['id'];
         if ($result['email']) {
             $result['label'] = $result['label'] . '-' . $result['email'];
         }
