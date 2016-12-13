@@ -46,4 +46,61 @@ class HomeController extends ControllerController
             cookie('forward', (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER["REQUEST_URI"]);
         }
     }
+
+    /**
+     * 用户登录检测
+     * @author jry <598821125@qq.com>
+     */
+    protected function is_login()
+    {
+        //用户登录检测
+        $uid = is_login();
+        if ($uid) {
+            return $uid;
+        } else {
+            if (IS_AJAX) {
+                $this->error('请先登录系统', U('User/User/login', '', true, true), array('login' => 1));
+            } else {
+                redirect(U('User/User/login', '', true, true));
+            }
+        }
+    }
+
+    /**
+     * 用户VIP权限检测
+     * @author jry <598821125@qq.com>
+     */
+    protected function is_vip($level = 1)
+    {
+        if (is_dir('./Application/Vip/')) {
+            $vip      = is_vip();
+            $vip_info = D('Vip/Index')->find($vip);
+            if ($vip && $vip_info['type_info']['level'] >= $level) {
+                return $vip;
+            } else {
+                $con['status'] = 1;
+                $con['level']  = $level;
+                $need_vip_info = D('Vip/Type')->where($con)->find();
+                $this->error('请先开通' . $need_vip_info['title'] . 'VIP', U('Vip/Index/index', '', true, true));
+            }
+        }
+    }
+
+    /**
+     * 是否实名认证
+     * @author jry <598821125@qq.com>
+     */
+    protected function is_cert()
+    {
+        $user_info = $this->user_info;
+        if ($user_info['cert_info']) {
+            return $user_info['id'];
+        } else {
+            if (IS_AJAX) {
+                $this->error('请先实名认证', U('User/Cert/index', '', true, true));
+            } else {
+                redirect(U('User/Cert/index', '', true, true));
+            }
+        }
+    }
 }
