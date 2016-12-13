@@ -57,6 +57,18 @@ class ControllerController extends \Think\Controller
             C('HOME_PUBLIC_LAYOUT', C('DEFAULT_PUBLIC_LAYOUT'));
         }
 
+        $this->assign('meta_description', C('WEB_SITE_DESCRIPTION'));
+        $this->assign('_new_message', cookie('_new_message')); // 获取用户未读消息数量
+        $this->assign('_user_auth', session('user_auth')); // 用户登录信息
+        $this->assign('_user_nav_main', $_user_nav_main); // 用户导航信息
+        $this->assign('_user_center_side', C('USER_CENTER_SIDE')); // 用户中心侧边
+        $this->assign('_user_center_info', C('USER_CENTER_INFO')); // 用户中心信息
+        $this->assign('_admin_public_layout', C('ADMIN_PUBLIC_LAYOUT')); // 页面公共继承模版
+        $this->assign('_home_public_layout', C('HOME_PUBLIC_LAYOUT')); // 页面公共继承模版
+        $this->assign('_home_public_modal', C('HOME_PUBLIC_MODAL')); // 页面公共继承模版
+        $this->assign('_listbuilder_layout', C('LISTBUILDER_LAYOUT')); // ListBuilder继承模版
+        $this->assign('_formbuilder_layout', C('FORMBUILDER_LAYOUT')); // FormBuilder继承模版
+
         // 提示页面继承模板
         if (MODULE_MARK == 'Admin') {
             $this->assign('_info_layout', C('ADMIN_PUBLIC_LAYOUT'));
@@ -64,15 +76,6 @@ class ControllerController extends \Think\Controller
             $this->assign('_info_layout', C('HOME_PUBLIC_LAYOUT'));
         }
 
-        $this->assign('meta_keywords', C('WEB_SITE_KEYWORD'));
-        $this->assign('meta_description', C('WEB_SITE_DESCRIPTION'));
-        $this->assign('_user_auth', session('user_auth')); // 用户登录信息
-        $this->assign('_user_nav_main', $_user_nav_main); // 用户导航信息
-        $this->assign('_admin_public_layout', C('ADMIN_PUBLIC_LAYOUT')); // 页面公共继承模版
-        $this->assign('_home_public_layout', C('HOME_PUBLIC_LAYOUT')); // 页面公共继承模版
-        $this->assign('_home_public_modal', C('HOME_PUBLIC_MODAL')); // 页面公共继承模版
-        $this->assign('_listbuilder_layout', C('LISTBUILDER_LAYOUT')); // ListBuilder继承模版
-        $this->assign('_formbuilder_layout', C('FORMBUILDER_LAYOUT')); // FormBuilder继承模版
         $this->assign('_page_name', strtolower(MODULE_NAME . '_' . CONTROLLER_NAME . '_' . ACTION_NAME));
         $_current_module = D('Admin/Module')->getFieldByName(MODULE_NAME, 'title'); // 当前模块标题
         $this->assign('_current_module', $_current_module);
