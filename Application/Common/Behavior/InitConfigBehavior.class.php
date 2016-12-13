@@ -59,7 +59,7 @@ class InitConfigBehavior extends Behavior
                     // 加载模块标签库
                     if (isset($val['taglib'])) {
                         foreach ($val['taglib'] as $tag) {
-                            $tag_path = APP_PATH . $val['module_name'] . '/' . 'TagLib' . '/' . $tag . '.class.php';
+                            $tag_path = APP_PATH . $val['module_name'] . '/TagLib/' . $tag . '.class.php';
                             if (is_file($tag_path)) {
                                 $system_config['TAGLIB_PRE_LOAD'][] = $val['module_name'] . '\\TagLib\\' . $tag;
                             }
@@ -69,9 +69,45 @@ class InitConfigBehavior extends Behavior
                     // 加载模块行为扩展
                     if (isset($val['behavior'])) {
                         foreach ($val['behavior'] as $bhv) {
-                            $bhv_path = APP_PATH . $val['module_name'] . '/' . 'Behavior' . '/' . $bhv . 'Behavior.class.php';
+                            $bhv_path = APP_PATH . $val['module_name'] . '/Behavior/' . $bhv . 'Behavior.class.php';
                             if (is_file($bhv_path)) {
-                                \Think\Hook::add('corethink_behavior', $val['module_name'] . '\\Behavior\\' . $bhv . 'Behavior');
+                                \Think\Hook::add('lingyun_behavior', $val['module_name'] . '\\Behavior\\' . $bhv . 'Behavior');
+                            }
+                        }
+                    }
+                }
+                $system_config['TAGLIB_PRE_LOAD'] = implode(',', $system_config['TAGLIB_PRE_LOAD']);
+            }
+
+            // 获取所有安装的插件配置
+            $addon_list = D('Admin/Addon')->where(array('status' => '1'))->select();
+            foreach ($addon_list as $val) {
+                $addon_config[strtolower($val['name'] . '_addon_config')]               = json_decode($val['config'], true);
+                $addon_config[strtolower($val['name'] . '_addon_config')]['addon_name'] = $val['name'];
+            }
+            if ($addon_config) {
+                // 合并模块配置
+                $system_config = array_merge($system_config, $addon_config);
+
+                // 加载插件标签库及行为扩展
+                $system_config['TAGLIB_PRE_LOAD'] = explode(',', $system_config['TAGLIB_PRE_LOAD']); // 先取出配置文件中定义的否则会被覆盖
+                foreach ($addon_config as $key => $val) {
+                    // 加载模块标签库
+                    if (isset($val['taglib'])) {
+                        foreach ($val['taglib'] as $tag) {
+                            $tag_path = C('ADDON_PATH') . $val['addon_name'] . '/TagLib/' . $tag . '.class.php';
+                            if (is_file($tag_path)) {
+                                $system_config['TAGLIB_PRE_LOAD'][] = 'Addons\\' . $val['addon_name'] . '\\TagLib\\' . $tag;
+                            }
+                        }
+                    }
+
+                    // 加载插件行为扩展
+                    if (isset($val['behavior'])) {
+                        foreach ($val['behavior'] as $bhv) {
+                            $bhv_path = C('ADDON_PATH') . $val['addon_name'] . '/Behavior/' . $bhv . '.class.php';
+                            if (is_file($bhv_path)) {
+                                \Think\Hook::add('lingyun_behavior', 'Addons\\' . $val['addon_name'] . '\\Behavior\\' . $bhv);
                             }
                         }
                     }
