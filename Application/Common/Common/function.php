@@ -71,7 +71,7 @@ function format_data($data = null)
     if (!$data) {
         $data = $_POST;
     }
-    $data_object = new \Util\Page;
+    $data_object = new \Util\;
     foreach ($data as $key => $val) {
         if (!is_array($val)) {
             $val = trim($val);
@@ -183,7 +183,7 @@ function html2text($str)
  */
 function friendly_date($sTime, $type = 'mohu', $alt = 'false')
 {
-    $date = new \Util\Page((int) $sTime);
+    $date = new \Util\Date((int) $sTime);
     return $date->friendlyDate($type, $alt);
 }
 
