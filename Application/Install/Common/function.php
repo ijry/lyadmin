@@ -201,7 +201,11 @@ function check_func_and_ext()
 function create_tables($db, $prefix = '')
 {
     //读取SQL文件
-    $sql = file_get_contents(MODULE_PATH . 'Data/install.sql');
+    if (is_file('./Data/install.sql')) {
+        $sql = file_get_contents('./Data/install.sql');
+    } else {
+        $sql = file_get_contents(MODULE_PATH . 'Data/install.sql');
+    }
     $sql = str_replace("\r", "\n", $sql);
     $sql = explode(";\n", $sql);
 
