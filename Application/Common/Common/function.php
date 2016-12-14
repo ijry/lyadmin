@@ -71,7 +71,7 @@ function format_data($data = null)
     if (!$data) {
         $data = $_POST;
     }
-    $data_object = new \Util\;
+    $data_object = new \Util\Date;
     foreach ($data as $key => $val) {
         if (!is_array($val)) {
             $val = trim($val);
