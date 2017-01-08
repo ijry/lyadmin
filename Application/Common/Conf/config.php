@@ -12,9 +12,9 @@
  */
 $_config = array(
     'PRODUCT_NAME'         => 'lyadmin', // 产品名称
-    'LOGO_DEFAULT'         => '<b><span style="color: #2699ed;">lygit</span></b>', // 产品Logo
-    'LOGO_INVERSE'         => '<b><span style="color: #fff;">lygit</span></b>', // 产品Logo深色背景
-    'CURRENT_VERSION'      => '1.1.0', // 当前版本号
+    'LOGO_DEFAULT'         => '<b><span style="color: #2699ed;">lyadmin</span></b>', // 产品Logo
+    'LOGO_INVERSE'         => '<b><span style="color: #fff;">lyadmin</span></b>', // 产品Logo深色背景
+    'CURRENT_VERSION'      => '1.1.1', // 当前版本号
     'DEVELOP_VERSION'      => 'beta1', // 开发版本号
     'BUILD_VERSION'        => '201612041650', // 编译标记
     'PRODUCT_MODEL'        => 'lyadmin', // 产品型号
