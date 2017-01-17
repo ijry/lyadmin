@@ -8,6 +8,9 @@ lyadmin是一套轻量级通用后台，采用Bootstrap3制作，自带权限管
 
 http://lyadmin.lingyun.net
 
+## v2.0仓库地址
+
+https://github.com/ijry/lyadmin_v2
 
 ## 后台截图
 
