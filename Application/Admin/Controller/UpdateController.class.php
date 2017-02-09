@@ -62,7 +62,7 @@ class UpdateController extends AdminController
         $conf_arr = array(
             'post' => $params,
         );
-        $result = json_decode(\Org\Net\Http::fsockopenDownload($url, $conf_arr), true);
+        $result = json_decode(\Util\Http::fsockopenDownload($url, $conf_arr), true);
 
         if ($result['status'] == 1) {
             $this->ajaxReturn($result);
