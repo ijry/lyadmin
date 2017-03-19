@@ -14,9 +14,9 @@ $_config = array(
     'PRODUCT_NAME'         => 'lyadmin', // 产品名称
     'LOGO_DEFAULT'         => '<b><span style="color: #2699ed;">lyadmin</span></b>', // 产品Logo
     'LOGO_INVERSE'         => '<b><span style="color: #fff;">lyadmin</span></b>', // 产品Logo深色背景
-    'CURRENT_VERSION'      => '1.1.1', // 当前版本号
-    'DEVELOP_VERSION'      => 'beta1', // 开发版本号
-    'BUILD_VERSION'        => '201612041650', // 编译标记
+    'CURRENT_VERSION'      => '1.1.2', // 当前版本号
+    'DEVELOP_VERSION'      => 'release', // 开发版本号
+    'BUILD_VERSION'        => '201703191221', // 编译标记
     'PRODUCT_MODEL'        => 'lyadmin', // 产品型号
     'PRODUCT_TITLE'        => '零云', // 产品标题
     'WEBSITE_DOMAIN'       => 'http://lyadmin.lyunweb.com', // 官方网址
