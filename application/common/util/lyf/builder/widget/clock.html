@@ -1,0 +1,25 @@
+<case value="clock">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">{$[type]form.title}：</label>
+        <div class="right">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                <input type="text" id="[type]{$group_k|default=''}_clock_{$[type]k}" class="form-control input time" name="{$[type]form.name}" value="{$[type]form.value|default=''}" {$[type]form.extra.attr|default=''}>
+            </div>
+            <script type="text/javascript">
+                $(function(){
+                    $('#[type]{$group_k|default=''}_clock_{$[type]k}').datetimepicker({
+                        format      : 'hh:ii',
+                        startView   : '0',
+                        minView     : '0',
+                        showMeridian : true,
+                        minuteStep  : 1,
+                        autoclose   : true,
+                        language    : 'zh-CN',
+                        fontAwesome : true
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

@@ -1,0 +1,13 @@
+<script type="text/javascript">
+    var query = {};
+    var urlParams = window.location.search.split('?')[1];
+    urlParams = urlParams.split("&");
+
+    for (var i = 0; i< urlParams.length; i++) {
+        var param = urlParams[i].split("="); 
+        query[param[0]] = param[1]; 
+    }
+
+    var imageDialog = window.parent.document.getElementById(query['dialog_id']);
+    //console.log(imageDialog, window.parent.document, window.parent, query);
+</script>

@@ -1,0 +1,24 @@
+<case value="summernote">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">{$[type]form.title}：</label>
+        <div class="right">
+            <textarea name="{$[type]form.name}" rwos="5" id="[type]{$group_k|default=''}_summernote_{$[type]k}" class="form-control" {$[type]form.extra.attr|default=''}>
+                {$[type]form.value|default=''}
+            </textarea>
+            <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/summernote/summernote.css">
+            <style type="text/css" media="screen">
+                .note-editor .modal-body .form-group {
+                    margin: 0;
+                }
+            </style>
+            <script type="text/javascript" src="__PUBLIC__/libs/summernote/summernote.min.js" charset="utf-8"></script>
+            <script type="text/javascript">
+                $(function(){
+                    $('#[type]{$group_k|default=''}_summernote_{$[type]k}').summernote({
+                        height: 300,
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

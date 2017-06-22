@@ -1,0 +1,19 @@
+<script type="text/javascript">
+    $(function() {
+        //给数组增加查找指定的元素索引方法
+        Array.prototype.ly_inde_of = function(val) {
+            for (var i = 0; i < this.length; i++) {
+                if (this[i] == val) return i;
+            }
+            return -1;
+        };
+
+        //给数组增加删除方法
+        Array.prototype.ly_delete = function(val) {
+            var index = this.indexOf(val);
+            if (index > -1) {
+                this.splice(index, 1);
+            }
+        };
+    });
+</script>

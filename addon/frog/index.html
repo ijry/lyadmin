@@ -1,0 +1,45 @@
+<style>
+	.cvs{right:100px; bottom:20px; position:fixed;}
+	.sdv{width:90px; background:#fff;padding:5px; right:100px; bottom:110px; position:fixed; border:1px solid #333; display:none; border-radius:15px;}
+</style>
+<div id="sayDiv" class="sdv"></div>
+<canvas id="myCanvas" width="100" height="100" class="cvs"></canvas>
+	<script type="text/javascript">
+	var canvas = document.getElementById('myCanvas');
+	var ctx = canvas.getContext('2d');
+	var count = 0;
+	var frog = new Image(); frog.src = '__ADDONROOT__/sprites.png';
+	var say = '{$config.frog_say}'
+
+	function star() {
+		happy = setInterval(happy, 50);
+	}
+	function happy() {
+		if (count > 18) {
+			count = 0;
+		}
+		ctx.drawImage(frog, 0, count*100, 100, 100, 0, 0, 100, 100);
+		count++;
+	}
+	function sad() {
+		if (count > 32) {
+			clearInterval(sad);
+		}
+		ctx.drawImage(frog, 0, count*100, 100, 100, 0, 0, 100, 100);
+		count++;
+	}
+	function change() {
+		var sayDiv = document.getElementById('sayDiv');
+		sayDiv.innerHTML = say;
+		sayDiv.style.display = 'block';
+		clearInterval(happy);
+		count = 19;
+		sad = setInterval(sad, 50);
+	}
+	window.onkeydown = function (event) {
+	    if (event.keyCode) {
+	        change();
+	    }
+	};
+	star();
+</script>

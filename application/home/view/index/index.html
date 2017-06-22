@@ -1,0 +1,423 @@
+<extend name="$_home_public_layout"/>
+
+<block name="title"><title>{:C('WEB_SITE_TITLE')}－{:C('WEB_SITE_SLOGAN')}</title></block>
+
+<block name="style">
+    <style type="text/css">
+        /* 主导航 */
+        @media (min-width: 768px) {
+            .main-nav {
+                border: 0;
+            }
+        }
+
+        /* 主要内容 */
+        #main {
+            padding: 0;
+        }
+
+        /* 幻灯片 */
+        #index-carousel .carousel-inner .item,
+        #index-carousel .carousel-inner img.item-bg {
+            width: 100%;
+            height: 520px;
+        }
+        #index-carousel .item-default .btn {
+            color: #fff;
+            border-color: #fff;
+        }
+        #index-carousel .item-default .btn:hover {
+            color: #333;
+            background: #fff;
+        }
+        @media (max-width: 768px) {
+            #index-carousel .carousel-inner .item,
+            #index-carousel .carousel-inner img.item-bg {
+                height: 200px;
+            }
+        }
+
+        /* section */
+        .section {
+            padding: 30px 0;
+        }
+        .section .section-title {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .section .section-abstract {
+            font-size: 20px;
+            color: #82939e;
+            line-height: 2;
+            margin-bottom: 40px;
+        }
+        @media (min-width: 768px) {
+            .section {
+                height: 560px;
+            }
+        }
+        @media (max-width: 768px) {
+            .section .section-title {
+                font-size: 26px;
+                margin: 0;
+                margin-bottom: 8px
+            }
+            .section .section-abstract {
+                font-size: 15px;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* 功能 */
+        .function-list>.col-xs-12 button.btn {
+            width: 180px;
+            height: 180px;
+        }
+        @media (max-width: 768px) {
+            .function-list>.col-xs-12 button.btn {
+                width: 120px;
+                height: 120px;
+            }
+            .function-list>.col-xs-12 button.btn .fa-5x {
+                font-size: 40px;
+            }
+        }
+
+        /* 优秀特性 */
+        .feature-list .col-sm-2 {
+            width: 20%;
+        }
+        .feature-list .feature-item {
+            color: #667588;
+            border: 0px solid #fff;
+        }
+        .feature-list .feature-item > span {
+            display: inline-block;
+            padding: 10px 22px;
+            margin:20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .feature-list .feature-item > span:focus,
+        .feature-list .feature-item > span:hover {
+            box-shadow: none!important;
+            transform: translateY(5px);
+        }
+        .feature-list .feature-item .fa {
+            font-size: 60px;
+            font-weight: bold;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .feature-list .col-xs-4 {
+                width: 50%;
+            }
+            .feature-list .feature-item p {
+                font-size: 12px;
+            }
+            .feature-list .feature-item .fa {
+                font-size: 40px;
+            }
+        }
+
+        /* 数据统计 */
+        .statistics-list .col-xs-12 button.btn {
+            width: 220px;
+            height: 220px;
+        }
+        @media (max-width: 768px) {
+            .statistics-list .col-xs-12 button.btn {
+                width: 90px;
+                height: 90px;
+            }
+            .statistics-list .numberGrow {
+                font-size: 20px;
+            }
+        }
+    </style>
+</block>
+
+<block name="jumbotron">
+    <div id="index-carousel" class="carousel slide" data-ride="carousel" >
+        <!-- 轮播（Carousel）项目 -->
+        <div class="carousel-inner">
+            <lingyun:slider_list name="slider">
+                <div class="item <php>if($i == 1) echo 'active';</php>">
+                    <a href="{$slider.url}"><img class="item-bg" src="{$slider.cover|get_cover}"></a>
+                </div>
+            </lingyun:slider_list>
+            <?php if(!$__SLIDER_LIST__): ?>
+                <div class="item item-default active">
+                    <div class="jumbotron p-t-md" style="position: relative;height:520px;">
+                        <div style="position: absolute;top: 0;width:100%;height: 100%;background-image: url(__HOME_IMG__/index/banner.jpg);background-repeat: no-repeat;background-size: cover;"></div>
+                        <div class="container" style="position: absolute;top: 0;width:100%;height: 100%;">
+                            <div class="text-center m-t-lg p-t-lg">
+                                <h1 class="title" style="font-size: 70px;font-weight: 400;color: #fff;">
+                                    {:C('WEB_SITE_TITLE')}
+                                </h1>
+                                <hr style="width: 20%;">
+                                <p style="font-size: 26px;color: #fff;">{:C('WEB_SITE_SLOGAN')}</p>
+                                <div class="small m-b-lg" style="color: #fff;">v{:C('CURRENT_VERSION')}</div>
+                                <div class="btn btn-pill m-t-lg" style="width: 50px;height: 50px;padding: 10px 0 0 0;color: #fff;">
+                                    <i class="fa fa-angle-double-down fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <?php if($__SLIDER_LIST__): ?>
+            <!-- 幻灯片导航 -->
+            <ol class="carousel-indicators">
+                <lingyun:slider_list name="slider">
+                    <li class="<php> if($i==1) echo 'active';</php>" data-target="#index-carousel" data-slide-to="<?php echo $i-1; ?>"></li>
+                </lingyun:slider_list>
+            </ol>
+
+            <!-- 左右切换按钮 -->
+            <a class="left carousel-control hidden-xs" href="#index-carousel" data-slide="prev"><span class="fa fa-chevron-left"></span></a>
+            <a class="right carousel-control hidden-xs" href="#index-carousel" data-slide="next"><span class="fa fa-chevron-right"></span></a>
+        <?php endif; ?>
+    </div>
+</block>
+
+<block name="breadcrumb"></block>
+
+<block name="main">
+    <div class="section section-function">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <h3 class="section-title">{:C('WEB_SITE_TITLE')}是什么?</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <p class="section-abstract">{:C('WEB_SITE_DESCRIPTION')}</p>
+                </div>
+            </div>
+            <div class="row function-list text-center">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-primary-outline btn-pill m-b-sm">
+                                <i class="fa fa-cloud fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #333;">积木式模块化</p>
+                            <p class="text-muted function-abstract">系统功能全面模块化、插件化；应用商城拥有丰富的模块、插件、主题，方便的无限扩展系统。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-warning-outline btn-pill m-b-sm">
+                                <i class="fa fa-tablet fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #333;">多终端多平台支持</p>
+                            <p class="text-muted function-abstract">支持PC、手机Wap、微信、iOS、安卓等流行操作系统平台，真正的一次编写，到处运行。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-danger-outline btn-pill m-b-sm">
+                                <i class="fa fa-adjust fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #333;">多主题支持</p>
+                            <p class="text-muted function-abstract">系统支持多主题机制，允许用户建立自己的个性化主题，每个主题支持只对部分模块进行个性化。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section section-feature" style="background: #f7f7f7;">
+        <div class="container">
+            <div class="row text-center m-b-md">
+                <div class="col-xs-12">
+                    <h3 class="section-title">优秀特性</h3>
+                </div>
+            </div>
+            <div class="row feature-list">
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(236,91,91,.7);box-shadow: 0px 5px #ec5151">
+                            <i class="fa fa-hourglass-1"></i>
+                        </span>
+                        <p>Builder页面生成技术</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(61,186,247,0.7);box-shadow: 0px 5px #3DBAF7;">
+                            <i class="fa fa-check-circle"></i>
+                        </span>
+                        <p>对接阿里大鱼</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(93,89,205,0.7);box-shadow: 0px 5px #5D59CD ">
+                            <i class="fa fa-book"></i>
+                        </span>
+                        <p>文档齐全开发简单</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(42,167,89,0.7);box-shadow: 0px 5px #2AA759">
+                            <i class="fa fa-desktop"></i>
+                        </span>
+                        <p>基于Bootstrap3.3.5</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(245,129,21,0.7);box-shadow: 0px 5px #F58115;">
+                            <i class="fa fa-circle-o-notch"></i>
+                        </span>
+                        <p>基于Framework7</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(104,197,179,0.7);box-shadow: 0px 5px #68C5B3">
+                            <i class="fa fa-server"></i>
+                        </span>
+                        <p>云存储支持</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(101,136,255,0.7);box-shadow: 0px 5px #6588FF">
+                            <i class="fa fa-users"></i>
+                        </span>
+                        <p>多种注册方式</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(253,65,92,0.7);box-shadow: 0px 5px #FD415C;">
+                            <i class="fa fa-cubes"></i>
+                        </span>
+                        <p>完善的消息推送</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(88,180,210,0.7);box-shadow: 0px 5px #58B4D2">
+                            <i class="fa fa-credit-card"></i>
+                        </span>
+                        <p>多种支付方式</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(103,118,137,0.7);box-shadow: 0px 5px #677689">
+                            <i class="fa fa-heart"></i>
+                        </span>
+                        <p>自主产权技术支持完善</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section section-statistics">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <h3 class="section-title">数据统计</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <p class="section-abstract">
+                        零云自发布起，已经服务了上万的企业和开发者，为他们节省了50%以上的开发成本，获得了广大用户的一致好评，希望你能成为下一个令人非常期待的用户！
+                    </p>
+                </div>
+            </div>
+            <div class="row statistics-list text-center">
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-primary-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="39870">0</h3>
+                            </button>
+                        </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">下载次数</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-warning-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="11986">0</h3>
+                            </button>
+                        </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">产品用户</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-danger-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="2189">0</h3>
+                            </button>
+                        </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">成功案例</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="jumbotron jumbotron-primary jumbotron-background m-b-0">
+        <div class="container text-center">
+            <h3 style="font-weight: 300;">
+                <span class="fa fa-download"></span>
+                <a target="_blank" href="https://pan.baidu.com/s/1qYTL45Y" style="color: #fff;">
+                    <span>立即下载免费版</span>
+                </a>
+                <span style="color: #ebb724;">或者</span>
+                <a target="_blank" href="http://www.lingyun.net/home/page/24.html" style="color: #fff;">
+                    <span>更多功能的商业版？</span>
+                </a>
+            </h3>
+        </div>
+    </div>
+</block>
+
+<block name="script">
+    <script type="text/javascript" >
+        $(function(){
+            // 数据统计动画
+            $('.numberGrow').on('scrollSpy:enter', function() {
+                $.numberGrow(this);
+            });
+            $('.numberGrow').scrollSpy();
+
+            // 特性详情
+            $('.feature-item').hover(function() {
+                $(this).children('.feature-cover').addClass('active');
+            }, function() {
+                $(this).children('.feature-cover').removeClass('active');
+            });
+        });
+    </script>
+</block>

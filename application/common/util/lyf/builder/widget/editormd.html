@@ -1,0 +1,53 @@
+<case value="editormd">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">{$[type]form.title}：</label>
+        <div class="right">
+            <div name="{$[type]form.name}" id="[type]{$group_k|default=''}_markdown_{$[type]k}" style="z-index: 1000;" class="form-control" {$[type]form.extra.attr|default=''}></div>
+            <pre id="default_[type]{$group_k|default=''}_markdown_{$[type]k}" class="hidden">{$[type]form.value|default=''}</pre>
+
+            <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/editormd/css/editormd.min.css">
+            <script type="text/javascript" src="__PUBLIC__/libs/editormd/js/editormd.min.js"></script>
+
+            <script type="text/javascript">
+                //解码
+                function html_decode(str){
+                    var s = "";
+                    if (str.length == 0) return "";
+                    s = str.replace(/&amp;/g, "&");
+                    s = s.replace(/&lt;/g, "<");
+                    s = s.replace(/&gt;/g, ">");
+                    s = s.replace(/&nbsp;/g, " ");
+                    s = s.replace(/&#39;/g, "\'");
+                    s = s.replace(/&quot;/g, "\"");
+                    s = s.replace(/<br>/g, "\n");
+                    return s;
+                }
+
+                $(function(){
+                    var editormd_[type]{$group_k|default=''}_markdown_{$[type]k}_content = html_decode($('#default_[type]{$group_k|default=''}_markdown_{$[type]k}').html());
+                    var editormd_[type]{$group_k|default=''}_markdown_{$[type]k} = editormd({
+                        id                : '[type]{$group_k|default=''}_markdown_{$[type]k}',
+                        path              : '__PUBLIC__/libs/editormd/lib/',
+                        pluginPath        : '__PUBLIC__/libs/editormd/plugins/',
+                        name              : '{$[type]form.name}',
+                        markdown          : editormd_[type]{$group_k|default=''}_markdown_{$[type]k}_content,
+                        imageUpload       : true,
+                        imageFormats      : ["jpg", "jpeg", "gif", "png", "bmp"],
+                        imageUploadURL    : '{:U(MODULE_MARK."/Upload/upload", array("callback_type" => "editormd", "module_name" => request()->module()), true, true)}',
+                        placeholder       : '零云积木式云平台！',
+                        width             : '100%',
+                        height            : 640,
+                        watch             : <?php if(MODULE_MARK === 'Admin'){ echo 'false';} else {echo 'true';} ?>,
+                        codeFold          : true,
+                        htmlDecode        : false,
+                        toolbarAutoFixed  : false,
+                        crossDomainUpload : true
+                    });
+                });
+            </script>
+            <notempty name="[type]form.tip">
+                <span class="check-tips small">{$[type]form.tip|default=''}</span>
+            </notempty>
+        </div>
+    </div>
+</case>

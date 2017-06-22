@@ -1,0 +1,42 @@
+<case value="uids">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">{$[type]form.title}：</label>
+        <div class="right">
+            <?php
+                if ($[type]form['value']) {
+                    $map['id'] = array('in', $[type]form['value']);
+                    $uids = D('Admin/User')->where($map)->select();
+                }
+                if ($uids) {
+                    $uids = json_encode($uids);
+                } else {
+                    $uids = '[]';
+                }
+            ?>
+            <input type="text" id="[type]{$group_k|default=''}_tag_{$[type]k}" class="form-control input" name="{$[type]form.name}" value="{$[type]form.value|default=''}" {$[type]form.extra.attr|default=''}>
+            <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/jquery_tokeninput/css/token-input-bootstrap.css">
+            <script type="text/javascript" src="__PUBLIC__/libs/jquery_tokeninput/js/jquery.tokeninput.min.js" charset="utf-8"></script>
+            <script type="text/javascript">
+                $(function(){
+                    //标签自动完成
+                    var tags = $('#[type]{$group_k|default=''}_tag_{$[type]k}')
+                    tags.tokenInput("index.php?s=/user/index/lists&from=builder",{
+                        queryParam          :   'keyword',
+                        propertyToSearch    :   'label',
+                        tokenValue          :   'id',
+                        searchDelay         :   0,
+                        tokenLimit          :   20,
+                        preventDuplicates   :   true,
+                        animateDropdown     :   true,
+                        allowFreeTagging    :   false,
+                        hintText            :   '请输入用户名、邮箱、手机号搜索',
+                        noResultsText       :   '此用户不存在, 请重新搜索',
+                        searchingText       :   '查找中...',
+                        prePopulate         :   {$uids},
+                        theme               :   'bootstrap'
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

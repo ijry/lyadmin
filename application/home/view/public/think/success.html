@@ -1,0 +1,46 @@
+<extend name="$_info_layout"/>
+
+<block name="title"><title>提示页面－{:C('WEB_SITE_SLOGAN')}</title></block>
+
+<block name="breadcrumb"></block>
+
+<block name="main">
+    <div class="row m-t-md m-b-md">
+        <div class="col-xs-12 col-sm-6 col-sm-offset-3">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    {$msgTitle}
+                </div>
+                <div class="panel-body text-center">
+                    <div class="fa fa-check text-success m-t m-b" style="font-size: 100px;font-weight: 700;"></div>
+                    <div class="text-success m-b" style="font-size: 30px;">
+                        <?php echo($message); ?>
+                    </div>
+                    <p class="text-muted">
+                        如果 <b id="wait" class="text-success"><?php echo($waitSecond); ?></b> 秒后没有自动跳转，请点击
+                        <a id="href" href="<?php echo $jumpUrl; ?>">这里</a>。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>
+
+<block name="script">
+    <script type="text/javascript" >
+        (function(){
+            var wait = document.getElementById('wait');
+            var href = document.getElementById('href').href;
+            var interval = setInterval(function(){
+                var time = --wait.innerHTML;
+                if(time <= 0) {
+                    location.href = href;
+                    clearInterval(interval);
+                };
+            }, 1000);
+            window.stop = function (){
+                clearInterval(interval);
+            }
+        })();
+    </script>
+</block>
