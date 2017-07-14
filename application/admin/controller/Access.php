@@ -110,7 +110,7 @@ class Access extends Admin
             $builder = new \lyf\builder\FormBuilder();
             $builder->setMetaTitle('新增配置') // 设置页面标题
                 ->setPostUrl(U('add')) // 设置表单提交地址
-                ->addFormItem('uid', 'uid', 'UID', '用户ID')
+                ->addFormItem('uid', 'num', 'UID', '用户ID')
                 ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'))
                 ->display();
         }
@@ -143,7 +143,7 @@ class Access extends Admin
             $builder->setMetaTitle('编辑配置') // 设置页面标题
                 ->setPostUrl(U('edit')) // 设置表单提交地址
                 ->addFormItem('id', 'hidden', 'ID', 'ID')
-                ->addFormItem('uid', 'uid', 'UID', '用户ID')
+                ->addFormItem('uid', 'num', 'UID', '用户ID')
                 ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'))
                 ->setFormData(D('Access')->find($id))
                 ->display();
