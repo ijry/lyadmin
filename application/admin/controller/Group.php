@@ -82,7 +82,7 @@ class Group extends Admin
     {
         if (request()->isPost()) {
             $group_object       = D('Group');
-            $_POST['menu_auth'] = json_encode(I('post.menu_auth'));
+            $_POST['menu_auth'] = json_encode(I('post.menu_auth/a'));
             $data               = $group_object->create();
             if ($data) {
                 $id = $group_object->add($data);
@@ -126,13 +126,13 @@ class Group extends Admin
     {
         if (request()->isPost()) {
             $group_object       = D('Group');
-            $_POST['menu_auth'] = json_encode(I('post.menu_auth'));
-            $data               = $group_object->create();
+            $_POST['menu_auth'] = json_encode(I('post.menu_auth/a'));
+            $data = $group_object->create($_POST);
             if ($data) {
                 if ($group_object->save($data) !== false) {
                     $this->success('更新成功', U('index'));
                 } else {
-                    $this->error('更新失败');
+                    $this->error('更新失败' . $group_object->getError());
                 }
             } else {
                 $this->error($group_object->getError());

@@ -65,6 +65,10 @@ class Model
     // 链操作方法列表
     protected $methods = array('strict', 'order', 'alias', 'having', 'group', 'lock', 'distinct', 'auto', 'filter', 'validate', 'result', 'token', 'index', 'force', 'master');
 
+    // 禁止写入
+    protected $forbidWrite    = false;
+    protected $forbidWriteMsg = '已关闭数据库写入功能';
+
     /**
      * 架构函数
      * 取得DB类的实例对象 字段检查
@@ -115,7 +119,7 @@ class Model
         // 只在第一次执行记录
         if (empty($this->fields)) {
             // 如果数据表字段没有定义则自动获取
-            if (C('DB_FIELDS_CACHE')) {
+            if (config('app_debug')) {
                 $fields = F('_fields/' . strtolower($this->getTableName()));
                 if ($fields) {
                     $this->fields = $fields;
@@ -173,7 +177,7 @@ class Model
         $this->fields['_type'] = $type;
 
         // 2008-3-7 增加缓存开关控制
-        if (C('DB_FIELDS_CACHE')) {
+        if (config('app_debug')) {
             // 永久缓存数据表信息
             F('_fields/' . strtolower($tableName), $this->fields);
         }
@@ -320,6 +324,13 @@ class Model
      */
     public function add($data = '', $options = array(), $replace = false)
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
+        // 判断数据为空
         if (empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if (!empty($this->data)) {
@@ -371,6 +382,13 @@ class Model
 
     public function addAll($dataList, $options = array(), $replace = false)
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
+        // 判断数据为空
         if (empty($dataList)) {
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
@@ -424,6 +442,13 @@ class Model
      */
     public function save($data = '', $options = array())
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
+        // 判断数据为空
         if (empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if (!empty($this->data)) {
@@ -503,6 +528,13 @@ class Model
      */
     public function delete($options = array())
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
+        // 获取主键
         $pk = $this->getPk();
         if (empty($options) && empty($this->options['where'])) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
@@ -898,6 +930,12 @@ class Model
      */
     public function setField($field, $value = '')
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
         if (is_array($field)) {
             $data = $field;
         } else {
@@ -1078,10 +1116,11 @@ class Model
     {
         // 如果没有传值默认取POST数据
         if (empty($data)) {
-            $data = I('post.');
+            $data = $_POST;
         } elseif (is_object($data)) {
             $data = get_object_vars($data);
         }
+
         // 验证数据
         if (empty($data) || !is_array($data)) {
             $this->error = L('_DATA_TYPE_INVALID_');
@@ -1144,6 +1183,10 @@ class Model
         if ($this->autoCheckFields) {
             // 开启字段检测 则过滤非法字段数据
             $fields = $this->getDbFields();
+            if (!$fields) {
+                $this->error = 'getDbFields错误';
+                return false;
+            }
             foreach ($data as $key => $val) {
                 if (!in_array($key, $fields)) {
                     unset($data[$key]);
@@ -1538,6 +1581,7 @@ class Model
      */
     public function query($sql, $parse = false)
     {
+        // 坚持指令
         if (!is_bool($parse) && !is_array($parse)) {
             $parse = func_get_args();
             array_shift($parse);
@@ -1555,6 +1599,12 @@ class Model
      */
     public function execute($sql, $parse = false)
     {
+        // 支持关闭写入功能
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+
         if (!is_bool($parse) && !is_array($parse)) {
             $parse = func_get_args();
             array_shift($parse);
@@ -1777,11 +1827,18 @@ class Model
 
             return $fields ? array_keys($fields) : false;
         }
+
+        // 修复获取数据库字段错误的问题
+        if (!$this->fields) {
+            $this->_checkTableInfo();
+        }
+
         if ($this->fields) {
             $fields = $this->fields;
             unset($fields['_type'], $fields['_pk']);
             return $fields;
         }
+
         return false;
     }
 

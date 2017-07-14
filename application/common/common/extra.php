@@ -122,6 +122,21 @@ if (!function_exists('S')) {
     }
 }
 
+if (!function_exists('F')) {
+    /**
+     * 缓存管理
+     * @param mixed     $name 缓存名称，如果为数组表示进行缓存设置
+     * @param mixed     $value 缓存值
+     * @param mixed     $options 缓存参数
+     * @param string    $tag 缓存标签
+     * @return mixed
+     */
+    function F($name, $value = '', $options = null, $tag = null)
+    {
+        return cache($name, $value, $options, $tag);
+    }
+}
+
 if (!function_exists('I')) {
     /**
      * 获取输入数据 支持默认值和过滤
