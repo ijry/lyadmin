@@ -450,12 +450,12 @@ class Str
      */
     public static function str2url($text)
     {
-        $text = eregi_replace('(((f|ht){1}tp://)[-a-zA-Z0-9@:%_+.~#?&//=]+)',
-            '<a class="str2url external" target="_blank" href="\1">\1</a>', $text);
-        $text = eregi_replace('([[:space:]()[{}])(www.[-a-zA-Z0-9@:%_+.~#?&//=]+)',
-            '\1<a class="str2url external" target="_blank" href="http://\2">\2</a>', $text);
-        $text = eregi_replace('([_.0-9a-z-]+@([0-9a-z][0-9a-z-]+.)+[a-z]{2,3})',
-            '<a class="str2url external" href="mailto:\1">\1</a>', $text);
+        preg_match_all('/http(s)?:\/\/[(a-zA-Z0-9\/\.\-\_\?\&\=)]*/', $text, $match);
+        foreach ($match[0] as $value) {
+            $strReplace = '<a class="str2url external" target="_blank" href=\'' . $value . '\'>' . $value . "</a>";
+            $text       = str_replace($strReplace, $value, $text); //文本中存在重复的url 且进行了一次替换的时候把先前的替换回来重新替换一次
+            $text       = str_replace($value, $strReplace, $text);
+        }
         return $text;
     }
 }
