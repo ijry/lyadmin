@@ -74,7 +74,7 @@ class NavModel extends ModelModel
                 $result['href']    = U('Home/Nav/page', array('id' => $result['id']), true, true);
                 break;
             case 'post':
-                $result['href'] = U('Home/Nav/lists', array('id' => $result['id']), true, true);
+                $result['href'] = U('Home/Nav/lists', array('cid' => $result['id']), true, true);
                 break;
         }
     }
