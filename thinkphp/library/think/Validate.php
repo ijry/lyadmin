@@ -38,6 +38,7 @@ class Validate
     protected static $typeMsg = [
         'require'     => ':attribute不能为空',
         'number'      => ':attribute必须是数字',
+        'integer'     => ':attribute必须是整数',
         'float'       => ':attribute必须是浮点数',
         'boolean'     => ':attribute必须是布尔值',
         'email'       => ':attribute格式不符',
@@ -102,7 +103,7 @@ class Validate
     protected $batch = false;
 
     /**
-     * 架构函数
+     * 构造函数
      * @access public
      * @param array $rules 验证规则
      * @param array $message 验证提示信息
@@ -165,7 +166,7 @@ class Validate
     }
 
     /**
-     * 获取验证规则的默认提示信息
+     * 设置验证规则的默认提示信息
      * @access protected
      * @param string|array  $type  验证规则类型名称或者数组
      * @param string        $msg  验证提示信息
@@ -456,11 +457,13 @@ class Validate
      * @access protected
      * @param mixed     $value  字段值
      * @param mixed     $rule  验证规则
+     * @param array     $data  数据
      * @return bool
      */
-    protected function egt($value, $rule)
+    protected function egt($value, $rule, $data)
     {
-        return $value >= $rule;
+        $val = $this->getDataValue($data, $rule);
+        return !is_null($val) && $value >= $val;
     }
 
     /**
@@ -468,11 +471,13 @@ class Validate
      * @access protected
      * @param mixed     $value  字段值
      * @param mixed     $rule  验证规则
+     * @param array     $data  数据
      * @return bool
      */
-    protected function gt($value, $rule)
+    protected function gt($value, $rule, $data)
     {
-        return $value > $rule;
+        $val = $this->getDataValue($data, $rule);
+        return !is_null($val) && $value > $val;
     }
 
     /**
@@ -480,11 +485,13 @@ class Validate
      * @access protected
      * @param mixed     $value  字段值
      * @param mixed     $rule  验证规则
+     * @param array     $data  数据
      * @return bool
      */
-    protected function elt($value, $rule)
+    protected function elt($value, $rule, $data)
     {
-        return $value <= $rule;
+        $val = $this->getDataValue($data, $rule);
+        return !is_null($val) && $value <= $val;
     }
 
     /**
@@ -492,11 +499,13 @@ class Validate
      * @access protected
      * @param mixed     $value  字段值
      * @param mixed     $rule  验证规则
+     * @param array     $data  数据
      * @return bool
      */
-    protected function lt($value, $rule)
+    protected function lt($value, $rule, $data)
     {
-        return $value < $rule;
+        $val = $this->getDataValue($data, $rule);
+        return !is_null($val) && $value < $val;
     }
 
     /**
@@ -568,7 +577,7 @@ class Validate
                 break;
             case 'ip':
                 // 是否为IP地址
-                $result = $this->filter($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6);
+                $result = $this->filter($value, [FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_IPV6]);
                 break;
             case 'url':
                 // 是否为一个URL地址
@@ -591,7 +600,7 @@ class Validate
                 break;
             case 'boolean':
                 // 是否为布尔值
-                $result = in_array($value, [0, 1, true, false]);
+                $result = in_array($value, [true, false, 0, 1, '0', '1'], true);
                 break;
             case 'array':
                 // 是否为数组
@@ -624,8 +633,12 @@ class Validate
         if (function_exists('exif_imagetype')) {
             return exif_imagetype($image);
         } else {
-            $info = getimagesize($image);
-            return $info[2];
+            try {
+                $info = getimagesize($image);
+                return $info ? $info[2] : false;
+            } catch (\Exception $e) {
+                return false;
+            }
         }
     }
 
@@ -656,7 +669,7 @@ class Validate
         if (!in_array($rule, ['ipv4', 'ipv6'])) {
             $rule = 'ipv4';
         }
-        return $this->filter($value, FILTER_VALIDATE_IP, 'ipv6' == $rule ? FILTER_FLAG_IPV6 : FILTER_FLAG_IPV4);
+        return $this->filter($value, [FILTER_VALIDATE_IP, 'ipv6' == $rule ? FILTER_FLAG_IPV6 : FILTER_FLAG_IPV4]);
     }
 
     /**
@@ -872,6 +885,7 @@ class Validate
             list($rule, $param) = explode(',', $rule);
         } elseif (is_array($rule)) {
             $param = isset($rule[1]) ? $rule[1] : null;
+            $rule  = $rule[0];
         } else {
             $param = null;
         }
@@ -890,7 +904,7 @@ class Validate
     {
         list($field, $val) = explode(',', $rule);
         if ($this->getDataValue($data, $field) == $val) {
-            return !empty($value);
+            return !empty($value) || '0' == $value;
         } else {
             return true;
         }
@@ -908,7 +922,7 @@ class Validate
     {
         $result = call_user_func_array($rule, [$value, $data]);
         if ($result) {
-            return !empty($value);
+            return !empty($value) || '0' == $value;
         } else {
             return true;
         }
@@ -926,7 +940,7 @@ class Validate
     {
         $val = $this->getDataValue($data, $rule);
         if (!empty($val)) {
-            return !empty($value);
+            return !empty($value) || '0' == $value;
         } else {
             return true;
         }
@@ -1179,13 +1193,15 @@ class Validate
     /**
      * 获取数据值
      * @access protected
-     * @param array     $data  数据
-     * @param string    $key  数据标识 支持二维
+     * @param array $data 数据
+     * @param string $key 数据标识 支持二维
      * @return mixed
      */
     protected function getDataValue($data, $key)
     {
-        if (strpos($key, '.')) {
+        if (is_numeric($key)) {
+            $value = $key;
+        } elseif (strpos($key, '.')) {
             // 支持二维数组验证
             list($name1, $name2) = explode('.', $key);
             $value               = isset($data[$name1][$name2]) ? $data[$name1][$name2] : null;
@@ -1214,6 +1230,8 @@ class Validate
             $msg = $this->message[$attribute];
         } elseif (isset(self::$typeMsg[$type])) {
             $msg = self::$typeMsg[$type];
+        } elseif (0 === strpos($type, 'require')) {
+            $msg = self::$typeMsg['require'];
         } else {
             $msg = $title . '规则错误';
         }
@@ -1222,9 +1240,9 @@ class Validate
             $msg = Lang::get(substr($msg, 2, -1));
         }
 
-        if (is_string($msg) && is_string($rule) && false !== strpos($msg, ':')) {
+        if (is_string($msg) && is_scalar($rule) && false !== strpos($msg, ':')) {
             // 变量替换
-            if (strpos($rule, ',')) {
+            if (is_string($rule) && strpos($rule, ',')) {
                 $array = array_pad(explode(',', $rule), 3, '');
             } else {
                 $array = array_pad([], 3, '');

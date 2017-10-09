@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 5.5
+  - 5.4
+  - 5.3
+
+before_script:
+  - composer require --no-update satooshi/php-coveralls:dev-master@dev sensiolabs/security-checker:dev-master
+  - composer update --dev --no-interaction
+  - git config --global user.name "John Doe"
+  - git config --global user.email "example@example.com"
+
+script:
+  - mkdir -p build/logs
+  - phpunit -c phpunit.xml.dist --coverage-clover build/logs/clover.xml
+  - php vendor/bin/security-checker security:check composer.lock
+
+after_script:
+  - php vendor/bin/coveralls

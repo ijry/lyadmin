@@ -1,0 +1,59 @@
+{
+    "name": "jane/open-api",
+    "description": "Generate a PHP Client API (PSR7 compatible) given a OpenApi (Swagger) specification",
+    "type": "library",
+    "keywords": ["jane", "swagger", "openapi"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joel Wurtz",
+            "email": "jwurtz@jolicode.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Joli\\Jane\\OpenApi\\Model\\": "generated/Model/",
+            "Joli\\Jane\\OpenApi\\Normalizer\\": "generated/Normalizer/",
+            "Joli\\Jane\\OpenApi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Joli\\Jane\\OpenApi\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/jane-openapi"
+    ],
+    "require": {
+        "jane/jane": "^1.5",
+        "jane/openapi-runtime": "^1.0",
+        "nikic/php-parser": "^1.4|^2.0",
+        "symfony/console": "^2.3|^3.0",
+        "doctrine/inflector": "^1.0",
+        "symfony/yaml": "^2.8.2 | ^3.0",
+        "fitbug/symfony-yaml-serializer-encoder-decoder": "^0.1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7",
+        "friendsofphp/php-cs-fixer": "v2.0.0-alpha",
+        "sllh/php-cs-fixer-styleci-bridge": "^2.1"
+    },
+    "conflict": {
+        "friendsofphp/php-cs-fixer": "<2.0.0-alpha|>2.0.0-alpha"
+    },
+    "suggest": {
+        "friendsofphp/php-cs-fixer": "To have a nice formatting of the generated files"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-ci": "vendor/bin/phpunit --coverage-text --coverage-clover=build/coverage.xml"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1-dev"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

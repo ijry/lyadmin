@@ -1,0 +1,25 @@
+{
+	"name" : "phpdr.net/php-curlmulti",
+	"description" : "Beyond all doubts,It is the best php curl library.",
+	"require" : {
+		"php" : ">=5.4.0",
+		"ext-curl" : "*"
+	},
+	"license" : "Apache-2.0",
+	"keywords" : [
+		"curl",
+		"phpcurl",
+		"curlmulti",
+		"php-curlmulti"
+	],
+	"autoload" : {
+		"psr-4" : {
+			"Ares333\\CurlMulti\\" : "src"
+		}
+	},
+	"authors" : [{
+			"name" : "Ares",
+			"email" : "admin@phpdr.net"
+		}
+	]
+}

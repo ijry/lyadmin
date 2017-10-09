@@ -1,0 +1,8 @@
+<?php
+
+return [
+    'json-schema-file' => __DIR__ . '/schema.json',
+    'root-class' => 'Test',
+    'namespace' => 'Joli\Jane\Tests\Expected',
+    'directory' => __DIR__ . '/generated',
+];

@@ -1,0 +1,204 @@
+{
+    "swagger": "2.0",
+    "parameters": {
+        "testString": {
+            "name": "testString",
+            "in": "path",
+            "type": "string",
+            "required": true
+        }
+    },
+    "paths": {
+        "/test-query": {
+            "get": {
+                "operationId": "Test Query Parameters",
+                "parameters": [
+                    {
+                        "name": "testString",
+                        "in": "query",
+                        "type": "string"
+                    },
+                    {
+                        "name": "testInteger",
+                        "in": "query",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "testFloat",
+                        "in": "query",
+                        "type": "number"
+                    },
+                    {
+                        "name": "testArray",
+                        "in": "query",
+                        "type": "array"
+                    },
+                    {
+                        "name": "testRequired",
+                        "in": "query",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "testDefault",
+                        "in": "query",
+                        "type": "string",
+                        "default": "test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-header": {
+            "get": {
+                "operationId": "Test Header Parameters",
+                "parameters": [
+                    {
+                        "name": "testString",
+                        "in": "header",
+                        "type": "string"
+                    },
+                    {
+                        "name": "testInteger",
+                        "in": "header",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "testFloat",
+                        "in": "header",
+                        "type": "number"
+                    },
+                    {
+                        "name": "testArray",
+                        "in": "header",
+                        "type": "array"
+                    },
+                    {
+                        "name": "testRequired",
+                        "in": "header",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "testDefault",
+                        "in": "header",
+                        "type": "string",
+                        "default": "test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-form": {
+            "post": {
+                "operationId": "Test Form Parameters",
+                "parameters": [
+                    {
+                        "name": "testString",
+                        "in": "formData",
+                        "type": "string"
+                    },
+                    {
+                        "name": "testInteger",
+                        "in": "formData",
+                        "type": "integer"
+                    },
+                    {
+                        "name": "testFloat",
+                        "in": "formData",
+                        "type": "number"
+                    },
+                    {
+                        "name": "testArray",
+                        "in": "formData",
+                        "type": "array"
+                    },
+                    {
+                        "name": "testRequired",
+                        "in": "formData",
+                        "type": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "testDefault",
+                        "in": "formData",
+                        "type": "string",
+                        "default": "test"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-path/{testString}/{testInteger}/{testFloat}": {
+            "get": {
+                "operationId": "Test Path Parameters",
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/testString"
+                    },
+                    {
+                        "name": "testInteger",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    },
+                    {
+                        "name": "testFloat",
+                        "in": "path",
+                        "type": "number",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/{test_integer}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "test_integer",
+                        "in": "path",
+                        "type": "integer",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        }
+    }
+}

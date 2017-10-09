@@ -19,7 +19,6 @@ use think\response\Xml as XmlResponse;
 
 class Response
 {
-
     // 原始数据
     protected $data;
 
@@ -40,7 +39,7 @@ class Response
     protected $content = null;
 
     /**
-     * 架构函数
+     * 构造函数
      * @access   public
      * @param mixed $data    输出数据
      * @param int   $code
@@ -50,12 +49,12 @@ class Response
     public function __construct($data = '', $code = 200, array $header = [], $options = [])
     {
         $this->data($data);
-        $this->header = $header;
-        $this->code   = $code;
         if (!empty($options)) {
             $this->options = array_merge($this->options, $options);
         }
         $this->contentType($this->contentType, $this->charset);
+        $this->header = array_merge($this->header, $header);
+        $this->code   = $code;
     }
 
     /**
@@ -90,6 +89,9 @@ class Response
      */
     public function send()
     {
+        // 监听response_send
+        Hook::listen('response_send', $this);
+
         // 处理输出数据
         $data = $this->getContent();
 
@@ -104,7 +106,7 @@ class Response
                 $this->header['Cache-Control'] = 'max-age=' . $cache[1] . ',must-revalidate';
                 $this->header['Last-Modified'] = gmdate('D, d M Y H:i:s') . ' GMT';
                 $this->header['Expires']       = gmdate('D, d M Y H:i:s', $_SERVER['REQUEST_TIME'] + $cache[1]) . ' GMT';
-                Cache::set($cache[0], [$data, $this->header], $cache[1]);
+                Cache::tag($cache[2])->set($cache[0], [$data, $this->header], $cache[1]);
             }
         }
 
@@ -113,7 +115,11 @@ class Response
             http_response_code($this->code);
             // 发送头部信息
             foreach ($this->header as $name => $val) {
-                header($name . ':' . $val);
+                if (is_null($val)) {
+                    header($name);
+                } else {
+                    header($name . ':' . $val);
+                }
             }
         }
 

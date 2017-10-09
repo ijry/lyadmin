@@ -1,0 +1,11 @@
+{
+    "version": "1.0",
+    "name": "php-http/socket-client",
+    "bindings": {
+        "bbd41ece-94a0-4ddc-942d-a1491d74c5fc": {
+            "_class": "Puli\\Discovery\\Binding\\ClassBinding",
+            "class": "Http\\Client\\Socket\\Client",
+            "type": "Http\\Client\\HttpClient"
+        }
+    }
+}

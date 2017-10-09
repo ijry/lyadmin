@@ -17,13 +17,33 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "topthink/framework": "*",
-        "topthink/think-captcha": "^1.0"
+        "topthink/framework": "~5.0.0",
+        "topthink/think-captcha": "^1.0",
+        "topthink/think-queue": "^2.0",
+        "topthink/think-image": "^1.0",
+        "topthink/think-helper": "^1.0",
+        "cypresslab/gitelephant": "~1.0",
+        "kzykhys/git": "dev-master",
+        "docker-php/docker-php": "^1.24",
+        "erusev/parsedown": "^1.6",
+        "aferrandini/phpqrcode": "1.0.1",
+        "spipu/html2pdf": "^4.6",
+        "phpoffice/phpexcel": "v1.8.*",
+        "phpoffice/phpword": "v0.13.*",
+        "jaeger/querylist": "^4.0",
+        "jaeger/querylist-absolute-url": "^4.0",
+        "jaeger/querylist-curl-multi": "^4.0",
+        "liesauer/ql-plugin-simpleform": "^4.0",
+        "jaeger/querylist-phantomjs": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "app\\": "application"
+        }
     },
     "extra": {
         "think-path": "thinkphp"
     },
-    "minimum-stability": "dev",
     "config": {
         "preferred-install": "dist"
     }

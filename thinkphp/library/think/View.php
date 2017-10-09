@@ -25,7 +25,7 @@ class View
     protected $replace = [];
 
     /**
-     * 架构函数
+     * 构造函数
      * @access public
      * @param array $engine  模板引擎参数
      * @param array $replace  字符串替换参数
@@ -127,7 +127,7 @@ class View
      * @access private
      * @param string|array  $name 参数名
      * @param mixed         $value 参数值
-     * @return void
+     * @return $this
      */
     public function config($name, $value = null)
     {

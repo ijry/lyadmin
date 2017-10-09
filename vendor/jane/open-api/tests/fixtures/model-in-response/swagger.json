@@ -1,0 +1,96 @@
+{
+    "swagger": "2.0",
+    "definitions": {
+        "Schema": {
+            "type": "object",
+            "properties": {
+                "stringProperty": {
+                    "type": "string"
+                },
+                "integerProperty": {
+                    "type": "integer"
+                },
+                "floatProperty": {
+                    "type": "number"
+                },
+                "arrayProperty": {
+                    "type": "array"
+                },
+                "mapProperty": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "objectProperty": {
+                    "type": "object",
+                    "properties": {
+                        "stringProperty": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "objectRefProperty": {
+                    "$ref": "#/definitions/Schema"
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "Get Test",
+                "responses": {
+                    "200": {
+                        "description": "no error",
+                        "schema": {
+                            "$ref": "#/definitions/Schema"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "404": {
+                        "description": "not found",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-list": {
+            "get": {
+                "operationId": "Get Test List",
+                "responses": {
+                    "200": {
+                        "description": "no error",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Schema"
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        }
+    }
+}

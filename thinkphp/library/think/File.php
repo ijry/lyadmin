@@ -11,7 +11,6 @@
 
 namespace think;
 
-use SplFileInfo;
 use SplFileObject;
 
 class File extends SplFileObject
@@ -96,7 +95,8 @@ class File extends SplFileObject
 
     /**
      * 获取文件的哈希散列值
-     * @return $string
+     * @param string $type
+     * @return mixed $string
      */
     public function hash($type = 'sha1')
     {
@@ -230,7 +230,7 @@ class File extends SplFileObject
     {
         $extension = strtolower(pathinfo($this->getInfo('name'), PATHINFO_EXTENSION));
         /* 对图像文件进行严格检测 */
-        if (in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf']) && !in_array($this->getImageType($this->filename), [1, 2, 3, 4, 6])) {
+        if (in_array($extension, ['gif', 'jpg', 'jpeg', 'bmp', 'png', 'swf']) && !in_array($this->getImageType($this->filename), [1, 2, 3, 4, 6, 13])) {
             return false;
         }
         return true;
@@ -242,8 +242,12 @@ class File extends SplFileObject
         if (function_exists('exif_imagetype')) {
             return exif_imagetype($image);
         } else {
-            $info = getimagesize($image);
-            return $info[2];
+            try {
+                $info = getimagesize($image);
+                return $info ? $info[2] : false;
+            } catch (\Exception $e) {
+                return false;
+            }
         }
     }
 
@@ -281,7 +285,7 @@ class File extends SplFileObject
      * @param  string           $path    保存路径
      * @param  string|bool      $savename    保存的文件名 默认自动生成
      * @param  boolean          $replace 同名文件是否覆盖
-     * @return false|SplFileInfo false-失败 否则返回SplFileInfo实例
+     * @return false|File false-失败 否则返回File实例
      */
     public function move($path, $savename = true, $replace = true)
     {

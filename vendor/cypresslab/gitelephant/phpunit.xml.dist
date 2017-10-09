@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit bootstrap="tests/bootstrap.php"
+        colors="true"
+        stopOnFailure="false">
+    <testsuites>
+        <testsuite name="GitElephant Test Suite">
+            <directory>tests/GitElephant/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src/GitElephant/</directory>
+        </whitelist>
+    </filter>
+</phpunit>

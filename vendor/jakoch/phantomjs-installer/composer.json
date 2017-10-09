@@ -1,0 +1,30 @@
+{
+    "name": "jakoch/phantomjs-installer",
+    "description": "A Composer package which installs the PhantomJS binary (Linux, Windows, Mac) into `/bin` of your project.",
+    "type": "custom-installer",
+    "keywords": ["phantomjs", "headless", "binaries"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jens-André Koch",
+            "email": "jakoch@web.de"
+        }
+    ],
+    "require": {
+        "php": ">5.3",
+        "ext-bz2": "*",
+        "ext-openssl": "*"
+    },
+    "require-dev": {
+        "composer/composer": "^1.2",
+        "phpunit/phpunit": "^4.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "PhantomInstaller\\Test\\" : "tests/"
+        },
+        "psr-0": {
+            "PhantomInstaller\\": "src/"
+        }
+    }
+}

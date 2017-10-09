@@ -1,0 +1,35 @@
+{
+    "name": "cypresslab/gitelephant",
+    "description": "An abstraction layer for git written in PHP 5.3",
+    "keywords": ["git"],
+    "homepage": "http://gitelephant.cypresslab.net/",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Matteo Giachino",
+            "email": "matteog@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/process": "~2.0|~3.0",
+        "symfony/filesystem": "~2.0|~3.0",
+        "symfony/finder": "~2.0|~3.0",
+        "phpcollection/phpcollection": "~0.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.8",
+        "mockery/mockery": "~0.9"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-0": {
+            "GitElephant": "src/"
+        }
+    },
+    "config": {
+      "platform": {
+        "php": "5.3.3"
+      }
+    }
+}

@@ -1,0 +1,106 @@
+checks:
+    php:
+        use_self_instead_of_fqcn: true
+        uppercase_constants: true
+        simplify_boolean_return: true
+        return_doc_comments: true
+        return_doc_comment_if_not_inferrable: true
+        properties_in_camelcaps: true
+        prefer_while_loop_over_for_loop: true
+        phpunit_assertions: true
+        parameters_in_camelcaps: true
+        parameter_doc_comments: true
+        param_doc_comment_if_not_inferrable: true
+        optional_parameters_at_the_end: true
+        no_short_variable_names:
+            minimum: '3'
+        no_short_method_names:
+            minimum: '3'
+        no_long_variable_names:
+            maximum: '20'
+        no_goto: true
+        newline_at_end_of_file: true
+        naming_conventions:
+            local_variable: '^[a-z][a-zA-Z0-9]*$'
+            abstract_class_name: '^Abstract[A-Z][A-Za-z0-9]*$'
+            utility_class_name: '^[A-Z][A-Z0-9a-z]*$'
+            constant_name: '^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*$'
+            property_name: '^[a-z][a-zA-Z0-9]*$'
+            method_name: '^(?:[a-z]|__)[a-zA-Z0-9]*$'
+            parameter_name: '^[a-z][a-zA-Z0-9]*$'
+            interface_name: '^[A-Z][a-zA-Z0-9]*$'
+            type_name: '^[A-Z][a-zA-Z0-9]*$'
+            exception_name: '^[A-Z][a-zA-Z0-9]*Exception$'
+            isser_method_name: '^(?:is|has|should|may|supports)'
+        more_specific_types_in_doc_comments: true
+        line_length:
+            max_length: '120'
+        function_in_camel_caps: true
+        fix_use_statements:
+            remove_unused: true
+            preserve_multiple: false
+            preserve_blanklines: false
+            order_alphabetically: true
+        fix_line_ending: true
+        classes_in_camel_caps: true
+        check_method_contracts:
+            verify_interface_like_constraints: true
+            verify_documented_constraints: true
+            verify_parent_constraints: true
+        avoid_unnecessary_concatenation: true
+        avoid_todo_comments: true
+        avoid_perl_style_comments: true
+        avoid_multiple_statements_on_same_line: true
+        avoid_fixme_comments: true
+        align_assignments: true
+        code_rating: true
+        duplication: true
+
+filter:
+    excluded_paths:
+        - vendor/*
+        - spec/*
+coding_style:
+    php:
+        spaces:
+            around_operators:
+                concatenation: true
+        braces:
+            classes_functions:
+                class: new-line
+                function: new-line
+                closure: end-of-line
+            if:
+                opening: end-of-line
+            for:
+                opening: end-of-line
+            while:
+                opening: end-of-line
+            do_while:
+                opening: end-of-line
+            switch:
+                opening: end-of-line
+            try:
+                opening: end-of-line
+        upper_lower_casing:
+            keywords:
+                general: lower
+            constants:
+                true_false_null: lower
+
+build_failure_conditions:
+    - 'elements.rating(<= D).exists'
+    - 'issues.new.exists'
+    - 'project.metric("scrutinizer.quality", < 9)'
+    - 'project.metric("scrutinizer.quality", < -0.5)'
+
+build:
+    environment:
+        php:
+            version: 7.0.8
+    tests:
+        override:
+            -
+                command: 'find src spec -name "*.php" -print0 | xargs -0 -n1 -P8 php -l'
+            -
+                command: 'vendor/bin/phpspec run -n'

@@ -1,0 +1,20 @@
+{
+    "id": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Schema for object with null values",
+    "type": "object",
+    "properties": {
+        "date": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "dateOrNull": {
+            "type": ["string", "null"],
+            "format": "date-time"
+        },
+        "dateOrNullOrInt": {
+            "type": ["string", "null", "integer"],
+            "format": "date-time"
+        }
+    }
+}

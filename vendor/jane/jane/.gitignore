@@ -1,0 +1,11 @@
+.idea
+.php_cs.cache
+vendor
+composer.lock
+bin/*
+!bin/jane
+stub
+
+tests/generated/*
+!tests/generated/.gitkeep
+tests/fixtures/*/generated

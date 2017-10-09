@@ -1,0 +1,24 @@
+{
+    "name": "jane/runtime",
+    "description": "Jane runtime Library",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joel Wurtz",
+            "email": "jwurtz@jolicode.com"
+        }
+    ],
+    "require": {
+        "symfony/serializer": "^2.3|^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Joli\\Jane\\Runtime\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}

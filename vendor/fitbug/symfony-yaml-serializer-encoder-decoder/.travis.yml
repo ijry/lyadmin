@@ -1,0 +1,22 @@
+language: php
+
+php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
+matrix:
+    fast_finish: true
+    include:
+        - php: 5.4
+          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
+
+before_script:
+  - composer install
+
+
+script:
+  - find src spec -name "*.php" -print0 | xargs -0 -n1 -P8 php -l
+  - vendor/bin/phpspec run

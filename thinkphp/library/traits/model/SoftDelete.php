@@ -30,7 +30,7 @@ trait SoftDelete
     {
         $model = new static();
         $field = $model->getDeleteTimeField(true);
-        return $model->db(false)->removeWhereField($field);
+        return $model->getQuery();
     }
 
     /**
@@ -42,7 +42,8 @@ trait SoftDelete
     {
         $model = new static();
         $field = $model->getDeleteTimeField(true);
-        return $model->db(false)->where($field, 'exp', 'is not null');
+        return $model->getQuery()
+            ->useSoftDelete($field, ['not null', '']);
     }
 
     /**
@@ -59,14 +60,29 @@ trait SoftDelete
         $name = $this->getDeleteTimeField();
         if (!$force) {
             // 软删除
-            $this->change[]    = $name;
             $this->data[$name] = $this->autoWriteTimestamp($name);
             $result            = $this->isUpdate()->save();
         } else {
-            $result = $this->db()->delete($this->data);
+            // 删除条件
+            $where = $this->getWhere();
+            // 删除当前模型数据
+            $result = $this->getQuery()->where($where)->delete();
+        }
+
+        // 关联删除
+        if (!empty($this->relationWrite)) {
+            foreach ($this->relationWrite as $key => $name) {
+                $name  = is_numeric($key) ? $name : $key;
+                $model = $this->getAttr($name);
+                if ($model instanceof Model) {
+                    $model->delete($force);
+                }
+            }
         }
 
         $this->trigger('after_delete', $this);
+        // 清空原始数据
+        $this->origin = [];
         return $result;
     }
 
@@ -112,12 +128,14 @@ trait SoftDelete
     {
         $name = $this->getDeleteTimeField();
         if (empty($where)) {
-            $pk           = $this->getPk();
-            $where[$pk]   = $this->getData($pk);
-            $where[$name] = ['not null', ''];
+            $pk         = $this->getPk();
+            $where[$pk] = $this->getData($pk);
         }
         // 恢复删除
-        return $this->db(false)->removeWhereField($this->getDeleteTimeField(true))->where($where)->update([$name => null]);
+        return $this->getQuery()
+            ->useSoftDelete($name, ['not null', ''])
+            ->where($where)
+            ->update([$name => null]);
     }
 
     /**
@@ -129,7 +147,7 @@ trait SoftDelete
     protected function base($query)
     {
         $field = $this->getDeleteTimeField(true);
-        $query->where($field, 'null');
+        $query->useSoftDelete($field);
     }
 
     /**
@@ -140,9 +158,9 @@ trait SoftDelete
      */
     protected function getDeleteTimeField($read = false)
     {
-        $field = isset($this->deleteTime) ? $this->deleteTime : 'delete_time';
+        $field = property_exists($this, 'deleteTime') && isset($this->deleteTime) ? $this->deleteTime : 'delete_time';
         if (!strpos($field, '.')) {
-            $field = $this->db(false)->getTable() . '.' . $field;
+            $field = '__TABLE__.' . $field;
         }
         if (!$read && strpos($field, '.')) {
             $array = explode('.', $field);

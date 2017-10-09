@@ -1,0 +1,48 @@
+{
+    "name": "php-http/socket-client",
+    "description": "Socket client for PHP-HTTP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joel Wurtz",
+            "email": "jwurtz@jolicode.com"
+        }
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "symfony/options-resolver": "^2.6 || ^3.0",
+        "php-http/httplug": "^1.0",
+        "php-http/message-factory": "^1.0.2",
+        "php-http/discovery": "^1.0"
+    },
+    "require-dev": {
+        "guzzlehttp/psr7": "^1.2",
+        "php-http/client-integration-tests": "^0.6",
+        "php-http/message": "^1.0",
+        "php-http/client-common": "^1.0"
+    },
+    "provide": {
+        "php-http/client-implementation": "1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Http\\Client\\Socket\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Http\\Client\\Socket\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-ci": "vendor/bin/phpunit --coverage-clover build/coverage.xml"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.1-dev"
+        }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
+}

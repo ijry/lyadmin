@@ -1,0 +1,11 @@
+{
+    "name": "pguardiario/phpuri",
+	"type": "project",
+	"version": "1.0",
+    "description": "A php library for converting relative urls to absolute.",
+	"autoload" : {
+		"files": [
+			"phpuri.php"
+		]
+	}
+}

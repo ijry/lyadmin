@@ -1,0 +1,117 @@
+{
+    "swagger": "2.0",
+    "definitions": {
+        "Schema": {
+            "type": "object",
+            "properties": {
+                "stringProperty": {
+                    "type": "string"
+                },
+                "dateProperty": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "integerProperty": {
+                    "type": "integer"
+                },
+                "floatProperty": {
+                    "type": "number"
+                },
+                "arrayProperty": {
+                    "type": "array"
+                },
+                "mapProperty": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "objectProperty": {
+                    "type": "object",
+                    "properties": {
+                        "stringProperty": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "objectRefProperty": {
+                    "$ref": "#/definitions/Schema"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/test-simple": {
+            "post": {
+                "operationId": "Test Simple Body Parameter",
+                "parameters": [
+                    {
+                        "name": "testString",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-object": {
+            "post": {
+                "operationId": "Test Object Body Parameter",
+                "parameters": [
+                    {
+                        "name": "testObject",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Schema"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        },
+        "/test-object-list": {
+            "post": {
+                "operationId": "Test Object List Body Parameter",
+                "parameters": [
+                    {
+                        "name": "testObjectList",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "additionalProperties": {
+                                "$ref": "#/definitions/Schema"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "no error"
+                    }
+                },
+                "tags": [
+                    "Test"
+                ]
+            }
+        }
+    }
+}

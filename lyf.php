@@ -90,7 +90,7 @@ if (is_file('./data/install.lock') === false && @$_SERVER[ENV_PRE . 'DEV_MODE'] 
 ]);
 
 // 注册错误和异常处理机制
-\lyf\Error::register();
+\think\Error::register();
 
 // 加载惯例配置文件
 \think\Config::set(include THINK_PATH . 'convention' . EXT);

@@ -15,7 +15,7 @@ use think\exception\DbException;
 
 class DataNotFoundException extends DbException
 {
-    protected $tableName;
+    protected $table;
 
     /**
      * DbException constructor.

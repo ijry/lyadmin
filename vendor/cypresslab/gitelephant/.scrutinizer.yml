@@ -1,0 +1,34 @@
+before_commands:
+    - git --version
+    - git config --global user.email "git-elephant@scrutinizer-ci.com"
+    - git config --global user.name "git-elephant"
+    - composer install
+filter:
+    excluded_paths:
+        - 'vendor/*'
+tools:
+    external_code_coverage:
+        timeout: 600
+    php_code_sniffer:
+        enabled: true
+        filter:
+            paths: [ src/ ]
+        config:
+            # Built-in standards: PEAR, PHPCS, PSR1, PSR2, Squiz, Zend
+            standard: PSR2
+    php_cpd:
+        enabled: true
+    php_cs_fixer:
+        enabled: true
+        config:
+            level: psr2
+        filter:
+            paths: [ src/ ]
+    php_mess_detector:
+        enabled: true
+        filter:
+            paths: [ src/ ]
+    php_analyzer: true
+    sensiolabs_security_checker: true
+    php_pdepend: true
+    php_loc: true

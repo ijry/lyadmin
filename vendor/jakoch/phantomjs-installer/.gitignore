@@ -1,0 +1,20 @@
+# Netbeans
+/nbproject
+
+# Eclipse
+/.settings
+/.buildpath
+/.project
+
+# Composer
+/composer.phar
+/composer.lock
+/vendor
+
+# Vagrant
+.vagrant
+Vagrantfile
+
+.idea
+
+/src/PhantomInstaller/PhantomBinary.php

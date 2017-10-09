@@ -18,6 +18,8 @@ use think\db\Builder;
  */
 class Pgsql extends Builder
 {
+    protected $insertSql    = 'INSERT INTO %TABLE% (%FIELD%) VALUES (%DATA%) %COMMENT%';
+    protected $insertAllSql = 'INSERT INTO %TABLE% (%FIELD%) %DATA% %COMMENT%';
 
     /**
      * limit分析
@@ -55,6 +57,9 @@ class Pgsql extends Builder
             $key                = $field . '->>\'' . $name . '\'';
         } elseif (strpos($key, '.')) {
             list($table, $key) = explode('.', $key, 2);
+            if ('__TABLE__' == $table) {
+                $table = $this->query->getTable();
+            }
             if (isset($options['alias'][$table])) {
                 $table = $options['alias'][$table];
             }

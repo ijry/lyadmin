@@ -21,6 +21,8 @@ use think\Log;
 class Mysql extends Connection
 {
 
+    protected $builder = '\\think\\db\\builder\\Mysql';
+
     /**
      * 解析pdo连接的dsn信息
      * @access protected
@@ -29,12 +31,15 @@ class Mysql extends Connection
      */
     protected function parseDsn($config)
     {
-        $dsn = 'mysql:dbname=' . $config['database'] . ';host=' . $config['hostname'];
-        if (!empty($config['hostport'])) {
-            $dsn .= ';port=' . $config['hostport'];
-        } elseif (!empty($config['socket'])) {
-            $dsn .= ';unix_socket=' . $config['socket'];
+        if (!empty($config['socket'])) {
+            $dsn = 'mysql:unix_socket=' . $config['socket'];
+        } elseif (!empty($config['hostport'])) {
+            $dsn = 'mysql:host=' . $config['hostname'] . ';port=' . $config['hostport'];
+        } else {
+            $dsn = 'mysql:host=' . $config['hostname'];
         }
+        $dsn .= ';dbname=' . $config['database'];
+
         if (!empty($config['charset'])) {
             $dsn .= ';charset=' . $config['charset'];
         }
@@ -49,7 +54,6 @@ class Mysql extends Connection
      */
     public function getFields($tableName)
     {
-        $this->initConnect(true);
         list($tableName) = explode(' ', $tableName);
         if (false === strpos($tableName, '`')) {
             if (strpos($tableName, '.')) {
@@ -57,12 +61,8 @@ class Mysql extends Connection
             }
             $tableName = '`' . $tableName . '`';
         }
-        $sql = 'SHOW COLUMNS FROM ' . $tableName;
-        // 调试开始
-        $this->debug(true);
-        $pdo = $this->linkID->query($sql);
-        // 调试结束
-        $this->debug(false, $sql);
+        $sql    = 'SHOW COLUMNS FROM ' . $tableName;
+        $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
         if ($result) {
@@ -89,13 +89,8 @@ class Mysql extends Connection
      */
     public function getTables($dbName = '')
     {
-        $this->initConnect(true);
-        $sql = !empty($dbName) ? 'SHOW TABLES FROM ' . $dbName : 'SHOW TABLES ';
-        // 调试开始
-        $this->debug(true);
-        $pdo = $this->linkID->query($sql);
-        // 调试结束
-        $this->debug(false, $sql);
+        $sql    = !empty($dbName) ? 'SHOW TABLES FROM ' . $dbName : 'SHOW TABLES ';
+        $pdo    = $this->query($sql, [], false, true);
         $result = $pdo->fetchAll(PDO::FETCH_ASSOC);
         $info   = [];
         foreach ($result as $key => $val) {
@@ -127,4 +122,5 @@ class Mysql extends Connection
     {
         return true;
     }
+
 }

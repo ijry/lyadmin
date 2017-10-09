@@ -1,0 +1,24 @@
+{
+    "name": "liesauer/ql-plugin-simpleform",
+    "description": "QueryList Plugin - SimpleForm",
+    "license": "MIT",
+    "author": [
+        {
+            "name": "LiesAuer",
+            "email": "liesauer@hotmail.com",
+            "homepage": "http://www.liesauer.net",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "jaeger/querylist": "^4.0.0",
+        "jaeger/querylist-absolute-url":"^4.0.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "liesauer\\":"src/"
+        }
+    }
+}

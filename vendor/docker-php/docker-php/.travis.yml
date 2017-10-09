@@ -1,0 +1,53 @@
+language: php
+sudo: required
+
+services:
+  - docker
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - 7.1
+  - hhvm
+
+env:
+  global:
+    - TEST_COMMAND="composer test"
+    - DOCKER_VERSION=1.12.0-0~trusty
+
+matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true
+  include:
+    - php: 5.4
+      sudo: required
+      services:
+          - docker
+      env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest" COVERAGE=true TEST_COMMAND="composer test-ci"
+
+before_install:
+  - sudo apt-cache madison docker-engine
+  - sudo apt-get -o Dpkg::Options::="--force-confnew" install -y docker-engine=${DOCKER_VERSION}
+  - travis_retry composer self-update
+
+install:
+  - travis_retry composer update ${COMPOSER_FLAGS} --prefer-source --no-interaction
+  - docker pull registry:latest
+  - docker run -p 5000:5000 -d registry
+
+script:
+  - $TEST_COMMAND
+
+after_success:
+  - if [[ "$COVERAGE" = true ]]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [[ "$COVERAGE" = true ]]; then php ocular.phar code-coverage:upload --format=php-clover build/coverage.xml; fi
+
+after_script:
+  - sudo cat /var/log/upstart/docker.log

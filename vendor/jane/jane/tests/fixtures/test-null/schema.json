@@ -1,0 +1,14 @@
+{
+    "id": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "Schema for object with null values",
+    "type": "object",
+    "properties": {
+        "onlyNull": {
+            "type": "null"
+        },
+        "nullOrString": {
+            "type": ["string", "null"]
+        }
+    }
+}

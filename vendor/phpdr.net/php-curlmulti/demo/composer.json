@@ -1,0 +1,11 @@
+{
+	"require" : {
+		"ext-curl" : "*",
+		"electrolinux/phpquery" : "0.9.*"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Ares333\\CurlMulti\\" : "../src"
+		}
+	}
+}

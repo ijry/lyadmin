@@ -15,26 +15,24 @@ use think\db\Query;
 use think\Exception;
 use think\Model;
 
+/**
+ * Class Relation
+ * @package think\model
+ *
+ * @mixin Query
+ */
 abstract class Relation
 {
     // 父模型对象
     protected $parent;
     /** @var  Model 当前关联的模型类 */
     protected $model;
+    /** @var Query 关联模型查询对象 */
+    protected $query;
     // 关联表外键
     protected $foreignKey;
     // 关联表主键
     protected $localKey;
-    // 数据表别名
-    protected $alias;
-    // 当前关联的JOIN类型
-    protected $joinType;
-    // 关联模型查询对象
-    protected $query;
-    // 关联查询条件
-    protected $where;
-    // 关联查询参数
-    protected $option;
     // 基础查询
     protected $baseQuery;
 
@@ -71,37 +69,47 @@ abstract class Relation
     /**
      * 封装关联数据集
      * @access public
-     * @param array     $resultSet 数据集
-     * @param string    $class 数据集类名
+     * @param array $resultSet 数据集
      * @return mixed
      */
-    protected function resultSetBuild($resultSet, $class = '')
+    protected function resultSetBuild($resultSet)
     {
-        return $class ? new $class($resultSet) : $resultSet;
+        return (new $this->model)->toCollection($resultSet);
+    }
+
+    protected function getQueryFields($model)
+    {
+        $fields = $this->query->getOptions('field');
+        return $this->getRelationQueryFields($fields, $model);
+    }
+
+    protected function getRelationQueryFields($fields, $model)
+    {
+        if ($fields) {
+
+            if (is_string($fields)) {
+                $fields = explode(',', $fields);
+            }
+
+            foreach ($fields as &$field) {
+                if (false === strpos($field, '.')) {
+                    $field = $model . '.' . $field;
+                }
+            }
+        } else {
+            $fields = $model . '.*';
+        }
+
+        return $fields;
     }
 
     /**
-     * 设置当前关联定义的数据表别名
-     * @access public
-     * @param array  $alias 别名定义
-     * @return $this
+     * 执行基础查询（仅执行一次）
+     * @access protected
+     * @return void
      */
-    public function setAlias($alias)
-    {
-        $this->alias = $alias;
-        return $this;
-    }
-
-    /**
-     * 移除关联查询参数
-     * @access public
-     * @return $this
-     */
-    public function removeOption()
-    {
-        $this->query->removeOption();
-        return $this;
-    }
+    protected function baseQuery()
+    {}
 
     public function __call($method, $args)
     {
@@ -111,10 +119,8 @@ abstract class Relation
 
             $result = call_user_func_array([$this->query, $method], $args);
             if ($result instanceof Query) {
-                $this->option = $result->getOptions();
                 return $this;
             } else {
-                $this->option    = [];
                 $this->baseQuery = false;
                 return $result;
             }

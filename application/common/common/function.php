@@ -14,6 +14,9 @@
 require_once APP_DIR . 'common/common/developer.php'; //加载开发者二次开发公共函数库
 require_once APP_DIR . 'common/common/extra.php'; //加载兼容公共函数库
 
+// 异常错误报错级别
+error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+
 /**
  * 处理插件钩子
  * @param string $hook   钩子名称

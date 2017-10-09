@@ -1,0 +1,9 @@
+<?php
+
+return [
+    'json-schema-file' => __DIR__ . '/swagger-spec.json',
+    'root-class' => 'OpenApi',
+    'namespace' => 'Joli\Jane\OpenApi',
+    'directory' => __DIR__ . '/generated',
+    'reference' => true,
+];

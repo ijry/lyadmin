@@ -6,4 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Twig_' => array($vendorDir . '/twig/twig/lib'),
+    'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src'),
+    'PhpCollection' => array($vendorDir . '/phpcollection/phpcollection/src'),
+    'PhantomInstaller\\' => array($vendorDir . '/jakoch/phantomjs-installer/src'),
+    'Parsedown' => array($vendorDir . '/erusev/parsedown'),
+    'PHPQRCode' => array($vendorDir . '/aferrandini/phpqrcode/lib'),
+    'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
+    'JonnyW\\PhantomJs\\' => array($vendorDir . '/jonnyw/php-phantomjs/src'),
+    'GitElephant' => array($vendorDir . '/cypresslab/gitelephant/src'),
+    '' => array($vendorDir . '/kzykhys/git/src'),
 );

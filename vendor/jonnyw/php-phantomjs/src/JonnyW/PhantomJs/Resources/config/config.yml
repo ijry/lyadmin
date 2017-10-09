@@ -1,0 +1,62 @@
+parameters:
+
+#############################
+### CONFIGURATION OPTIONS ###
+#############################
+
+    phantomjs.cache_dir: /tmp
+    phantomjs.procedure_dir: "%phantomjs.resource_dir%/procedures"
+    phantomjs.procedure_extension: proc
+    phantomjs.validator_dir: "%phantomjs.resource_dir%/validators"
+    phantomjs.validator_engine: "esprima-2.0.0.js"
+
+##############
+### ENGINE ###
+##############
+
+    phantomjs.engine.class: JonnyW\PhantomJs\Engine
+
+##################
+### PROCEDURES ###
+##################
+
+    phantomjs.procedure.procedure_loader.class: JonnyW\PhantomJs\Procedure\ProcedureLoader
+    phantomjs.procedure.chain_loader.class: JonnyW\PhantomJs\Procedure\ChainProcedureLoader
+    phantomjs.procedure.procedure_factory.class: JonnyW\PhantomJs\Procedure\ProcedureFactory
+    phantomjs.procedure.procedure_loader_factory.class: JonnyW\PhantomJs\Procedure\ProcedureLoaderFactory
+    phantomjs.procedure.procedure_validator.class: JonnyW\PhantomJs\Procedure\ProcedureValidator
+    phantomjs.procedure.procedure_compiler.class: JonnyW\PhantomJs\Procedure\ProcedureCompiler
+
+############
+### HTTP ###
+############
+
+    phantomjs.http.message_factory.class: JonnyW\PhantomJs\Http\MessageFactory
+
+################
+### PARSING ####
+################
+
+    phantomjs.parser.json_parser.class: JonnyW\PhantomJs\Parser\JsonParser
+
+###################
+### VALIDATION ####
+###################
+
+    phantomjs.validator.esprima.class: JonnyW\PhantomJs\Validator\Esprima
+
+##################
+### TEMPLATES ####
+##################
+
+    phantomjs.template.template_renderer.class: JonnyW\PhantomJs\Template\TemplateRenderer
+    phantomjs.twig.environment.class: Twig_Environment
+    phantomjs.twig.lexer.class: Twig_Lexer
+    phantomjs.twig.array_loader.class: Twig_Loader_Array
+
+##################
+### RESOURCES ####
+##################
+
+    phantomjs.cache.file_cache.class: JonnyW\PhantomJs\Cache\FileCache
+    phantomjs.loader.file_locator.class: Symfony\Component\Config\FileLocator

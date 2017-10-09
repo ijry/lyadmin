@@ -1,0 +1,23 @@
+{
+    "name": "jaeger/querylist-absolute-url",
+    "description": "QueryList Plugin: Converting relative urls to absolute.",
+    "require": {
+        "PHP":">=7.0",
+        "pguardiario/phpuri": "^1.0"
+    },
+    "require-dev": {
+        "jaeger/querylist": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "QL\\Ext\\": ""
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jaeger",
+            "email": "JaegerCode@gmail.com"
+        }
+    ]
+}

@@ -1,0 +1,5 @@
+git:
+  build: .
+  volumes:
+    - .:/code
+  working_dir: /code

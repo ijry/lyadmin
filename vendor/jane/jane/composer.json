@@ -1,0 +1,51 @@
+{
+    "name": "jane/jane",
+    "description": "Generate a serializable / deserializable object model given a json schema",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joel Wurtz",
+            "email": "jwurtz@jolicode.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Joli\\Jane\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Joli\\Jane\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/jane"
+    ],
+    "require": {
+        "jane/runtime": "^1.0",
+        "symfony/property-access": "^2.3|^3.0",
+        "symfony/console": "^2.3|^3.0",
+        "nikic/php-parser": "^1.4|^2.0",
+        "doctrine/inflector": "^1.0",
+        "symfony/options-resolver": "^2.7.2|^3.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7|^5.5",
+        "friendsofphp/php-cs-fixer": "v2.0.0-alpha"
+    },
+    "suggest": {
+        "fabpot/php-cs-fixer": "Allow to automatically fix cs on generated code for better visualisation"
+    },
+    "conflict": {
+        "fabpot/php-cs-fixer": "<2.0.0-alpha|>v2.0.0-alpha"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-ci": "vendor/bin/phpunit --coverage-text --coverage-clover=build/coverage.xml"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}

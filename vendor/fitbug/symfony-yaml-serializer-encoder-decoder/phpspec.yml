@@ -1,0 +1,4 @@
+suites:
+    default:
+        namespace: Fitbug\SymfonySerializer\YamlEncoderDecoder
+        psr4_prefix: Fitbug\SymfonySerializer\YamlEncoderDecoder

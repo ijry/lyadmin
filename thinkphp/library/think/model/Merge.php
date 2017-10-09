@@ -23,7 +23,7 @@ class Merge extends Model
     protected $mapFields     = []; //  需要处理的模型映射字段，避免混淆 array( id => 'user.id'  )
 
     /**
-     * 架构函数
+     * 构造函数
      * @access public
      * @param array|object $data 数据
      */
@@ -40,9 +40,9 @@ class Merge extends Model
     /**
      * 查找单条记录
      * @access public
-     * @param mixed     $data 主键值或者查询条件（闭包）
-     * @param string    $with 关联预查询
-     * @param bool      $cache 是否缓存
+     * @param mixed        $data  主键值或者查询条件（闭包）
+     * @param string|array $with  关联预查询
+     * @param bool         $cache 是否缓存
      * @return \think\Model
      */
     public static function get($data = null, $with = [], $cache = false)
@@ -78,11 +78,11 @@ class Merge extends Model
     /**
      * 获取关联模型的字段 并解决混淆
      * @access protected
-     * @param \think\db\Query   $query 查询对象
-     * @param string            $name 模型名称
-     * @param string            $table 关联表名称
-     * @param array             $map 字段映射
-     * @param array             $fields 查询字段
+     * @param \think\db\Query $query  查询对象
+     * @param string          $name   模型名称
+     * @param string          $table  关联表名称
+     * @param array           $map    字段映射
+     * @param array           $fields 查询字段
      * @return array
      */
     protected static function getModelField($query, $name, $table = '', $map = [], $fields = [])
@@ -104,8 +104,9 @@ class Merge extends Model
     /**
      * 查找所有记录
      * @access public
-     * @param mixed     $data 主键列表或者查询条件（闭包）
-     * @param string    $with 关联预查询
+     * @param mixed        $data 主键列表或者查询条件（闭包）
+     * @param array|string $with 关联预查询
+     * @param bool         $cache
      * @return array|false|string
      */
     public static function all($data = null, $with = [], $cache = false)
@@ -118,24 +119,21 @@ class Merge extends Model
     /**
      * 处理写入的模型数据
      * @access public
-     * @param string    $model 模型名称
-     * @param array     $data 数据
-     * @param bool      $insert 是否新增
-     * @return void
+     * @param string $model  模型名称
+     * @param array  $data   数据
+     * @return array
      */
-    protected function parseData($model, $data, $insert = false)
+    protected function parseData($model, $data)
     {
         $item = [];
         foreach ($data as $key => $val) {
-            if ($insert || in_array($key, $this->change) || $this->isPk($key)) {
-                if ($this->fk != $key && array_key_exists($key, $this->mapFields)) {
-                    list($name, $key) = explode('.', $this->mapFields[$key]);
-                    if ($model == $name) {
-                        $item[$key] = $val;
-                    }
-                } else {
+            if ($this->fk != $key && array_key_exists($key, $this->mapFields)) {
+                list($name, $key) = explode('.', $this->mapFields[$key]);
+                if ($model == $name) {
                     $item[$key] = $val;
                 }
+            } else {
+                $item[$key] = $val;
             }
         }
         return $item;
@@ -144,10 +142,11 @@ class Merge extends Model
     /**
      * 保存模型数据 以及关联数据
      * @access public
-     * @param mixed     $data 数据
-     * @param array     $where 更新条件
-     * @param string    $sequence     自增序列名
-     * @return integer|false
+     * @param mixed  $data     数据
+     * @param array  $where    更新条件
+     * @param string $sequence 自增序列名
+     * @return false|int
+     * @throws \Exception
      */
     public function save($data = [], $where = [], $sequence = null)
     {
@@ -158,7 +157,7 @@ class Merge extends Model
             }
             // 数据对象赋值
             foreach ($data as $key => $value) {
-                $this->setAttr($key, $value);
+                $this->setAttr($key, $value, $data);
             }
             if (!empty($where)) {
                 $this->isUpdate = true;
@@ -171,6 +170,11 @@ class Merge extends Model
         // 自动写入更新时间
         if ($this->autoWriteTimestamp && $this->updateTime && !isset($this->data[$this->updateTime])) {
             $this->setAttr($this->updateTime, null);
+        }
+
+        // 事件回调
+        if (false === $this->trigger('before_write', $this)) {
+            return false;
         }
 
         $db = $this->db();
@@ -189,8 +193,16 @@ class Merge extends Model
                     $where = $this->updateWhere;
                 }
 
+                // 获取有更新的数据
+                $data = $this->getChangedData();
+                // 保留主键数据
+                foreach ($this->data as $key => $val) {
+                    if ($this->isPk($key)) {
+                        $data[$key] = $val;
+                    }
+                }
                 // 处理模型数据
-                $data = $this->parseData($this->name, $this->data);
+                $data = $this->parseData($this->name, $data);
                 if (is_string($pk) && isset($data[$pk])) {
                     if (!isset($where[$pk])) {
                         unset($where);
@@ -206,14 +218,12 @@ class Merge extends Model
                     $name  = is_int($key) ? $model : $key;
                     $table = is_int($key) ? $db->getTable($model) : $model;
                     // 处理关联模型数据
-                    $data  = $this->parseData($name, $this->data);
-                    $query = new Query;
-                    if ($query->table($table)->strict(false)->where($this->fk, $this->data[$this->getPk()])->update($data)) {
+                    $data = $this->parseData($name, $data);
+                    if (Db::table($table)->strict(false)->where($this->fk, $this->data[$this->getPk()])->update($data)) {
                         $result = 1;
                     }
                 }
-                // 清空change
-                $this->change = [];
+
                 // 新增回调
                 $this->trigger('after_update', $this);
             } else {
@@ -230,7 +240,7 @@ class Merge extends Model
                 }
 
                 // 处理模型数据
-                $data = $this->parseData($this->name, $this->data, true);
+                $data = $this->parseData($this->name, $this->data);
                 // 写入主表数据
                 $result = $db->name($this->name)->strict(false)->insert($data);
                 if ($result) {
@@ -239,9 +249,6 @@ class Merge extends Model
                     if ($insertId) {
                         if (is_string($pk)) {
                             $this->data[$pk] = $insertId;
-                            if ($this->fk == $pk) {
-                                $this->change[] = $pk;
-                            }
                         }
                         $this->data[$this->fk] = $insertId;
                     }
@@ -255,19 +262,20 @@ class Merge extends Model
                         $name  = is_int($key) ? $model : $key;
                         $table = is_int($key) ? $db->getTable($model) : $model;
                         // 处理关联模型数据
-                        $data  = $this->parseData($name, $source, true);
-                        $query = new Query;
-                        $query->table($table)->strict(false)->insert($data);
+                        $data = $this->parseData($name, $source);
+                        Db::table($table)->strict(false)->insert($data);
                     }
                 }
                 // 标记为更新
                 $this->isUpdate = true;
-                // 清空change
-                $this->change = [];
                 // 新增回调
                 $this->trigger('after_insert', $this);
             }
             $db->commit();
+            // 写入回调
+            $this->trigger('after_write', $this);
+
+            $this->origin = $this->data;
             return $result;
         } catch (\Exception $e) {
             $db->rollback();
@@ -278,7 +286,8 @@ class Merge extends Model
     /**
      * 删除当前的记录 并删除关联数据
      * @access public
-     * @return integer
+     * @return int
+     * @throws \Exception
      */
     public function delete()
     {
