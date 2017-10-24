@@ -6,10 +6,6 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
-// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
-// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
-// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
-// +----------------------------------------------------------------------
 namespace Common\TagLib;
 
 use lyf\template\TagLib;
@@ -25,11 +21,11 @@ class Lingyun extends TagLib
      * @author jry <598821125@qq.com>
      */
     protected $tags = array(
-        'sql_query'         => array('attr' => 'sql,result', 'close' => 0), //SQL查询
-        'nav_list'          => array('attr' => 'name,pid,group', 'close' => 1), //导航列表
-        'nav_list_child'    => array('attr' => 'name,pid,group', 'close' => 1), //导航列表
-        'slider_list'       => array('attr' => 'name,limit,page,order', 'close' => 1), //幻灯列表
-        'post_list'         => array('attr' => 'name,limit,page,order,cid', 'close' => 1), //文章列表
+        'sql_query'      => array('attr' => 'sql,result', 'close' => 0), //SQL查询
+        'nav_list'       => array('attr' => 'name,pid,group', 'close' => 1), //导航列表
+        'nav_list_child' => array('attr' => 'name,pid,group', 'close' => 1), //导航列表
+        'slider_list'    => array('attr' => 'name,limit,page,order', 'close' => 1), //幻灯列表
+        'post_list'      => array('attr' => 'name,limit,page,order,cid', 'close' => 1), //文章列表
     );
 
     /**
@@ -67,11 +63,11 @@ class Lingyun extends TagLib
      */
     public function _nav_list_child($tag, $content)
     {
-        $name  = $tag['name'];
-        $pid   = $tag['pid'] ?: 0;
-        $group = $tag['group'] ?: 'main';
+        $name   = $tag['name'];
+        $pid    = $tag['pid'] ?: 0;
+        $group  = $tag['group'] ?: 'main';
         $module = $tag['module'] ?: '';
-        $parse = '<?php ';
+        $parse  = '<?php ';
         $parse .= '$__NAV_LIST_CHILD__ = D(\'Admin/Nav\')->getNavTreeChild(' . $pid . ', "' . $group . '", true, "' . $module . '");';
         $parse .= ' ?>';
         $parse .= '<volist name="__NAV_LIST_CHILD__" id="' . $name . '">';

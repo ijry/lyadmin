@@ -6,10 +6,6 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
-// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
-// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
-// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
-// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
 use lyf\Sql;
@@ -210,7 +206,7 @@ class ModuleController extends AdminController
         $sql_object           = new Sql();
         $uninstall_sql_status = true;
         if ($clear) {
-            $sql_file             = realpath(APP_DIR . $name) . '/Sql/uninstall.sql';
+            $sql_file = realpath(APP_DIR . $name) . '/Sql/uninstall.sql';
             if (file_exists($sql_file)) {
                 $uninstall_sql_status = $sql_object->execute_sql_from_file($sql_file);
             }
@@ -241,7 +237,7 @@ class ModuleController extends AdminController
                 $this->error($module_object->getError());
             }
         } else {
-            $sql_file   = realpath(APP_DIR . $name) . '/Sql/uninstall.sql';
+            $sql_file = realpath(APP_DIR . $name) . '/Sql/uninstall.sql';
             if (file_exists($sql_file)) {
                 $sql_status = $sql_object->execute_sql_from_file($sql_file);
             }

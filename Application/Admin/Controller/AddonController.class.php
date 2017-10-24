@@ -6,10 +6,6 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
-// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
-// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
-// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
-// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
 use lyf\Page;
@@ -182,10 +178,10 @@ class AddonController extends AdminController
         }
 
         // 清除旧数据
-        $sql_object = new Sql();
+        $sql_object           = new Sql();
         $uninstall_sql_status = true;
         if ($clear) {
-            $sql_file             = realpath(C('ADDON_PATH') . $addon_name) . '/Sql/uninstall.sql';
+            $sql_file = realpath(C('ADDON_PATH') . $addon_name) . '/Sql/uninstall.sql';
             if (file_exists($sql_file)) {
                 $uninstall_sql_status = $sql_object->execute_sql_from_file($sql_file);
             }
@@ -350,7 +346,7 @@ class AddonController extends AdminController
                 $tab_list[$key]['title'] = $val['title'];
                 $tab_list[$key]['href']  = U('Admin/Addon/adminList', array(
                     'addon_name' => $addon_name,
-                    'tab'  => $key,
+                    'tab'        => $key,
                 ));
             }
             $admin = $admin_list[$tab];
@@ -405,8 +401,8 @@ class AddonController extends AdminController
                 $attr['class'] = 'label label-info-outline label-pill';
                 $attr['href']  = U('Admin/Addon/adminEdit', array(
                     'addon_name' => $addon_name,
-                    'tab'  => $tab,
-                    'id'   => '__data_id__',
+                    'tab'        => $tab,
+                    'id'         => '__data_id__',
                 ));
 
                 // 显示列表
