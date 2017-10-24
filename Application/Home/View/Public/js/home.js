@@ -1,3 +1,42 @@
+// 获取GPS定位
+function get_location(){
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(get_location_success, get_location_error);
+    } else {
+        $.alertMessager('浏览器不支持地理定位', 'danger');
+    }
+}
+
+// 如果需要用于GPS距离计算直接使用存储的坐标即可，如果需要在百度地图定位则需要手动调用百度地图接口进行坐标转换
+function get_location_success(position){
+    var lat = position.coords.latitude; //纬度
+    var lng = position.coords.longitude; //经度
+    localStorage.ly_latitude = lat;
+    localStorage.ly_longitude = lng;
+}
+
+// 获取GPS定位错误提示
+function get_location_error(error){
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            //$.alertMessager('定位失败,用户拒绝请求地理定位', 'danger');
+            break;
+        case error.POSITION_UNAVAILABLE:
+            //$.alertMessager('定位失败,位置信息是不可用', 'danger');
+            break;
+        case error.TIMEOUT:
+            //$.alertMessager('定位失败,请求获取用户位置超时', 'danger');
+            break;
+        case error.UNKNOWN_ERROR:
+            //$.alertMessager('定位失败,定位系统失效', 'danger');
+            break;
+    }
+}
+
+// 请求定位
+//get_location();
+//window.setInterval(get_location, 20000);
+
 $(function(){
     // 一次性初始化所有弹出框
     $('[data-toggle="popover"]').popover();
@@ -190,45 +229,4 @@ $(function(){
         }
         return false;
     });
-
-
-    // 获取GPS定位
-    function get_location(){
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(get_location_success, get_location_error);
-        } else {
-            $.alertMessager('浏览器不支持地理定位', 'danger');
-        }
-    }
-
-    // 获取GPS定位存储进cookie,后台用$_COOKIE['oc_latitude']和$_COOKIE['oc_longitude']读取
-    // 如果需要用于GPS距离计算直接使用存储的坐标即可，如果需要在百度地图定位则需要手动调用百度地图接口进行坐标转换
-    function get_location_success(position){
-        var lat = position.coords.latitude; //纬度
-        var lng = position.coords.longitude; //经度
-        $.cookie('oc_latitude', lat, {path: window.lingyun.var_root});
-        $.cookie('oc_longitude', lng, {path: window.lingyun.var_root});
-    }
-
-    // 获取GPS定位错误提示
-    function get_location_error(error){
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                //$.alertMessager('定位失败,用户拒绝请求地理定位', 'danger');
-                break;
-            case error.POSITION_UNAVAILABLE:
-                //$.alertMessager('定位失败,位置信息是不可用', 'danger');
-                break;
-            case error.TIMEOUT:
-                //$.alertMessager('定位失败,请求获取用户位置超时', 'danger');
-                break;
-            case error.UNKNOWN_ERROR:
-                //$.alertMessager('定位失败,定位系统失效', 'danger');
-                break;
-        }
-    }
-
-    // 请求定位
-    //get_location();
-    //window.setInterval(get_location, 20000);
 });

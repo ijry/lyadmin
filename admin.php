@@ -6,6 +6,10 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 
 /**
  * Content-type设置
@@ -30,11 +34,6 @@ error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
 define('ENV_PRE', 'LY_');
 
 /**
- * 根目录绝对路径
- */
-define('ROOT_PATH', dirname(dirname(dirname(dirname(__DIR__)))));
-
-/**
  * 定义后台标记
  */
 define('MODULE_MARK', 'Admin');
@@ -44,6 +43,8 @@ define('MODULE_MARK', 'Admin');
  * 安全期间，建议安装调试完成后移动到非WEB目录
  */
 define('APP_PATH', './Application/');
+define('APP_DIR', './Application/');
+define('BUILDER_DIR', APP_DIR . 'Common/util/lyf/builder/');
 
 /**
  * 缓存目录设置
@@ -67,7 +68,13 @@ if (@$_SERVER[ENV_PRE . 'DEV_MODE'] !== 'true') {
 /**
  * 系统调试设置, 项目正式部署后请设置为false
  */
-define('APP_DEBUG', @$_SERVER[ENV_PRE . 'APP_DEBUG'] ?: true);
+if ($_SERVER[ENV_PRE . 'APP_DEBUG'] === 'false') {
+    define('APP_DEBUG', false);
+} elseif ($_SERVER[ENV_PRE . 'APP_DEBUG'] === 'true') {
+    define('APP_DEBUG', true);
+} else {
+    define('APP_DEBUG', true);
+}
 
 /**
  * 系统安装及开发模式检测
@@ -79,10 +86,11 @@ if (is_file('./Data/install.lock') === false && @$_SERVER[ENV_PRE . 'DEV_MODE'] 
 /**
  * Composer
  */
-//require './vendor/autoload.php';
+if (is_file('./vendor/autoload.php')) {
+    require './vendor/autoload.php';
+}
 
 /**
  * 引入核心入口
- * ThinkPHP亦可移动到WEB以外的目录
  */
-require './ThinkPHP/ThinkPHP.php';
+require './Framework/Lingyun.php';

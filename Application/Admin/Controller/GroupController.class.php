@@ -6,9 +6,13 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Util\Tree;
+use lyf\Tree;
 
 /**
  * 部门控制器
@@ -25,6 +29,7 @@ class GroupController extends AdminController
         // 搜索
         $keyword         = I('keyword', '', 'string');
         $condition       = array('like', '%' . $keyword . '%');
+        $map             = array();
         $map['id|title'] = array(
             $condition,
             $condition,
@@ -45,8 +50,8 @@ class GroupController extends AdminController
         $right_button['no']['title']     = '超级管理员无需操作';
         $right_button['no']['attribute'] = 'class="label label-warning" href="#"';
 
-        // 使用Builder快速建立列表页面。
-        $builder = new \Common\Builder\ListBuilder();
+        // 使用Builder快速建立列表页面
+        $builder = new \lyf\builder\ListBuilder();
         $builder->setMetaTitle('部门列表') // 设置页面标题
             ->addTopButton('addnew') // 添加新增按钮
             ->addTopButton('resume') // 添加启用按钮
@@ -76,7 +81,7 @@ class GroupController extends AdminController
      */
     public function add()
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $group_object       = D('Group');
             $_POST['menu_auth'] = json_encode(I('post.menu_auth'));
             $data               = $group_object->create();
@@ -85,7 +90,7 @@ class GroupController extends AdminController
                 if ($id) {
                     $this->success('新增成功', U('index'));
                 } else {
-                    $this->error('新增失败');
+                    $this->error('新增失败：' . $group_object->getError());
                 }
             } else {
                 $this->error($group_object->getError());
@@ -96,10 +101,8 @@ class GroupController extends AdminController
             $all_group     = select_list_as_tree('Group', $map, '顶级部门');
 
             // 获取功能模块的后台菜单列表
-            $tree       = new Tree();
-            $moule_list = D('Module')
-                ->where(array('status' => 1))
-                ->select(); // 获取所有安装并启用的功能模块
+            $tree                 = new Tree();
+            $moule_list           = D('Module')->where(array('status' => 1))->select(); // 获取所有安装并启用的功能模块
             $all_module_menu_list = array();
             foreach ($moule_list as $key => $val) {
                 $temp                               = json_decode($val['admin_menu'], true);
@@ -120,7 +123,7 @@ class GroupController extends AdminController
      */
     public function edit($id)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $group_object       = D('Group');
             $_POST['menu_auth'] = json_encode(I('post.menu_auth'));
             $data               = $group_object->create();
@@ -128,7 +131,7 @@ class GroupController extends AdminController
                 if ($group_object->save($data) !== false) {
                     $this->success('更新成功', U('index'));
                 } else {
-                    $this->error('更新失败');
+                    $this->error('更新失败：' . $group_object->getError());
                 }
             } else {
                 $this->error($group_object->getError());
@@ -168,8 +171,11 @@ class GroupController extends AdminController
      * 设置一条或者多条数据的状态
      * @author jry <598821125@qq.com>
      */
-    public function setStatus($model = CONTROLLER_NAME, $script = false)
+    public function setStatus($model = '', $strict = null)
     {
+        if ('' == $model) {
+            $model = request()->controller();
+        }
         $ids = I('request.ids');
         if (is_array($ids)) {
             if (in_array('1', $ids)) {

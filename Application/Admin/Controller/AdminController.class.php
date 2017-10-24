@@ -6,9 +6,13 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Common\Controller\ControllerController;
+use Common\Controller\Controller;
 
 /**
  * 后台公共控制器
@@ -19,7 +23,7 @@ use Common\Controller\ControllerController;
  * 所以综合考虑还是继承比较好。
  * @author jry <598821125@qq.com>
  */
-class AdminController extends ControllerController
+class AdminController extends Controller
 {
     /**
      * 初始化方法
@@ -30,13 +34,23 @@ class AdminController extends ControllerController
         // 登录检测
         if (!is_login()) {
             //还没登录跳转到登录页面
-            $this->redirect('Admin/Public/login');
+            $this->redirect('Admin/Login/login');
         }
-        C('PARSE_VAR', true);
 
-        // 权限检测
-        $current_url = MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME;
-        if ('Admin/Index/index' !== $current_url) {
+        // 演示模式
+        // UID>=2时才有效
+        if ($_SERVER[ENV_PRE . 'APP_DEMO'] === 'true' && is_login() >= 2) {
+            define('APP_DEMO', true);
+        } else {
+            define('APP_DEMO', false);
+        }
+        C('APP_DEMO', APP_DEMO);
+
+        // 获取当前访问地址
+        $current_url = request()->module() . '/' . request()->controller() . '/' . request()->action();
+
+        // 权限检测，首页不需要权限
+        if ('admin/index/index' !== strtolower($current_url)) {
             if (!D('Admin/Group')->checkMenuAuth()) {
                 $this->error('权限不足！', U('Admin/Index/index'));
             }
@@ -54,7 +68,7 @@ class AdminController extends ControllerController
             if (isset($parent_menu_list[0]['top'])) {
                 $current_menu_list = $menu_list[$parent_menu_list[0]['top']];
             } else {
-                $current_menu_list = $menu_list[MODULE_NAME];
+                $current_menu_list = $menu_list[request()->module()];
             }
             $this->assign('_current_menu_list', $current_menu_list); // 后台左侧菜单
             $this->assign('_parent_menu_list', $parent_menu_list); // 后台父级菜单
@@ -62,115 +76,21 @@ class AdminController extends ControllerController
     }
 
     /**
-     * 设置一条或者多条数据的状态
-     * @param $script 严格模式要求处理的纪录的uid等于当前登陆用户UID
+     * 用户登录检测
      * @author jry <598821125@qq.com>
      */
-    public function setStatus($model = CONTROLLER_NAME, $script = false)
+    protected function is_login()
     {
-        $ids    = I('request.ids');
-        $status = I('request.status');
-        if (empty($ids)) {
-            $this->error('请选择要操作的数据');
-        }
-        $model_primary_key       = D($model)->getPk();
-        $map[$model_primary_key] = array('in', $ids);
-        if ($script) {
-            $map['uid'] = array('eq', is_login());
-        }
-        switch ($status) {
-            case 'forbid': // 禁用条目
-                $data = array('status' => 0);
-                $this->editRow(
-                    $model,
-                    $data,
-                    $map,
-                    array('success' => '禁用成功', 'error' => '禁用失败')
-                );
-                break;
-            case 'resume': // 启用条目
-                $data = array('status' => 1);
-                $map  = array_merge(array('status' => 0), $map);
-                $this->editRow(
-                    $model,
-                    $data,
-                    $map,
-                    array('success' => '启用成功', 'error' => '启用失败')
-                );
-                break;
-            case 'recycle': // 移动至回收站
-                $data['status'] = -1;
-                $this->editRow(
-                    $model,
-                    $data,
-                    $map,
-                    array('success' => '成功移至回收站', 'error' => '删除失败')
-                );
-                break;
-            case 'restore': // 从回收站还原
-                $data = array('status' => 1);
-                $map  = array_merge(array('status' => -1), $map);
-                $this->editRow(
-                    $model,
-                    $data,
-                    $map,
-                    array('success' => '恢复成功', 'error' => '恢复失败')
-                );
-                break;
-            case 'delete': // 删除条目
-                $result = D($model)->where($map)->delete();
-                if ($result) {
-                    $this->success('删除成功，不可恢复！');
-                } else {
-                    $this->error('删除失败');
-                }
-                break;
-            default:
-                $this->error('参数错误');
-                break;
-        }
-    }
-
-    /**
-     * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
-     * @param string $model 模型名称,供M函数使用的参数
-     * @param array  $data  修改的数据
-     * @param array  $map   查询时的where()方法的参数
-     * @param array  $msg   执行正确和错误的消息
-     *                       array(
-     *                           'success' => '',
-     *                           'error'   => '',
-     *                           'url'     => '',   // url为跳转页面
-     *                           'ajax'    => false //是否ajax(数字则为倒数计时)
-     *                       )
-     * @author jry <598821125@qq.com>
-     */
-    final protected function editRow($model, $data, $map, $msg)
-    {
-        $id = array_unique((array) I('id', 0));
-        $id = is_array($id) ? implode(',', $id) : $id;
-        //如存在id字段，则加入该条件
-        $fields = D($model)->getDbFields();
-        if (in_array('id', $fields) && !empty($id)) {
-            $where = array_merge(
-                array('id' => array('in', $id)),
-                (array) $where
-            );
-        }
-        $msg = array_merge(
-            array(
-                'success' => '操作成功！',
-                'error'   => '操作失败！',
-                'url'     => ' ',
-                'ajax'    => IS_AJAX,
-            ),
-            (array) $msg
-        );
-        $result = D($model)->where($map)->save($data);
-        if ($result != false) {
-            $this->success($msg['success'], $msg['url'], $msg['ajax']);
+        //用户登录检测
+        $uid = is_login();
+        if ($uid) {
+            return $uid;
         } else {
-            $this->error($msg['error'], $msg['url'], $msg['ajax']);
+            if (request()->isAjax()) {
+                $this->error('请先登录系统', U('Admin/Login/login', '', true, true), array('login' => 1));
+            } else {
+                redirect(U('Admin/Login/login', '', true, true));
+            }
         }
     }
 
@@ -180,20 +100,24 @@ class AdminController extends ControllerController
      */
     public function module_config()
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $id     = (int) I('id');
             $config = I('config');
-            $flag   = D('Admin/Module')
-                ->where("id={$id}")
-                ->setField('config', json_encode($config));
+            foreach ($config as $key => &$val) {
+                if (is_string($val)) {
+                    $val = trim($val); // 去除空格
+                }
+            }
+            $module_model = D('Admin/Module');
+            $flag         = $module_model->where("id={$id}")->setField('config', json_encode($config));
             if ($flag !== false) {
                 $this->success('保存成功');
             } else {
-                $this->error('保存失败');
+                $this->error('保存失败' . $module_model->getError());
             }
         } else {
-            $name        = MODULE_NAME;
-            $config_file = realpath(APP_PATH . $name) . '/' . D('Admin/Module')->install_file();
+            $name        = request()->module();
+            $config_file = realpath(APP_DIR . $name) . '/' . D('Admin/Module')->install_file();
             if (!$config_file) {
                 $this->error('配置文件不存在');
             }
@@ -231,8 +155,8 @@ class AdminController extends ControllerController
                 }
             }
 
-            //使用FormBuilder快速建立表单页面。
-            $builder = new \Common\Builder\FormBuilder();
+            // 使用FormBuilder快速建立表单页面
+            $builder = new \lyf\builder\FormBuilder();
             $builder->setMetaTitle('设置') //设置页面标题
                 ->setPostUrl(U('')) //设置表单提交地址
                 ->addFormItem('id', 'hidden', 'ID', 'ID')
@@ -240,39 +164,5 @@ class AdminController extends ControllerController
                 ->setFormData($module_info)
                 ->display();
         }
-    }
-
-    /**
-     * 扩展日期搜索map
-     * @param $map array 引用型
-     * @param string $field 搜索的时间范围字段
-     * @param string $type datetime  类型 或 timestamp 时间戳
-     * @param boolean $not_empty 是否允许空值搜索到
-     */
-    public function extendDates(&$map, $field = 'update_time', $type = 'datetime', $not_empty = false)
-    {
-        $dates = I('dates', '', 'trim');
-        if ($dates) {
-            $start_date = substr($dates, 0, 10);
-            $end_date   = substr($dates, 11, 10);
-            if ($type == 'datetime') {
-                $map[$field] = [
-                    ['egt', $start_date . ' 00:00:00'],
-                    ['lt', $end_date . ' 23:59:59'],
-                ];
-                if ($not_empty) {
-                    $map[$field][] = ['exp', 'IS NOT NUll'];
-                }
-            } else {
-                $map[$field] = [
-                    ['egt', strtotime($start_date . ' 00:00:00')],
-                    ['lt', strtotime($end_date . ' 23:59:59')],
-                ];
-            }
-        }
-        // else {
-        //     $start_date = datetime("-365 days", 'Y-m-d');
-        //     $end_date   = datetime('now', 'Y-m-d');
-        // }
     }
 }

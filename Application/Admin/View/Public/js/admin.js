@@ -64,14 +64,15 @@ $(function(){
     $('.ct-tab').width($(window).width()-373);
 
     // 打开新Tab
-    $(document).on('click', '#sidebar .open-tab', function() {
+    $(document).on('click', '.open-tab', function(e) {
+        e.preventDefault(); // 取消默认行为
         var tab_url   = $(this).attr('href');
         var tab_name  = $(this).attr('tab-name');
         var is_open   = $('.ct-tab-content #' + tab_name).length;
         if(is_open !== 0){
-            $('.ct-tab a[href=#' + tab_name + ']').tab('show');
+            $('.ct-tab a[href="#' + tab_name + '"]').tab('show');
         } else {
-            var tab  = '<li class="new-add" style="position: relative;float:left;display: inline-block;"><a href="#'
+            var tab  = '<li class="new-add" style="position: relative;float:left;display: inline-block;"><a class="b-r-0" href="#'
                      + tab_name
                      + '" role="tab" data-toggle="tab">'
                      + $(this).html()
@@ -92,6 +93,23 @@ $(function(){
         return false;
     });
 
+    // 给Bootstrap标签切换增加关闭功能
+    $('body').on('click', '.ct-tab-wrap .close', function() {
+        var id = $(this).closest('a[data-toggle="tab"]').attr('href');
+        if(id) {
+            // 删除前先显示前一个tab
+            if ($(id).hasClass('active')) {
+                $(this).closest('li').prev().addClass('active');
+                $($(this).closest('li').prev().find('a').attr('href')).removeClass('fade').addClass('active');
+
+            }
+            // 删除标签对应的内容
+            if ($(id).remove()) {
+                $(this).closest('li').remove();  // 删除标签
+            };
+        }
+    });
+
     // 关闭标签时自动取消左侧导航的active状态
     $(document).on('click', '.nav-close .close', function() {
         var id  = $(this).closest('a[data-toggle="tab"]').attr('href');
@@ -103,6 +121,7 @@ $(function(){
     $(document).on('click', '.close-all', function() {
         $('.new-add').remove();
         $('.ct-tab a:first').tab('show');
+        $('.ct-tab-content .tab-pane').addClass('active in');
     });
 
     // 双击刷新标签

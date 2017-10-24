@@ -6,6 +6,10 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Common\Controller;
 
 /**
@@ -39,9 +43,7 @@ abstract class Addon
         $this->view                         = \Think\Think::instance('Think\View');
         $this->addon_path                   = C('ADDON_PATH') . $this->getName() . '/';
         $TMPL_PARSE_STRING                  = C('TMPL_PARSE_STRING');
-        $TMPL_PARSE_STRING['__ADDONROOT__'] = __ROOT__
-        . '/Addons/'
-        . $this->getName();
+        $TMPL_PARSE_STRING['__ADDONROOT__'] = __ROOT__ . '/Addons/' . $this->getName();
         C('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
         if (is_file($this->addon_path . 'config.php')) {
             $this->config_file = $this->addon_path . 'config.php';
@@ -68,7 +70,7 @@ abstract class Addon
     final protected function display($file = '')
     {
         if ($file == '') {
-            $file = CONTROLLER_NAME;
+            $file = request()->controller();
         }
         if (MODULE_MARK === 'Home') {
             if (C('CURRENT_THEME')) {
@@ -76,14 +78,14 @@ abstract class Addon
                 if (is_file($template)) {
                     $file = $template;
                 }
-                if (IS_WAP) {
+                if (request()->isMobile()) {
                     $wap_template = './Theme/' . C('CURRENT_THEME') . '/Home/Wap/Addons/' . $this->getName() . '/' . $file . '.html';
                     if (is_file($wap_template)) {
                         $file = $wap_template;
                     }
                 }
             } else {
-                if (IS_WAP) {
+                if (request()->isMobile()) {
                     $wap_template = './Addons/' . $this->getName() . '/Wap/' . $file . '.html';
                     if (is_file($wap_template)) {
                         $file = $wap_template;
@@ -112,8 +114,11 @@ abstract class Addon
      * 用于显示模板的方法
      * @author jry <598821125@qq.com>
      */
-    final protected function fetch($templateFile = CONTROLLER_NAME)
+    final protected function fetch($templateFile = '')
     {
+        if ('' == $templateFile) {
+            $templateFile = request()->controller();
+        }
         if (!is_file($templateFile)) {
             $templateFile = $this->addon_path
             . $templateFile

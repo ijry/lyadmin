@@ -6,15 +6,19 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Model;
 
-use Common\Model\ModelModel;
+use Common\Model\Model;
 
 /**
  * 用户模型
  * @author jry <598821125@qq.com>
  */
-class UserModel extends ModelModel
+class UserModel extends Model
 {
     /**
      * 数据库表名
@@ -40,22 +44,11 @@ class UserModel extends ModelModel
         array('password', 'require', '密码不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_INSERT),
         array('password', '6,30', '密码长度为6-30位', self::MUST_VALIDATE, 'length', self::MODEL_INSERT),
         array('password', '/(?!^(\d+|[a-zA-Z]+|[~!@#$%^&*()_+{}:"<>?\-=[\];\',.\/]+)$)^[\w~!@#$%^&*()_+{}:"<>?\-=[\];\',.\/]+$/', '密码至少由数字、字符、特殊字符三种中的两种组成', self::MUST_VALIDATE, 'regex', self::MODEL_INSERT),
-        array('repassword', 'password', '两次输入的密码不一致', self::EXISTS_VALIDATE, 'confirm', self::MODEL_INSERT),
 
         //验证密码
         array('password', 'require', '密码不能为空', self::EXISTS_VALIDATE, 'regex', self::MODEL_UPDATE),
         array('password', '6,30', '密码长度为6-30位', self::EXISTS_VALIDATE, 'length', self::MODEL_UPDATE),
         array('password', '/(?!^(\d+|[a-zA-Z]+|[~!@#$%^&*()_+{}:"<>?\-=[\];\',.\/]+)$)^[\w~!@#$%^&*()_+{}:"<>?\-=[\];\',.\/]+$/', '密码至少由数字、字符、特殊字符三种中的两种组成', self::EXISTS_VALIDATE, 'regex', self::MODEL_UPDATE),
-        array('repassword', 'password', '两次输入的密码不一致', self::EXISTS_VALIDATE, 'confirm', self::MODEL_UPDATE),
-
-        //验证邮箱
-        array('email', 'email', '邮箱格式不正确', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('email', '1,32', '邮箱长度为1-32个字符', self::EXISTS_VALIDATE, 'length', self::MODEL_BOTH),
-        array('email', '', '邮箱被占用', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
-
-        //验证手机号码
-        array('mobile', '/^1\d{10}$/', '手机号码格式不正确', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('mobile', '', '手机号被占用', self::EXISTS_VALIDATE, 'unique', self::MODEL_BOTH),
 
         // 验证注册来源
         array('reg_type', 'require', '注册来源不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_INSERT),
@@ -81,9 +74,18 @@ class UserModel extends ModelModel
      */
     protected function _after_find(&$result, $options)
     {
+        // 获取用户头像地址
         $result['avatar_url'] = get_cover($result['avatar'], 'avatar');
 
-        $result['label'] = $result['nickname'] . '(' . $result['id'];
+        // 用户识别label
+        if (is_dir(APP_DIR . 'User') && (D('Admin/Module')->where('name="User" and status="1"')->count())) {
+            $cert_info = D('User/Cert')->isCert($result['id']);
+        }
+        if (isset($cert_info)) {
+            $result['label'] = $cert_info['cert_title'] . '(' . $result['id'];
+        } else {
+            $result['label'] = $result['nickname'] . '(' . $result['id'];
+        }
         if ($result['email']) {
             $result['label'] = $result['label'] . '-' . $result['email'];
         }
@@ -113,7 +115,7 @@ class UserModel extends ModelModel
         if (!$id) {
             return false;
         }
-        if (D('Admin/Module')->where('name="User" and status="1"')->count()) {
+        if (is_dir(APP_DIR . 'User') && (D('Admin/Module')->where('name="User" and status="1"')->count())) {
             $user_info = D('User/User')->detail($id);
         } else {
             $user_info = $this->find($id);

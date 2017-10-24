@@ -4,226 +4,496 @@
 
 <block name="style">
     <style type="text/css">
-        /* jumbotron */
-        .lyadmin .title {
-            margin-top: 60px;
+        /* 主导航 */
+        /*@media (min-width: 768px) {
+            .top-nav {
+                border: 0;
+                background-color: rgba(0,0,0,0.1);
+                position: absolute;
+                top: 0px;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+            }
+            .top-nav .navbar-nav>li>a {
+                color: #fff;
+            }
+            .main-nav.navbar-inverse{
+                border: 0;
+                background: none;
+                position: absolute;
+                top: 40px;
+                left: 0;
+                right: 0;
+                z-index: 999;
+            }
+            .main-nav.navbar-inverse .navbar-nav>li>a {
+                color: #fff;
+                font-size: 15px;
+                font-weight: 400;
+                padding: 16px 20px 17px;
+                -webkit-transition: all 0.2s;
+            }
+            .main-nav.navbar-inverse .navbar-nav>li>a:hover {
+                background: none;
+                color: #333;
+            }
+            .main-nav.navbar-inverse .navbar-nav>li>a:focus,
+            .main-nav.navbar-inverse .navbar-nav>li.active>a,
+            .main-nav.navbar-inverse .navbar-nav>li.active>a:hover {
+                background: none;
+                color: #fff;
+            }
+            .main-nav.navbar-inverse .navbar-nav>li.dropdown.open>a{
+                background: #5cadff;
+                color: #fff;
+            }
+            .main-nav.navbar-inverse .navbar-nav>li.dropdown.open>.dropdown-menu>li>a:focus,
+            .main-nav.navbar-inverse .navbar-nav>li.dropdown.open>.dropdown-menu>li>a:hover {
+                background: #5cadff;
+                color: #fff;
+            }
+        }*/
+
+        /* 主要内容 */
+        #main {
+            padding: 0;
         }
-        .lyadmin .abstract {
-            margin: 50px 0 70px;
+
+        /* 幻灯片 */
+        #index-carousel .carousel-inner .item,
+        #index-carousel .carousel-inner img {
+            width: 100%;
+            /*height: 520px;*/
         }
-        .lyadmin .action .btn-default {
+        #index-carousel .item-default .btn {
             color: #fff;
             border-color: #fff;
-            background: none;
         }
-        .lyadmin .action .btn-default:hover,
-        .lyadmin .action .btn-default.active {
-            color: #3EA9F5;
+        #index-carousel .item-default .btn:hover {
+            color: #333;
             background: #fff;
+        }
+        @media (max-width: 768px) {
+            #index-carousel .carousel-inner .item,
+            #index-carousel .carousel-inner img {
+                /*height: 200px;*/
+            }
         }
 
         /* section */
         .section {
-            padding: 10px 0;
+            padding: 30px 0;
         }
-        .section h3 {
-            margin-bottom: 30px;
+        .section .section-title {
+            font-size: 36px;
+            color: #464c5b;
+            margin-bottom: 20px;
+        }
+        .section .section-abstract {
+            font-size: 20px;
+            color: #657180;
+            line-height: 2;
+            margin-bottom: 40px;
+        }
+        @media (min-width: 768px) {
+            .section {
+                height: 560px;
+            }
+        }
+        @media (max-width: 768px) {
+            .section .section-title {
+                font-size: 26px;
+                margin: 0;
+                margin-bottom: 8px;
+            }
+            .section .section-abstract {
+                font-size: 15px;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* 功能 */
+        .function-list>.col-xs-12 button.btn {
+            width: 180px;
+            height: 180px;
+        }
+        @media (max-width: 768px) {
+            .function-list>.col-xs-12 button.btn {
+                width: 120px;
+                height: 120px;
+            }
+            .function-list>.col-xs-12 button.btn .fa-5x {
+                font-size: 40px;
+            }
         }
 
         /* 优秀特性 */
-        .section-feature .feature-item {
-            margin-bottom: 30px;
-            position: relative;
+        .feature-list .col-sm-2 {
+            width: 20%;
+        }
+        .feature-list .feature-item {
+            color: #667588;
+            border: 0px solid #fff;
+        }
+        .feature-list .feature-item > span {
+            display: inline-block;
+            padding: 10px 22px;
+            margin:20px;
+            border-radius: 10px;
             cursor: pointer;
         }
-        .section-feature .feature-item .feature-icon{
-            color:#fff;
-            padding-top:30px;
-            padding-bottom: 30px;
+        .feature-list .feature-item > span:focus,
+        .feature-list .feature-item > span:hover {
+            box-shadow: none!important;
+            transform: translateY(5px);
         }
-        .section-feature .feature-item .feature-caption {
-            border: 1px solid rgb(228,229,230);
-            border-top: none;
-            padding-top:15px;
-            padding-bottom: 15px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .section-feature .feature-item .feature-caption h4 {
-            margin: 0px;
-            font-weight: 300;
-            font-size: 14px;
-        }
-        .section-feature .feature-cover {
-            width: 100%;
-            height: 0px;
-            position: absolute;
-            top:0px;
-            left: 0px;
-            opacity: 0;
-            transition: all 0.3s;
+        .feature-list .feature-item .fa {
+            font-size: 60px;
+            font-weight: bold;
             color: #fff;
-            padding: 20px;
         }
-        .section-feature .feature-cover.active{
-            height: 130px;
-            position: absolute;
-            top:0px;
-            left: 0px;
-            opacity: 1;
-            z-index: 10;
+        @media (max-width: 768px) {
+            .feature-list .col-xs-4 {
+                width: 50%;
+            }
+            .feature-list .feature-item p {
+                font-size: 12px;
+            }
+            .feature-list .feature-item .fa {
+                font-size: 40px;
+            }
         }
 
+        /* 数据统计 */
+        .statistics-list .col-xs-12 button.btn {
+            width: 220px;
+            height: 220px;
+        }
         @media (max-width: 768px) {
-            /* section */
-            .section {
-                padding: 0px 0;
+            .statistics-list .col-xs-12 button.btn {
+                width: 90px;
+                height: 90px;
             }
-            .section h3 {
-                margin-bottom: 15px;
+            .statistics-list .numberGrow {
+                font-size: 20px;
             }
+        }
+
+        /* 新闻资讯 */
+        .news ul li {
+            padding: 5px 0;
         }
     </style>
 </block>
 
 <block name="jumbotron">
-    <div class="jumbotron jumbotron-primary jumbotron-background section-feature-slider lyadmin">
-            <div class="container">
-                <div>
-                    <h1 class="title">
-                        {:C('WEB_SITE_TITLE')}
-                        <label class="small">{:C('CURRENT_VERSION')}</label>
-                    </h1>
+    <div id="index-carousel" class="carousel slide" data-ride="carousel" >
+        <!-- 轮播（Carousel）项目 -->
+        <div class="carousel-inner">
+            <lingyun:slider_list name="slider">
+                <div class="item <php>if($i == 1) echo 'active';</php>">
+                    <a target="{$slider.target}" href="{$slider.url}"><img class="item-bg" src="{$slider.cover|get_cover}"></a>
                 </div>
-                <p class="abstract">
-                    {:C('WEB_SITE_DESCRIPTION')}
-                </p>
-                <div class="action">
-                    <a class="btn btn-default btn-pill" target="_blank" href="https://github.com/ijry/lyadmin" ><i class="fa fa-download"></i> 立即下载</a>
-                    <a class="btn btn-default btn-pill" target="_blank" href="https://github.com/ijry/lyadmin"><i class="fa fa-github"></i> GitHub</a>
-                    <a class="btn btn-default btn-pill hidden-xs" target="_blank" href="http://shang.qq.com/wpa/qunwpa?idkey=9e5c6b98cf3bb4265bd6031b25f236cc4c7e596c31612b50d98b5e099cc3d246"><i class="fa fa-qq"></i> QQ群</a>
-                    <a class="btn btn-default btn-pill" target="_blank" href="http://lyadmin.lyunweb.com"><i class="fa fa-flask"></i> 演示</a>
+            </lingyun:slider_list>
+            <?php if(!$__SLIDER_LIST__): ?>
+                <div class="item item-default active">
+                    <img src="__HOME_IMG__/index/banner.jpg" alt="零云">
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
+
+        <?php if($__SLIDER_LIST__): ?>
+            <!-- 幻灯片导航 -->
+            <ol class="carousel-indicators">
+                <lingyun:slider_list name="slider">
+                    <li class="<php> if($i==1) echo 'active';</php>" data-target="#index-carousel" data-slide-to="<?php echo $i-1; ?>"></li>
+                </lingyun:slider_list>
+            </ol>
+
+            <!-- 左右切换按钮 -->
+            <a class="left carousel-control hidden-xs" href="#index-carousel" data-slide="prev"><span class="fa fa-chevron-left"></span></a>
+            <a class="right carousel-control hidden-xs" href="#index-carousel" data-slide="next"><span class="fa fa-chevron-right"></span></a>
+        <?php endif; ?>
     </div>
 </block>
 
 <block name="breadcrumb"></block>
 
 <block name="main">
-    <div class="section section-feature">
+    <div class="section section-function bg-white">
         <div class="container">
-            <div class="row">
-                <div class="col-sm-6 col-sm-offset-3 feature-bg text-center" >
-                    <h3 class="feature-title" style="color:rgb(109,188,245)">优秀特性</h3>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <h3 class="section-title">{:C('WEB_SITE_TITLE')}是什么?</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <p class="section-abstract">{:C('WEB_SITE_DESCRIPTION')}</p>
+                </div>
+            </div>
+            <div class="row function-list text-center">
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-primary-outline btn-pill m-b-sm">
+                                <i class="fa fa-cloud fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #464c5b;">积木式模块化</p>
+                            <p class="text-muted function-abstract">系统功能全面模块化、插件化；应用商城拥有丰富的模块、插件、主题，方便的无限扩展系统。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-warning-outline btn-pill m-b-sm">
+                                <i class="fa fa-tablet fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #464c5b;">多终端多平台支持</p>
+                            <p class="text-muted function-abstract">支持PC、手机Wap、微信、iOS、安卓等流行操作系统平台，真正的一次编写，到处运行。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-4 col-sm-12">
+                            <button class="btn btn-danger-outline btn-pill m-b-sm">
+                                <i class="fa fa-adjust fa-5x"></i>
+                            </button>
+                        </div>
+                        <div class="col-xs-7 col-sm-12">
+                            <p class="m-t-sm" style="color: #464c5b;">多主题支持</p>
+                            <p class="text-muted function-abstract">系统支持多主题机制，允许用户建立自己的个性化主题，每个主题支持只对部分模块进行个性化。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section section-feature" style="background: #f7f7f7;">
+        <div class="container">
+            <div class="row text-center m-b-md">
+                <div class="col-xs-12">
+                    <h3 class="section-title">优秀特性</h3>
                 </div>
             </div>
             <div class="row feature-list">
-                <div class="col-sm-3 col-xs-6">
+                <div class="col-xs-4 col-sm-2">
                     <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(81,175,241)"><span class="fa fa-cloud fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">开发模块化</h4>
+                        <span style="background-color: rgba(236,91,91,.7);box-shadow: 0px 5px #ec5151">
+                            <i class="fa fa-hourglass-1"></i>
+                        </span>
+                        <p>Builder页面生成技术</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(61,186,247,0.7);box-shadow: 0px 5px #3DBAF7;">
+                            <i class="fa fa-check-circle"></i>
+                        </span>
+                        <p>对接阿里大鱼</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(93,89,205,0.7);box-shadow: 0px 5px #5D59CD ">
+                            <i class="fa fa-book"></i>
+                        </span>
+                        <p>文档齐全开发简单</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(42,167,89,0.7);box-shadow: 0px 5px #2AA759">
+                            <i class="fa fa-desktop"></i>
+                        </span>
+                        <p>基于Bootstrap3.3.5</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(245,129,21,0.7);box-shadow: 0px 5px #F58115;">
+                            <i class="fa fa-circle-o-notch"></i>
+                        </span>
+                        <p>基于Framework7</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(104,197,179,0.7);box-shadow: 0px 5px #68C5B3">
+                            <i class="fa fa-server"></i>
+                        </span>
+                        <p>云存储支持</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(101,136,255,0.7);box-shadow: 0px 5px #6588FF">
+                            <i class="fa fa-users"></i>
+                        </span>
+                        <p>多种注册方式</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(253,65,92,0.7);box-shadow: 0px 5px #FD415C;">
+                            <i class="fa fa-cubes"></i>
+                        </span>
+                        <p>完善的消息推送</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(88,180,210,0.7);box-shadow: 0px 5px #58B4D2">
+                            <i class="fa fa-credit-card"></i>
+                        </span>
+                        <p>多种支付方式</p>
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-2">
+                    <div class="feature-item text-center">
+                        <span style="background-color: rgba(103,118,137,0.7);box-shadow: 0px 5px #677689">
+                            <i class="fa fa-heart"></i>
+                        </span>
+                        <p>自主产权技术支持完善</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section section-statistics bg-white">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <h3 class="section-title">数据统计</h3>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-xs-12">
+                    <p class="section-abstract">
+                        零云自发布起，已经服务了上万的企业和开发者，为他们节省了50%以上的开发成本，获得了广大用户的一致好评，希望你能成为下一个令人非常期待的用户！
+                    </p>
+                </div>
+            </div>
+            <div class="row statistics-list text-center">
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-primary-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="39870">0</h3>
+                            </button>
                         </div>
-                        <div class="feature-cover" style="background:rgb(81,175,241)">
-                            <div class="feature-cover-content">
-                                系统功能全面模块化、插件化；可以用来对系统功能进行无限扩展。
-                            </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">下载次数</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(245,181,91)"><span class="fa fa-hourglass-1 fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">Builder页面生成技术</h4>
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-warning-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="11986">0</h3>
+                            </button>
                         </div>
-                        <div class="feature-cover" style="background:rgb(245,181,91)">
-                            <div class="feature-cover-content">
-                                独创的Builder页面自动生成技术极大的解放了后端开发者的工作，只需要专注于业务逻辑，页面交给Builder帮您完成。
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(59,183,225)"><span class="fa fa-tablet fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">多终端多平台支持</h4>
-                        </div>
-                        <div class="feature-cover" style="background:rgb(59,183,225)">
-                            <div class="feature-cover-content">
-                                支持PC、手机Wap、微信等常见界面的页面响应式。
-                            </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">产品用户</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(8,74,155)"><span class="fa fa-book fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">文档齐全开发简单</h4>
+                <div class="col-xs-4 col-sm-4">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button class="btn btn-danger-outline btn-pill">
+                                <h3 class="numberGrow" data-time="1" data-value="2189">0</h3>
+                            </button>
                         </div>
-                        <div class="feature-cover" style="background:rgb(8,74,155)">
-                            <div class="feature-cover-content">
-                                官方开发文档齐全、更新及时，让二次开发变得简单。
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(66,169,243)"><span class="fa fa-flash fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">基于ThinkPHP3.2.3最新版</h4>
-                        </div>
-                        <div class="feature-cover" style="background:rgb(66,169,243)">
-                            <div class="feature-cover-content">
-                                ThinkPHP 是一个免费开源的，快速、简单的面向对象的 轻量级PHP开发框架 ，遵循Apache2开源协议发布，是为了敏捷WEB应用开发和简化企业应用开发而诞生的。
-                            </div>
+                        <div class="col-xs-12">
+                            <p class="m-t-sm" style="color: #333;">成功案例</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(236,64,227)"><span class="fa fa-desktop fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">基于Bootstrap3.3.5</h4>
-                        </div>
-                        <div class="feature-cover" style="background:rgb(236,64,227)">
-                            <div class="feature-cover-content">
-                                官方开发cui前端框架，是在Bootstrap3.3.5基础上扩展出来的完全兼容Bootstrap3的最适合国人的前端框架。
+            </div>
+        </div>
+    </div>
+    <div class="jumbotron jumbotron-primary jumbotron-background m-b-0">
+        <div class="container text-center">
+            <h3 style="font-weight: 300;">
+                <span class="fa fa-download"></span>
+                <a target="_blank" href="https://pan.baidu.com/s/1qYTL45Y" style="color: #fff;">
+                    <span>立即下载免费版</span>
+                </a>
+                <span style="color: #ebb724;">或者</span>
+                <a target="_blank" href="http://www.lingyun.net/price.html" style="color: #fff;">
+                    <span>更多功能的商业版？</span>
+                </a>
+            </h3>
+        </div>
+    </div>
+</block>
+
+<block name="footer-nav">
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6  col-lg-7 footnav-list">
+                    <div class="row">
+                        <!-- 底部导航 开始 -->
+                        <lingyun:nav_list name="vo" pid="0" group="bottom">
+                            <div class="col-xs-12 col-sm-3">
+                                <h4>{$vo.title}</h4>
+                                <ul class="list-unstyled">
+                                    <volist name="vo._child" id="vo1">
+                                        <li>
+                                            <a target="{$vo1.target}" class="text-muted" href="{$vo1.href}">{$vo1.title}</a>
+                                        </li>
+                                    </volist>
+                                </ul>
                             </div>
-                        </div>
+                        </lingyun:nav_list>
+                        <!-- 底部导航 结束 -->
                     </div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(243,152,71)"><span class="fa fa-server fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">独家两种后台模式</h4>
-                        </div>
-                        <div class="feature-cover" style="background:rgb(243,152,71)">
-                            <div class="feature-cover-content">
-                                独创的经典和多标签两种后台，一键切换，让您在合适的场景选择合适的模式。
-                            </div>
-                        </div>
+                <div class="col-xs-12 col-sm-6 col-lg-5 qrcode-list hidden-xs">
+                    <div class="col-xs-6 text-center">
+                        <img src="<?php echo get_cover(C('QR_IOS'), 'qr_ios'); ?>" width="100">
+                        <p>iOS版本</p>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <img src="<?php echo get_cover(C('QR_ANDROID'), 'qr_android');?>" width="100">
+                        <p>Android版本</p>
                     </div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="feature-item text-center">
-                        <div class="feature-icon" style="background:rgb(84,222,234)"><span class="fa fa-heart fa-5x"></span></div>
-                        <div class="feature-caption">
-                            <h4 class="text-center">自主产权技术支持完善</h4>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 m-b-sm">合作伙伴:</div>
+                <div class="col-xs-12 friend-link">
+                    <!-- 合作伙伴 -->
+                    <linkAddon:link name="lk" type="2">
+                        <div class="m-b-xs item">
+                            <a target="_blank" href="{$lk.url}">
+                                <img src="{$lk.logo|get_cover}" alt="{$lk.title}" style="width: 100%;height: 100%;">
+                            </a>
                         </div>
-                        <div class="feature-cover" style="background:rgb(84,222,234)">
-                            <div class="feature-cover-content">
-                                本系统经国家教育部科技查新工作站查新认证、具有国家版权中心软件著作权，完全官方自主研发核心技术，技术支持完善。
-                            </div>
-                        </div>
-                    </div>
+                    </linkAddon:link>
+                </div>
+            </div>
+            <div class="row m-t-sm m-b">
+                <div class="col-xs-12 m-b-xs">友情链接:</div>
+                <div class="col-xs-12 friend-link">
+                    <!-- 友情链接 -->
+                    <linkAddon:link name="lk" type="1">
+                        <span class="m-b-xs m-r">
+                            <a target="_blank" href="{$lk.url}">
+                                {$lk.title}
+                            </a>
+                        </span>
+                    </linkAddon:link>
                 </div>
             </div>
         </div>
@@ -233,6 +503,12 @@
 <block name="script">
     <script type="text/javascript" >
         $(function(){
+            // 数据统计动画
+            $('.numberGrow').on('scrollSpy:enter', function() {
+                $.numberGrow(this);
+            });
+            $('.numberGrow').scrollSpy();
+
             // 特性详情
             $('.feature-item').hover(function() {
                 $(this).children('.feature-cover').addClass('active');

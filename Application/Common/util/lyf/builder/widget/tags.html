@@ -1,0 +1,54 @@
+<case value="tags">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <input type="text" id="[type]{$group_k|default=''}_tag_{$[type]k}" class="form-control" name="{$[type]form.name}" value="{$[type]form.value|default=''}" placeholder="{$[type]form.tip|default=''}" {$[type]form.extra.attr|default=''}>
+            <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/jquery_tokeninput/css/token-input.css">
+            <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/jquery_tokeninput/css/token-input-bootstrap.css">
+            <script type="text/javascript" src="__PUBLIC__/libs/jquery_tokeninput/js/jquery.tokeninput.min.js" charset="utf-8"></script>
+            <script type="text/javascript">
+                $(function(){
+                    //标签自动完成
+                    var tags = $('#[type]{$group_k|default=''}_tag_{$[type]k}'), tagsPre = [];
+                    if (tags.length > 0) {
+                        var items = tags.val().split(','), result = [];
+                        for (var i = 0; i < items.length; i ++) {
+                            var tag = items[i];
+                            if (!tag) {
+                                continue;
+                            }
+                            tagsPre.push({
+                                id      :   tag,
+                                title   :   tag
+                            });
+                        }
+                    }
+                    tags.tokenInput("<?php echo $[type]form['extra']['self']['search']; ?>",{
+                        propertyToSearch    :   'title',
+                        tokenValue          :   'title',
+                        searchDelay         :   0,
+                        tokenLimit          :   <?php echo $[type]form['extra']['self']['limit'] ? : 5; ?>,
+                        preventDuplicates   :   true,
+                        animateDropdown     :   true,
+                        allowFreeTagging    :   <?php echo $[type]form['extra']['self']['free'] ? : true; ?>, // 是否允许添加搜索结果中没有的数据
+                        hintText            :   '请输入标签名',
+                        noResultsText       :   '此标签不存在, 按回车创建',
+                        searchingText       :   '查找中...',
+                        prePopulate         :   tagsPre,
+                        theme               :   'bootstrap',
+                        onAdd: function (item){  //新增系统没有的标签时提交到数据库
+                            <?php if($[type]form['extra']['self']['new']): ?>
+                                $.post("<?php echo $[type]form['extra']['self']['new']; ?>", {'title': item.title});
+                            <?php endif; ?>
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

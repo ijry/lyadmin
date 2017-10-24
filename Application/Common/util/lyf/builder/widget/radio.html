@@ -1,0 +1,35 @@
+<case value="radio">
+    <!--
+        如果选项的值是自定义数组(必须定义key为title的元素)需要解析，如果选项的值是常规字符串直接显示
+        此处主要是用来给option定义更多的属性，比如data-ia=1，那么option应为
+        $option = array('title' => 标题, 'data-id' => 1);
+    -->
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <foreach name="[type]form.options" item="option" key="option_key">
+                <div class="radio-inline lyui-control lyui-radio">
+                    <label for="{$[type]form.name}{$option_key}">
+                        <php>if(is_array($option)):</php>
+                            <input type="radio" id="{$[type]form.name}{$option_key}" class="radio" name="{$[type]form.name}" value="{$option_key}" <?php if($[type]form['value'] == $option_key) echo 'checked';?> {$[type]form.extra.attr|default=''}
+                                <foreach name="option" item="option2" key="option_key2">
+                                    {$option_key2}="{$option2}"
+                                </foreach>>
+                            <span class="lyui-control-indicator"></span>
+                            <span>{$option.title}</span>
+                        <php>else:</php>
+                            <input type="radio" id="{$[type]form.name}{$option_key}" class="radio" name="{$[type]form.name}" value="{$option_key}" <?php if($[type]form['value'] == $option_key) echo 'checked';?> {$[type]form.extra.attr|default=''}> 
+                            <span class="lyui-control-indicator"></span>
+                            <span>{$option}</span>
+                        <php>endif;</php>
+                    </label>
+                </div>
+            </foreach>
+        </div>
+    </div>
+</case>

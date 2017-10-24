@@ -6,48 +6,78 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 
 /**
  * 全局配置文件
  */
 $_config = array(
-    'PRODUCT_NAME'         => 'lyadmin', // 产品名称
-    'LOGO_DEFAULT'         => '<b><span style="color: #2699ed;">lyadmin</span></b>', // 产品Logo
-    'LOGO_INVERSE'         => '<b><span style="color: #fff;">lyadmin</span></b>', // 产品Logo深色背景
-    'CURRENT_VERSION'      => '1.1.2', // 当前版本号
-    'DEVELOP_VERSION'      => 'release', // 开发版本号
-    'BUILD_VERSION'        => '201703191221', // 编译标记
-    'PRODUCT_MODEL'        => 'lyadmin', // 产品型号
+    /**
+     * 根据零云用户协议：
+     * 任何情况下使用零云均需获取官方授权，违者追究法律责任，授权联系：http://www.lingyun.net
+     */
+    'PRODUCT_NAME'         => 'lingyun', // 产品名称
     'PRODUCT_TITLE'        => '零云', // 产品标题
-    'WEBSITE_DOMAIN'       => 'http://lyadmin.lyunweb.com', // 官方网址
+    'LOGO_DEFAULT'         => '<img class="logo" style="max-width: 300px;" src="' . request()->domain() . __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/img/default/logo_title.png">', // 产品Logo
+    'LOGO_INVERSE'         => '<img class="logo" style="max-width: 300px;" src="' . request()->domain() . __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/img/default/logo_title_inverse.png">', // 产品Logo深色背景
+    'CURRENT_VERSION'      => '1.6.2', // 当前版本号
+    'DEVELOP_VERSION'      => 'release', // 开发版本号
+    'BUILD_VERSION'        => '201706011400', // 编译标记
+    'MODEL_NAME'           => 'ultimate', // 产品型号
+    'MODEL_TITLE'          => '旗舰版', // 产品型号标题
+    'WEBSITE_DOMAIN'       => 'http://www.lingyun.net', // 官方网址
     'UPDATE_URL'           => '/appstore/home/core/update', // 官方更新网址
     'TEAM_TITLE'           => '南京科斯克网络科技有限公司', // 公司名称
-    'TEAM_MEMBER'          => '江如意、赵瀚卿、张玥、潘美红、赵川', // 团队成员
+    'TEAM_MEMBER'          => '江如意、赵瀚卿、张玥、潘美红', // 团队成员
     'TEAM_ADDRESS'         => '南京市鼓楼区广东路38号', // 公司地址
     'TEAM_EMAIL'           => 'service@lingyun.net', // 公司邮箱
     'TEAM_PHONE'           => '15005173785', // 公司电话
     'TEAM_QQ'              => '209216005', // 公司QQ
-    'TEAM_QQQUN'           => '252262604', // 公司QQ群
+    'TEAM_QQQUN'           => '105108204', // 公司QQ群
     'AUTH_KEY'             => 'CoreThink', // 系统加密KEY，轻易不要修改此项，否则容易造成用户无法登录，如要修改，务必备份原key
 
     // 不输出模板变量
     'PARSE_VAR'            => false,
+
     // URL模式
     'URL_MODEL'            => '3',
+
+    // Cookie设置
+    'COOKIE_PATH'          => __ROOT__,
+
+    // Session设置
+    'VAR_SESSION_ID'       => 'session_id',
+    'SESSION_OPTIONS'      => array(
+        'expire' => 864000,
+        'type'   => 'Sql',
+    ),
 
     // 全局过滤配置
     'DEFAULT_FILTER'       => '', //TP默认为htmlspecialchars
 
     // 预先加载的标签库
-    'TAGLIB_PRE_LOAD'      => 'Home\\TagLib\\Lingyun',
+    'TAGLIB_PRE_LOAD'      => 'Common\\TagLib\\Lingyun',
 
     // 全局命名空间
     'AUTOLOAD_NAMESPACE'   => array(
-        'Util' => APP_PATH . 'Common/Util/',
+        'lyf'    => APP_DIR . 'Common/util/lyf/',
+        'vendor' => APP_DIR . 'Common/util/vendor/',
     ),
 
     // URL配置
     'URL_CASE_INSENSITIVE' => true, // 不区分大小写
+
+    // 路由设置
+    'URL_ROUTER_ON'        => true,
+    'URL_MAP_RULES'        => array(),
+    'URL_ROUTE_RULES'      => array(
+        'page/:id\d'  => 'Home/nav/page',
+        'list/:cid\d' => 'Home/nav/lists',
+        'post/:id\d'  => 'Home/nav/post',
+    ),
 
     // 应用配置
     'DEFAULT_MODULE'       => 'Home',
@@ -56,33 +86,36 @@ $_config = array(
 
     // 模板相关配置
     'TMPL_PARSE_STRING'    => array(
-        '__PUBLIC__'     => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . '/Public',
-        '__LYUI__'       => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . '/Public/libs/lyui/dist',
-        '__ADMIN_IMG__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/img',
-        '__ADMIN_CSS__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/css',
-        '__ADMIN_JS__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/js',
-        '__ADMIN_LIBS__' => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Admin/View/Public/libs',
-        '__HOME_IMG__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/img',
-        '__HOME_CSS__'   => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/css',
-        '__HOME_JS__'    => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/js',
-        '__HOME_LIBS__'  => (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . __ROOT__ . ltrim(APP_PATH, '.') . 'Home/View/Public/libs',
+        '__ROOT__'       => __ROOT__,
+        '__APP_DIR__'    => APP_DIR,
+        '__PUBLIC__'     => __ROOT__ . '/Public',
+        '__LYUI__'       => __ROOT__ . '/Public/libs/lyui/dist',
+        '__ADMIN_IMG__'  => __ROOT__ . ltrim(APP_DIR, '.') . 'Admin/View/Public/img',
+        '__ADMIN_CSS__'  => __ROOT__ . ltrim(APP_DIR, '.') . 'Admin/View/Public/css',
+        '__ADMIN_JS__'   => __ROOT__ . ltrim(APP_DIR, '.') . 'Admin/View/Public/js',
+        '__ADMIN_LIBS__' => __ROOT__ . ltrim(APP_DIR, '.') . 'Admin/View/Public/libs',
+        '__HOME_IMG__'   => __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/img',
+        '__HOME_CSS__'   => __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/css',
+        '__HOME_JS__'    => __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/js',
+        '__HOME_LIBS__'  => __ROOT__ . ltrim(APP_DIR, '.') . 'Home/View/Public/libs',
     ),
 
     // 系统功能模板
-    'USER_CENTER_SIDE'     => APP_PATH . 'User/View/Index/side.html',
-    'USER_CENTER_INFO'     => APP_PATH . 'User/View/Index/info.html',
-    'USER_CENTER_FORM'     => APP_PATH . 'User/View/Builder/form.html',
-    'USER_CENTER_LIST'     => APP_PATH . 'User/View/Builder/list.html',
-    'HOME_PUBLIC_LAYOUT'   => APP_PATH . 'Home/View/Public/layout.html',
-    'ADMIN_PUBLIC_LAYOUT'  => APP_PATH . 'Admin/View/Public/layout.html',
-    'HOME_PUBLIC_MODAL'    => APP_PATH . 'Home/View/Public/modal.html',
-    'LISTBUILDER_LAYOUT'   => APP_PATH . 'Common/Builder/listbuilder.html',
-    'FORMBUILDER_LAYOUT'   => APP_PATH . 'Common/Builder/formbuilder.html',
+    'USER_CENTER_SIDE'     => APP_DIR . 'User/View/Index/side.html',
+    'USER_CENTER_INFO'     => APP_DIR . 'User/View/Index/info.html',
+    'USER_CENTER_FORM'     => APP_DIR . 'User/View/Builder/form.html',
+    'USER_CENTER_LIST'     => APP_DIR . 'User/View/Builder/list.html',
+    'USER_HOME_INFO'       => APP_DIR . 'User/View/Index/home_info.html',
+    'HOME_PUBLIC_LAYOUT'   => APP_DIR . 'Home/View/Public/layout.html',
+    'ADMIN_PUBLIC_LAYOUT'  => APP_DIR . 'Admin/View/Public/layout.html',
+    'HOME_PUBLIC_MODAL'    => APP_DIR . 'Home/View/Public/modal.html',
+    'LISTBUILDER_LAYOUT'   => BUILDER_DIR . 'listbuilder.html',
+    'FORMBUILDER_LAYOUT'   => BUILDER_DIR . 'formbuilder.html',
 
     // 错误页面模板
-    'TMPL_ACTION_ERROR'    => APP_PATH . 'Home/View/Public/think/error.html', // 错误跳转对应的模板文件
-    'TMPL_ACTION_SUCCESS'  => APP_PATH . 'Home/View/Public/think/success.html', // 成功跳转对应的模板文件
-    'TMPL_EXCEPTION_FILE'  => APP_PATH . 'Home/View/Public/think/exception.html', // 异常页面的模板文件
+    'TMPL_ACTION_ERROR'    => APP_DIR . 'Home/View/Public/think/error.html', // 错误跳转对应的模板文件
+    'TMPL_ACTION_SUCCESS'  => APP_DIR . 'Home/View/Public/think/success.html', // 成功跳转对应的模板文件
+    'TMPL_EXCEPTION_FILE'  => APP_DIR . 'Home/View/Public/think/exception.html', // 异常页面的模板文件
 
     // 文件上传默认驱动
     'UPLOAD_DRIVER'        => 'Local',
@@ -103,7 +136,8 @@ $_config = array(
     ),
 );
 
-// 获取数据库配置信息，手动修改数据库配置请修改./Data/db.php，这里无需改动
+// 获取数据库配置信息
+// 手动修改/Data/db.php或者/Data/dev.php，这里改了没有用的
 if (is_file('./Data/db.php')) {
     $db_config = include './Data/db.php'; // 包含数据库连接配置
 } else {
@@ -133,6 +167,15 @@ if (is_file('./Data/db.php')) {
     }
 }
 
+// 额外配置
+$extra_config = array();
+if (is_file('./Data/extra.php')) {
+    $extra_config = include './Data/extra.php'; // 包含数据库连接配置
+}
+
+// utf8mb4
+$db_config['DB_CHARSET'] = 'utf8mb4';
+
 // 如果数据表字段名采用大小写混合需配置此项
 $db_config['DB_PARAMS'] = array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL);
 
@@ -140,5 +183,6 @@ $db_config['DB_PARAMS'] = array(\PDO::ATTR_CASE => \PDO::CASE_NATURAL);
 return array_merge(
     $_config, // 系统全局默认配置
     $db_config, // 数据库配置数组
-    include APP_PATH . '/Common/Builder/config.php' // 包含Builder配置
+    $extra_config, // 额外配置
+    include BUILDER_DIR . 'config.php' // 包含Builder配置
 );

@@ -1,0 +1,183 @@
+<div class="builder formbuilder-box">
+    {// 额外功能代码top }
+    <?php if(isset($extra_html['top'])): ?>
+        {$extra_html['top']}
+    <?php endif; ?>
+
+    <notempty name="tab_nav">
+        <div class="builder-tabs builder-tabs-link">
+            <ul class="nav nav-tabs">
+                <volist name="tab_nav.tab_list" id="tab">
+                    <li class="<php>if($tab_nav['current_tab'] == $key) echo 'active';</php>"><a href="{$tab.href}">{$tab.title}</a></li>
+                </volist>
+            </ul>
+        </div>
+        <div class="form-group"></div>
+    </notempty>
+
+    {// 数据列表 }
+    <div class="builder-container">
+        <div class="row">
+            <div class="col-xs-12">
+                <form action="{$post_url}" method="post" class="form-horizontal form form-builder">
+                    <div class="form-type-list">
+                        <volist name="form_items" id="form" key="k">
+                            <switch name="form.type">
+                                <include file='[builderpath]/widget/hidden.html' type='' />
+                                {// 不可修改文本 }
+                                <include file='[builderpath]/widget/static.html' type='' />
+                                {// 数字 }
+                                <include file='[builderpath]/widget/num.html' type='' />
+                                {// UID }
+                                <include file='[builderpath]/widget/uid.html' type='' />
+                                {// UIDS }
+                                <include file='[builderpath]/widget/uids.html' type='' />
+                                {// 价格 }
+                                <include file='[builderpath]/widget/price.html' type='' />
+                                {// 字符串 }
+                                <include file='[builderpath]/widget/text.html' type='' />
+                                {// 文本 }
+                                <include file='[builderpath]/widget/textarea.html' type='' />
+                                {// 数组 }
+                                <include file='[builderpath]/widget/array.html' type='' />
+                                {// 密码 }
+                                <include file='[builderpath]/widget/password.html' type='' />
+                                {// 开关 }
+                                <include file='[builderpath]/widget/toggle.html' type='' />
+                                {// 单选按钮 }
+                                <include file='[builderpath]/widget/radio.html' type='' />
+                                {// 复选框 }
+                                <include file='[builderpath]/widget/checkbox.html' type='' />
+                                {// 下拉框 }
+                                <include file='[builderpath]/widget/select.html' type='' />
+                                {// 下拉框(多选) }
+                                <include file='[builderpath]/widget/selects.html' type='' />
+                                {// 图标 }
+                                <include file='[builderpath]/widget/icon.html' type='' />
+                                {// 日期 }
+                                <include file='[builderpath]/widget/date.html' type='' />
+                                {// 时间 }
+                                <include file='[builderpath]/widget/datetime.html' type='' />
+                                {// 图片 }
+                                <include file='[builderpath]/widget/picture.html' type='' />
+                                {// 图片(多图) }
+                                <include file='[builderpath]/widget/pictures.html' type='' />
+                                {// 编辑器 kindeditor }
+                                <include file='[builderpath]/widget/kindeditor.html' type='' />
+                                {// 标签 }
+                                <include file='[builderpath]/widget/tags.html' type='' />
+                                <case value="group">
+                                    <div class="form-group"></div>
+                                    <div class="builder-tabs builder-tabs-tab form-group">
+                                        <?php $group_k = 0; ?>
+                                        <ul class="nav nav-tabs">
+                                            <volist name="form.options" id="li" key="group_k">
+                                                <li data-tab="tab{$group_k}" <eq name="group_k" value="1">class="active"</eq>><a href="#tab{$group_k}" data-toggle="tab">{$li.title}</a></li>
+                                            </volist>
+                                        </ul>
+                                    </div>
+                                    <div class="builder-container">
+                                        <div class="tab-content">
+                                            <volist name="form.options" id="tab" key="group_k">
+                                                <div id="tab{$group_k}" class='tab-pane <eq name="group_k" value="1">active</eq> tab{$group_k}'>
+                                                    <div class="group">
+                                                        <volist name="tab.options" id="tab_form" key="tab_k">
+                                                            <switch name="tab_form.type">
+                                                                <include file='[builderpath]/widget/hidden.html' type='tab_' />
+                                                                {// 不可修改文本 }
+                                                                <include file='[builderpath]/widget/static.html' type='tab_' />
+                                                                {// 数字 }
+                                                                <include file='[builderpath]/widget/num.html' type='tab_' />
+                                                                {// UID }
+                                                                <include file='[builderpath]/widget/uid.html' type='tab_' />
+                                                                {// UIDS }
+                                                                <include file='[builderpath]/widget/uids.html' type='tab_' />
+                                                                {// 价格 }
+                                                                <include file='[builderpath]/widget/price.html' type='tab_' />
+                                                                {// 字符串 }
+                                                                <include file='[builderpath]/widget/text.html' type='tab_' />
+                                                                {// 文本 }
+                                                                <include file='[builderpath]/widget/textarea.html' type='tab_' />
+                                                                {// 数组 }
+                                                                <include file='[builderpath]/widget/array.html' type='tab_' />
+                                                                {// 密码 }
+                                                                <include file='[builderpath]/widget/password.html' type='tab_' />
+                                                                {// 开关 }
+                                                                <include file='[builderpath]/widget/toggle.html' type='tab_' />
+                                                                {// 单选按钮 }
+                                                                <include file='[builderpath]/widget/radio.html' type='tab_' />
+                                                                {// 复选框 }
+                                                                <include file='[builderpath]/widget/checkbox.html' type='tab_' />
+                                                                {// 下拉框 }
+                                                                <include file='[builderpath]/widget/select.html' type='tab_' />
+                                                                {// 下拉框(多选) }
+                                                                <include file='[builderpath]/widget/selects.html' type='tab_' />
+                                                                {// 图标 }
+                                                                <include file='[builderpath]/widget/icon.html' type='tab_' />
+                                                                {// 日期 }
+                                                                <include file='[builderpath]/widget/date.html' type='tab_' />
+                                                                {// 时间 }
+                                                                <include file='[builderpath]/widget/datetime.html' type='tab_' />
+                                                                {// 图片 }
+                                                                <include file='[builderpath]/widget/picture.html' type='tab_' />
+                                                                {// 图片(多图) }
+                                                                <include file='[builderpath]/widget/pictures.html' type='tab_' />
+                                                                {// 编辑器 kindeditor }
+                                                                <include file='[builderpath]/widget/kindeditor.html' type='tab_' />
+                                                                {// 标签 }
+                                                                <include file='[builderpath]/widget/tags.html' type='tab_' />
+                                                                // 扩展类型
+                                                                <default />
+                                                                {:hook('FormBuilderExtend', array('form' => $tab_form, 'type' => tab_))}
+                                                            </switch>
+                                                        </volist>
+                                                    </div>
+                                                </div>
+                                            </volist>
+                                        </div>
+                                    </div>
+                                    <div class="form-group"><hr></div>
+                                </case>
+
+                                // 扩展类型
+                                <default />
+                                {:hook('FormBuilderExtend', array('form' => $form))}
+                            </switch>
+                        </volist>
+                        <empty name="form_items">
+                            <div class="builder-data-empty text-center">
+                                <div class="empty-info">
+                                    <i class="fa fa-database"></i> 暂时没有数据<br>
+                                    <span class="small">本系统由<a href="https://www.lingyun.net" class="text-muted" target="_blank">零云</a>强力驱动</span>
+                                </div>
+                            </div>
+                        </empty>
+                        <div class="form-group"></div>
+                        <div class="form-group bottom_button_list">
+                            <a class="btn btn-primary submit <?php if($ajax_submit) echo 'ajax-post';?>" type="submit" target-form="form-builder"><?php if ($submit_title) {echo $submit_title;} else {echo '确定';} ?></a>
+                            <!--底部按钮-->
+                            <volist name="bottom_button_list" id="vo">
+                                <a <?php if($vo['href']) echo 'href="'.$vo['href'].'"'; ?> <?php if($vo['href']) echo 'url="'.$vo['href'].'"'; ?>  class="{$vo.class} <?php if($ajax_submit && $vo['type'] == 'submit') echo 'ajax-post';?> m-r-xs" type="{$vo.type}" target-form="form-builder">{$vo.title}</a>
+                            </volist>
+                            <?php if($hide_bottom_cancel === false): ?>
+                                <a class="btn btn-danger return" onclick="javascript:history.back(-1);return false;">取消</a>
+                            <?php endif; ?>
+                            <script type="text/javascript">
+                                $('a[type="submit"]').click(function(){
+                                    if (!$(this).hasClass('ajax-post')) {
+                                        $("form.form-builder").submit();
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {// 额外功能代码bottom }
+    <?php if(isset($extra_html['bottom'])): ?>
+        {$extra_html['bottom']}
+    <?php endif; ?>
+</div>

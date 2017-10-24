@@ -17,16 +17,17 @@
     <link rel="apple-touch-icon" type="image/x-icon" href="__ROOT__/logo.png">
     <link rel="stylesheet" type="text/css" href="__LYUI__/css/lyui.min.css">
     <link rel="stylesheet" type="text/css" href="__HOME_CSS__/home.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/animate/animate.min.css">
     <block name="style"></block>
     <!--[if lt IE 9]>
-        <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
-        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <script src="//cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
+        <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script type="text/javascript" src="http://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
     <script type="text/javascript">
         window.jQuery || document.write('<script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"><\/script>');
         window.lingyun = {
-            "app_debug"     : "<?php echo APP_DEBUG; ?>",
+            "app_debug"     : "<?php echo C('app_debug'); ?>",
             "app_debug_msg" : "调试模式已关闭",
             "top_home_page" : "{:C('TOP_HOME_PAGE')}",
             "home_page"     : "{:C('HOME_PAGE')}",
@@ -47,6 +48,99 @@
             <div class="clearfix full-wrap">
                 <div class="clearfix full-header">
                     <block name="header">
+                        <block name="top-nav">
+                            <nav class="navbar navbar-default navbar-mini top-nav hidden-xs" role="navigation">
+                                <div class="container">
+                                    <div class="collapse navbar-collapse">
+                                        <ul class="nav navbar-nav" style="margin-left:-15px">
+                                            <li>
+                                                <a target="_blank" href="#" style="padding-left: 0;">
+                                                    <span>您好，</span>
+                                                    <span>欢迎来到 {:C('WEB_SITE_TITLE')}，{:C('WEB_SITE_SLOGAN')}！</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                        <ul class="nav navbar-nav navbar-right">
+                                            <li>
+                                                <a href="#"
+                                                    data-toggle="popover"
+                                                    title="微信小程序"
+                                                    data-html=true
+                                                    data-placement="bottom"
+                                                    data-trigger="hover"
+                                                    data-content='<div style="width: 120px;"><img width="120" src="<?php echo get_cover(C("QR_IOS"), "qr_weixin_app"); ?>" alt="微信小程序"></div>'>
+                                                    <span class="fa fa-wxapp" style="color: #1aad19;font-weight: 700;"></span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a target="_blank" href="{:U('Wallet/Recharge/index', '', true, true)}">
+                                                    <span class="text-primary">¥</span>
+                                                    <span>充值</span>
+                                                </a>
+                                            </li>
+                                            <?php if($_user_auth): ?>
+                                                <li>
+                                                    <a href="{:U('User/Message/index', '', true, true)}">
+                                                        <span class="fa fa-envelope-o"></span> 消息
+                                                        (<span>{$_new_message|default=0}</span>) <!-- 新消息数量 -->
+                                                    </a>
+                                                </li>
+                                                <li class="dropdown">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <img class="nav-img img-circle" src="{$_user_auth.avatar|get_cover='avatar'}" alt="{$_user_auth.nickname}">
+                                                        <span>{$_user_auth.nickname}</span>
+                                                        <span class="fa fa-angle-down"></span>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a href="{:U('User/Index/index', '', true, true)}">
+                                                                <i class="fa fa-tachometer" style="width: 16px;text-align: center;"></i>
+                                                                个人中心
+                                                            </a>
+                                                        </li>
+                                                        <?php if($_user_nav_main): ?>
+                                                            <li role="separator" class="divider"></li>
+                                                        <?php endif; ?>
+                                                        <volist name="_user_nav_main" id="vo_nav">
+                                                            <li>
+                                                                <a href="{:U($vo_nav['url'], '', true, true)}" class="{$vo_nav.class|default=''}">
+                                                                    <i class="{$vo_nav.icon}" style="width: 16px;text-align: center;"></i>
+                                                                    {$vo_nav.title}
+                                                                </a>
+                                                            </li>
+                                                        </volist>
+                                                        <li role="separator" class="divider"></li>
+                                                        <li>
+                                                            <a href="{:U('User/User/logout', '', true, true)}" class="ajax-get">
+                                                                <i class="fa fa-sign-out" style="width: 16px;text-align: center;"></i>
+                                                                注销登录
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            <?php else: ?>
+                                                <li>
+                                                    <a data-toggle="modal" href="#login-modal">
+                                                        <i class="fa fa-sign-in"></i>
+                                                        <span>登录/注册</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <li>
+                                                <a onmouseover="this.style.cssText='color:gray; text-decoration:none;'" 
+                                                    onmouseout="this.style.cssText='color:white;text-decoration:none'"
+                                                    class="bg bg-primary" style="color: #fff;"
+                                                    href="{:U('User/Cert/index', '', true, true)}">
+                                                    <span>实名认证</span>
+                                                    <span></span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </nav>
+                        </block>
+
                         <block name="main-nav">
                             <nav class="navbar navbar-default main-nav m-a-0" role="navigation">
                                 <div class="container">
@@ -57,38 +151,36 @@
                                             <span class="icon-bar"></span>
                                             <span class="icon-bar"></span>
                                         </button>
-                                        <php>if(C('WEB_SITE_LOGO')):</php>
-                                            <a class="navbar-brand" href="{:C('HOME_PAGE')}">
-                                                <img alt="logo" src="{$Think.config.WEB_SITE_LOGO|get_cover}" style="display: inline-block">
-                                            </a>
-                                        <php>else:</php>
-                                            <a class="navbar-brand" href="{:C('HOME_PAGE')}">
-                                                <span style="font-size: 30px;">{:C('LOGO_DEFAULT')}</span>
-                                            </a>
-                                        <php>endif;</php>
+                                        <a class="navbar-brand" href="{:C('TOP_HOME_PAGE')}">
+                                            <php>if(C('WEB_SITE_LOGO')):</php>
+                                                <img alt="logo" src="<?php echo get_cover(C('WEB_SITE_LOGO_INVERSE')); ?>" style="display: inline-block">
+                                            <php>else:</php>
+                                                <span>{:C('LOGO_DEFAULT')}</span>
+                                            <php>endif;</php>
+                                        </a>
                                     </div>
                                     <div class="collapse navbar-collapse navbar-collapse-main">
-                                        <ul class="nav navbar-nav navbar-left"></ul>
-                                        <ul class="nav navbar-nav navbar-right">
+                                        <ul class="nav navbar-nav navbar-left">
                                             <!-- 主导航 开始 -->
                                             <lingyun:nav_list name="vo" pid="0" group="main">
                                                 <php>if(isset($vo['_child'])):</php>
                                                     <li class="dropdown">
                                                         <a href="{$vo.href}" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                                                            {$vo.title} <span class="caret"></span>
+                                                            <span>{$vo.title}</span>
+                                                            <span class="caret"></span>
                                                         </a>
                                                         <ul class="dropdown-menu">
                                                             <volist name="vo._child" id="vo1">
                                                                 <li>
-                                                                    <a target="{$vo.target}" href="{$vo1.href}">{$vo1.title}</a>
+                                                                    <a target="{$vo1.target}" href="{$vo1.href}">{$vo1.title}</a>
                                                                 </li>
                                                             </volist>
                                                         </ul>
                                                     </li>
                                                 <php>else:</php>
-                                                    <li class="<?php 
-                                                            if(C('HOME_DOMAIN') . $_SERVER['REQUEST_URI'] == $vo['href']) {
-                                                                echo 'active'; 
+                                                    <li class="<?php
+                                                            if(rtrim(C('HOME_DOMAIN') . $_SERVER['REQUEST_URI'], '/') == rtrim($vo['href'], '/')) {
+                                                                echo 'active';
                                                             }
                                                         ?>">
                                                         <a target="{$vo.target}" href="{$vo.href}">
@@ -98,28 +190,210 @@
                                                 <php>endif;</php>
                                             </lingyun:nav_list>
                                             <!-- 主导航 结束 -->
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-ellipsis-h"></i>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li>
+                                                        <lingyun:nav_list name="vo" pid="0" group="main_extend">
+                                                            <li>
+                                                                <a target="{$vo.target}" href="{$vo.href}">
+                                                                    <span> {$vo.title}</span>
+                                                                </a>
+                                                            </li>
+                                                        </lingyun:nav_list>
+                                                    </li>
+                                                </ul>
+                                            </li>
                                         </ul>
+                                        <div class="navbar-right m-r-0 m-t-sm">
+                                            <a target="blank" style="margin-right: -15px;" href="http://demo.lingyun.net" class="btn btn-xs btn-pill btn-success navbar-btn">在线演示</a>
+                                        </div>
                                     </div>
                                 </div>
                             </nav>
+                        </block>
+
+                        <block name="child-nav">
+                            <?php if(($_nav_list_child || $_module_nav_main || $_module_nav_center || $_module_nav['search']) && !$_module_nav['hide']): ?>
+                                <nav class="navbar navbar-inverse child-nav m-a-0 bg-white b-0" role="navigation">
+                                    <div class="container">
+                                        <div class="navbar-header">
+                                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-child">
+                                                <span class="sr-only">切换导航</span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                                <span class="icon-bar"></span>
+                                            </button>
+                                            <a class="navbar-brand" href="{:U('/' . request()->module(), '', true, true)}">
+                                                <!-- 模块子logo -->
+                                                <?php if(C(request()->module() . '_config.title')): ?>
+                                                    <span style="color: #fff;font-size: 16pxs">
+                                                        <?php echo C(request()->module() . '_config.title'); ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <?php if($_current_module): ?>
+                                                        <span style="color: #fff;font-size: 16pxs">
+                                                            <?php echo $_current_module; ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </a>
+                                        </div>
+                                        <div class="collapse navbar-collapse navbar-collapse-child">
+                                            <ul class="nav navbar-nav navbar-left m-l">
+                                                <!-- 导航 开始 -->
+                                                <volist name="_nav_list_child" id="vo">
+                                                    <?php if(isset($vo['_child'])): ?>
+                                                        <li class="dropdown">
+                                                            <a href="{$vo.href}" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                                                <span>{$vo.title}</span>
+                                                                <span class="fa fa-angle-down"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <volist name="vo._child" id="vo1">
+                                                                    <li>
+                                                                        <a target="{$vo1.target}" href="{$vo1.href}">{$vo1.title}</a>
+                                                                    </li>
+                                                                </volist>
+                                                            </ul>
+                                                        </li>
+                                                    <?php else: ?>
+                                                        <li class="<?php
+                                                                if(rtrim(C('HOME_DOMAIN') . $_SERVER['REQUEST_URI'], '/') == rtrim($vo['href'], '/')) {
+                                                                    echo 'active';
+                                                                }
+                                                            ?>">
+                                                            <a target="{$vo.target}" href="{$vo.href}">
+                                                                <span>{$vo.title}</span>
+                                                            </a>
+                                                        </li>
+                                                    <?php endif; ?>
+                                                </volist>
+                                                <!-- 导航 结束 -->
+                                            </ul>
+                                            <?php if(isset($_module_nav['search'])): ?>
+                                                <form class="navbar-form navbar-left" action="{:U($_module_nav['search']['url'])}">
+                                                    <div class="form-group">
+                                                        <input type="text" name="keyword" class="form-control search-input" placeholder="{$_module_nav['search']['placeholder']}" value="{:I('get.keyword')}">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-default search-btn">搜索</button>
+                                                </form>
+                                            <?php endif; ?>
+                                            <ul class="nav navbar-nav navbar-right">
+                                                <volist name="_module_nav_main" id="vo">
+                                                    <li>
+                                                        <a target="{$vo.target}" href="{:U($vo['url'])}">
+                                                            <span class="{$vo.icon}"></span>
+                                                            <span>{$vo.title}</span>
+                                                        </a>
+                                                    </li>
+                                                </volist>
+                                                <?php if(isset($_module_nav_center)): ?>
+                                                    <li class="dropdown">
+                                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                                            <span class="fa fa-navicon"></span>
+                                                        </a>
+                                                        <ul class="dropdown-menu">
+                                                            <volist name="_module_nav_center" id="vo1">
+                                                                <li>
+                                                                    <a href="{:U($vo1['url'])}">{$vo1.title}</a>
+                                                                </li>
+                                                            </volist>
+                                                        </ul>
+                                                    </li>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
+                            <?php else: ?>
+                                <nav class="navbar navbar-inverse child-nav m-a-0 bg-white b-0 hidden" role="navigation">
+                                    <div class="container">
+                                        <div class="collapse navbar-collapse navbar-collapse-child">
+                                            <ul class="nav navbar-nav navbar-left" style="margin-left: -15px;">
+                                                <!-- 主导航 开始 -->
+                                                <lingyun:nav_list name="vo" pid="0" group="main">
+                                                    <php>if(isset($vo['_child'])):</php>
+                                                        <li class="dropdown">
+                                                            <a href="{$vo.href}" style="<?php if($i == 1) echo 'padding-left: 0;' ?>" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                                                <span>{$vo.title}</span>
+                                                                <span class="caret"></span>
+                                                            </a>
+                                                            <ul class="dropdown-menu">
+                                                                <volist name="vo._child" id="vo1">
+                                                                    <li>
+                                                                        <a target="{$vo1.target}" href="{$vo1.href}">{$vo1.title}</a>
+                                                                    </li>
+                                                                </volist>
+                                                            </ul>
+                                                        </li>
+                                                    <php>else:</php>
+                                                        <li class="<?php
+                                                                if(rtrim(C('HOME_DOMAIN') . $_SERVER['REQUEST_URI'], '/') == rtrim($vo['href'], '/')) {
+                                                                    echo 'active';
+                                                                }
+                                                            ?>">
+                                                            <a target="{$vo.target}" href="{$vo.href}" style="<?php if($i == 1) echo 'padding-left: 0;' ?>">
+                                                                <span> {$vo.title}</span>
+                                                            </a>
+                                                        </li>
+                                                    <php>endif;</php>
+                                                </lingyun:nav_list>
+                                                <!-- 主导航 结束 -->
+                                                <li class="dropdown">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa fa-ellipsis-h"></i>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <lingyun:nav_list name="vo" pid="0" group="main_extend">
+                                                                <li>
+                                                                    <a target="{$vo.target}" href="{$vo.href}">
+                                                                        <span> {$vo.title}</span>
+                                                                    </a>
+                                                                </li>
+                                                            </lingyun:nav_list>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
+                            <?php endif; ?>
                         </block>
                     </block>
                 </div>
 
                 <div class="clearfix full-container">
                     <block name="jumbotron">
-                        <div class="jumbotron jumbotron-primary jumbotron-background main-jumbotron text-center m-b-sm">
-                            <h4>简单、高效、卓越 － <span class="small">{:C('WEB_SITE_SLOGAN')}</span></h4>
-                        </div>
+                        <!--
+                            <div class="jumbotron jumbotron-primary jumbotron-background main-jumbotron text-center m-b-sm">
+                                <h4>简单、高效、卓越 － <span class="small">{:C('WEB_SITE_SLOGAN')}</span></h4>
+                            </div>
+                        -->
                     </block>
 
                     <block name="breadcrumb">
                         <!-- 子域名部署支持 -->
-                        <?php if($_current_module && $_current_module !== $meta_title): ?>   <!-- 如果是模块首页则不显示面包屑导航 -->
-                            <div class="container m-t">
-                                <ol class="breadcrumb m-a-0">
-                                    <li><a href="{:C('TOP_HOME_PAGE')}">首页</a></li>
-                                    <li><a href="{:U('/'.MODULE_NAME)}"><?php echo $_current_module; ?></a></li>
+                        <?php if(request()->controller() === 'Index' && request()->action() === 'index'): ?>   <!-- 如果是模块首不显示面包屑导航 -->
+                            <div class="container">
+                                <ol class="breadcrumb main-breadcrumb">
+                                    <li><a href="{:C('TOP_HOME_PAGE')}"><i class="fa fa-home"></i></a></li>
+                                    <?php if($_current_module): ?>
+                                        <li><a href="{:U('/' . request()->module(), '', true, true)}"><?php echo $_current_module; ?></a></li>
+                                    <?php endif; ?>
+                                </ol>
+                            </div>
+                        <?php else: ?>
+                            <div class="container">
+                                <ol class="breadcrumb main-breadcrumb">
+                                    <li><a href="{:C('TOP_HOME_PAGE')}"><i class="fa fa-home"></i></a></li>
+                                    <?php if($_current_module): ?>
+                                        <li><a href="{:U('/' . request()->module(), '', true, true)}"><?php echo $_current_module; ?></a></li>
+                                    <?php endif; ?>
                                     <li class="active">{$meta_title}</li>
                                 </ol>
                             </div>
@@ -127,46 +401,50 @@
                     </block>
 
                     <div id="main" class="main">
-                        <block name="main">这里是内容</block>
+                        <block name="main">
+                            <div class="container">这里是内容</div>
+                        </block>
                     </div>
                 </div>
 
                 <div class="clearfix full-foooter">
                     <block name="footer">
-                        <div class="footer">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-sm-6  col-lg-7 footnav-list">
-                                        <div class="row">
-                                            <!-- 底部导航 开始 -->
-                                            <lingyun:nav_list name="vo" pid="0" group="bottom">
-                                                <div class="col-xs-3">
-                                                    <h4>{$vo.title}</h4>
-                                                    <ul class="list-unstyled">
-                                                        <volist name="vo._child" id="vo1">
-                                                            <li>
-                                                                <a target="{$vo1.target}" class="text-muted" href="{$vo1.href}">{$vo1.title}</a>
-                                                            </li>
-                                                        </volist>
-                                                    </ul>
-                                                </div>
-                                            </lingyun:nav_list>
-                                            <!-- 底部导航 结束 -->
+                        <block name="footer-nav">
+                            <div class="footer">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-6  col-lg-7 footnav-list">
+                                            <div class="row">
+                                                <!-- 底部导航 开始 -->
+                                                <lingyun:nav_list name="vo" pid="0" group="bottom">
+                                                    <div class="col-xs-12 col-sm-3">
+                                                        <h4>{$vo.title}</h4>
+                                                        <ul class="list-unstyled">
+                                                            <volist name="vo._child" id="vo1">
+                                                                <li>
+                                                                    <a target="{$vo1.target}" class="text-muted" href="{$vo1.href}">{$vo1.title}</a>
+                                                                </li>
+                                                            </volist>
+                                                        </ul>
+                                                    </div>
+                                                </lingyun:nav_list>
+                                                <!-- 底部导航 结束 -->
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-6 col-lg-5 qrcode-list">
-                                        <div class="col-xs-6 text-center">
-                                            <img src="<?php echo get_cover(C('QR_IOS'), 'qr_ios'); ?>" width="100">
-                                            <p>iOS版本</p>
-                                        </div>
-                                        <div class="col-xs-6 text-center">
-                                            <img src="<?php echo get_cover(C('QR_ANDROID'), 'qr_android');?>" width="100">
-                                            <p>Android版本</p>
+                                        <div class="col-xs-12 col-sm-6 col-lg-5 qrcode-list hidden-xs">
+                                            <div class="col-xs-6 text-center">
+                                                <img src="<?php echo get_cover(C('QR_IOS'), 'qr_ios'); ?>" width="100">
+                                                <p>iOS版本</p>
+                                            </div>
+                                            <div class="col-xs-6 text-center">
+                                                <img src="<?php echo get_cover(C('QR_ANDROID'), 'qr_android');?>" width="100">
+                                                <p>Android版本</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </block>
                         <div class="footer-bottom">
                             <div class="container">
                                 <ul class="list-inline pull-left">
@@ -174,7 +452,6 @@
                                     <li><span class="copyright">{:C('WEB_SITE_COPYRIGHT')}</span></li>
                                 </ul>
                                 <ul class="list-inline pull-right hidden-xs">
-                                    <li><span><a target="_blank" href="http://weex-china.org">weex中文网</a></span></li>
                                     <li><span>Powered By <a target="_blank" href="http://www.lingyun.net">零云</a></span></li>
                                 </ul>
                             </div>
@@ -203,7 +480,7 @@
                         var $nav_list = $(".main-nav .navbar-right");
                         var $current = $nav_list.find("li.active");
                         if ($current.length == 0) {
-                            var url = "<?php echo U('/'.MODULE_NAME, '', true, true); ?>";
+                            var url = "<?php echo U('/'.request()->module(), '', true, true); ?>";
                             $('.navbar li a[href="' + url + '"]').closest('li').addClass('active');
                         }
                     });

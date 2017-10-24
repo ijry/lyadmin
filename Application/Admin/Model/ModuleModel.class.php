@@ -6,17 +6,20 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Model;
 
-use Common\Model\ModelModel;
-use Think\Storage;
-use Util\Tree;
+use Common\Model\Model;
+use lyf\Tree;
 
 /**
  * 功能模块模型
  * @author jry <598821125@qq.com>
  */
-class ModuleModel extends ModelModel
+class ModuleModel extends Model
 {
     /**
      * 数据库表名
@@ -62,8 +65,12 @@ class ModuleModel extends ModelModel
      * 获取模块菜单
      * @author jry <598821125@qq.com>
      */
-    public function getAdminMenu($module_name = MODULE_NAME)
+    public function getAdminMenu($module_name = '')
     {
+        if ('' == $module_name) {
+            $module_name = request()->module();
+        }
+
         // 获取模块左侧导航
         $where['name']   = $module_name;
         $module_info     = $this->where($where)->find();
@@ -78,20 +85,24 @@ class ModuleModel extends ModelModel
      * 获取模块当前菜单
      * @author jry <598821125@qq.com>
      */
-    public function getCurrentMenu($module_name = MODULE_NAME)
+    public function getCurrentMenu($module_name = '')
     {
+        if ('' == $module_name) {
+            $module_name = request()->module();
+        }
         $admin_menu = $this->getFieldByName($module_name, 'admin_menu');
         $admin_menu = json_decode($admin_menu, true);
         foreach ($admin_menu as $key => $val) {
             if (isset($val['url'])) {
-                $config_url  = U($val['url']);
-                $current_url = U(MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME);
-                if ($config_url === $current_url) {
+                $config_url   = U($val['url']); // url一般是Shop/Index/index格式
+                $current_url  = U(request()->module() . '/' . request()->controller() . '/' . request()->action());
+                $current_url2 = request()->url(); // 权限管理支持模块菜单如Shop/Index/index/status/1这样带参数的节点验证
+                if ($config_url === $current_url || $config_url === $current_url2) {
                     $result = $val;
+                    return $result;
                 }
             }
         }
-        return $result;
     }
 
     /**
@@ -132,8 +143,11 @@ class ModuleModel extends ModelModel
      * @return array 父级菜单集合
      * @author jry <598821125@qq.com>
      */
-    public function getParentMenu($current_menu = '', $module_name = MODULE_NAME)
+    public function getParentMenu($current_menu = '', $module_name = '')
     {
+        if ('' == $module_name) {
+            $module_name = request()->module();
+        }
         if (!$current_menu) {
             $current_menu = $this->getCurrentMenu();
         }
@@ -145,14 +159,17 @@ class ModuleModel extends ModelModel
         $pid        = $current_menu['pid'];
         $temp       = array();
         $result[]   = $current_menu;
-        while (true) {
+        $i          = 0;
+        while (true && $pid != '0') {
             foreach ($admin_menu as $key => $val) {
                 if ($val['id'] == $pid) {
                     $pid = $val['pid'];
                     array_unshift($result, $val); // 将父菜单插入到第一个元素前
+                    break;
                 }
             }
-            if ($pid == '0') {
+            $i++;
+            if ($pid == '0' || ($i == 1 && count($result) < 2)) {
                 break;
             }
         }
@@ -168,10 +185,10 @@ class ModuleModel extends ModelModel
     {
         // 获取除了Common等系统模块外的用户模块
         // 文件夹下必须有$install_file定义的安装描述文件
-        $dirs = array_map('basename', glob(APP_PATH . '*', GLOB_ONLYDIR));
+        $dirs = array_map('basename', glob(APP_DIR . '*', GLOB_ONLYDIR));
         foreach ($dirs as $dir) {
-            $config_file = realpath(APP_PATH . $dir) . '/' . $this->install_file();
-            if (Storage::has($config_file)) {
+            $config_file = APP_DIR . $dir . '/' . $this->install_file();
+            if (is_file($config_file)) {
                 $module_dir_list[]                      = $dir;
                 $temp_arr                               = include $config_file;
                 $temp_arr['info']['status']             = -1; //未安装
@@ -192,36 +209,37 @@ class ModuleModel extends ModelModel
             $module_list = array_merge($module_list, $new_module_list);
         }
 
+        // 右侧按钮
         foreach ($module_list as &$val) {
             switch ($val['status']) {
                 case '-2': // 损坏
-                    $val['status_icon']                          = '<span class="text-danger">删除记录</span>';
+                    $val['status_icon']                          = '<span class="label label-danger">已损坏</span>';
                     $val['right_button']['damaged']['title']     = '删除记录';
-                    $val['right_button']['damaged']['attribute'] = 'class="label label-danger ajax-get" href="' . U('setStatus', array('status' => 'delete', 'ids' => $val['id'])) . '"';
+                    $val['right_button']['damaged']['attribute'] = 'class="label label-danger-outline label-pill ajax-get" href="' . U('setStatus', array('status' => 'delete', 'ids' => $val['id'])) . '"';
                     break;
                 case '-1': // 未安装
-                    $val['status_icon']                                 = '<i class="fa fa-download text-success"></i>';
+                    $val['status_icon']                                 = '<i class="label label-primary">未安装</i>';
                     $val['right_button']['install_before']['title']     = '安装';
-                    $val['right_button']['install_before']['attribute'] = 'class="label label-success" href="' . U('install_before', array('name' => $val['name'])) . '"';
+                    $val['right_button']['install_before']['attribute'] = 'class="label label-success-outline label-pill" href="' . U('install_before', array('name' => $val['name'])) . '"';
                     break;
                 case '0': // 禁用
-                    $val['status_icon']                                   = '<i class="fa fa-ban text-danger"></i>';
+                    $val['status_icon']                                   = '<i class="label label-warning">已禁用</i>';
                     $val['right_button']['update_info']['title']          = '更新菜单';
-                    $val['right_button']['update_info']['attribute']      = 'class="label label-info ajax-get no-refresh" href="' . U('updateInfo', array('id' => $val['id'])) . '"';
+                    $val['right_button']['update_info']['attribute']      = 'class="label label-info-outline label-pill ajax-get no-refresh" href="' . U('updateInfo', array('id' => $val['id'])) . '"';
                     $val['right_button']['forbid']['title']               = '启用';
-                    $val['right_button']['forbid']['attribute']           = 'class="label label-success ajax-get" href="' . U('setStatus', array('status' => 'resume', 'ids' => $val['id'])) . '"';
+                    $val['right_button']['forbid']['attribute']           = 'class="label label-success-outline label-pill ajax-get" href="' . U('setStatus', array('status' => 'resume', 'ids' => $val['id'])) . '"';
                     $val['right_button']['uninstall_before']['title']     = '卸载';
-                    $val['right_button']['uninstall_before']['attribute'] = 'class="label label-danger " href="' . U('uninstall_before', array('id' => $val['id'])) . '"';
+                    $val['right_button']['uninstall_before']['attribute'] = 'class="label label-danger-outline label-pill " href="' . U('uninstall_before', array('id' => $val['id'])) . '"';
                     break;
                 case '1': // 正常
-                    $val['status_icon']                              = '<i class="fa fa-check text-success"></i>';
+                    $val['status_icon']                              = '<i class="label label-success">已安装</i>';
                     $val['right_button']['update_info']['title']     = '更新菜单';
-                    $val['right_button']['update_info']['attribute'] = 'class="label label-info ajax-get no-refresh" href="' . U('updateInfo', array('id' => $val['id'])) . '"';
+                    $val['right_button']['update_info']['attribute'] = 'class="label label-info-outline label-pill ajax-get no-refresh" href="' . U('updateInfo', array('id' => $val['id'])) . '"';
                     if (!$val['is_system']) {
                         $val['right_button']['forbid']['title']               = '禁用';
-                        $val['right_button']['forbid']['attribute']           = 'class="label label-warning ajax-get" href="' . U('setStatus', array('status' => 'forbid', 'ids' => $val['id'])) . '"';
+                        $val['right_button']['forbid']['attribute']           = 'class="label label-warning-outline label-pill ajax-get" href="' . U('setStatus', array('status' => 'forbid', 'ids' => $val['id'])) . '"';
                         $val['right_button']['uninstall_before']['title']     = '卸载';
-                        $val['right_button']['uninstall_before']['attribute'] = 'class="label label-danger " href="' . U('uninstall_before', array('id' => $val['id'])) . '"';
+                        $val['right_button']['uninstall_before']['attribute'] = 'class="label label-danger-outline label-pill " href="' . U('uninstall_before', array('id' => $val['id'])) . '"';
                     }
                     break;
             }

@@ -1,0 +1,16 @@
+<case value="array">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+    <label class="left control-label">
+        	<?php if($[type]form['extra']['must']): ?>
+        		<span style="color: red;">*</span>
+        	<?php endif; ?>
+        	<span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <textarea class="form-control textarea" rows="5" name="{$[type]form.name}" {$[type]form.extra.attr|default=''}>{$[type]form.value|default=''}</textarea>
+            <notempty name="[type]form.tip">
+                <span class="check-tips small">{$[type]form.tip|default=''}</span>
+            </notempty>
+        </div>
+    </div>
+</case>

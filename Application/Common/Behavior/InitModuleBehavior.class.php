@@ -6,11 +6,16 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Common\Behavior;
 
 use Think\Behavior;
 
 defined('THINK_PATH') or exit();
+
 /**
  * 初始化允许访问模块信息
  * @author jry <598821125@qq.com>
@@ -34,6 +39,10 @@ class InitModuleBehavior extends Behavior
         // 获取数据库存储的配置
         $database_config = D('Admin/Config')->lists();
 
+        // 兼容2.0规范
+        $config['APP_DEBUG']       = APP_DEBUG;
+        $config['SHOW_PAGE_TRACE'] = $database_config['APP_TRACE'];
+
         // URL_MODEL必须在app_init阶段就从数据库读取出来应用
         // 不然系统就会读取config.php中的配置导致后台的配置失效
         $config['URL_MODEL'] = $database_config['URL_MODEL'];
@@ -49,32 +58,24 @@ class InitModuleBehavior extends Behavior
         if (MODULE_MARK === 'Admin') {
             $module_allow_list[] = 'Admin';
             $config['URL_MODEL'] = 3;
+
+            // 后台只输入{域名}/admin.php即可进入后台首页
+            if (request()->pathinfo() === '/') {
+                $_SERVER['PATH_INFO'] = 'Admin/Index/index';
+            }
         }
         C('MODULE_ALLOW_LIST', $module_allow_list);
 
-        // 如果是后台访问自动设置默认模块为Admin
-        if (MODULE_MARK === 'Admin') {
-            C('DEFAULT_MODULE', 'Admin');
-        }
-
         // 设置默认模块
-        if ($database_config['DEFAULT_MODULE']) {
+        if ($database_config['DEFAULT_MODULE'] && MODULE_MARK === 'Home') {
             $config['DEFAULT_MODULE'] = $database_config['DEFAULT_MODULE'];
         }
 
-        // 设置WAP和微信标记
-        define('IS_WAP', is_wap() ? true : false);
-        define('IS_WEIXIN', is_weixin() ? true : false);
-
-        // 获取不带端口的域名
-        $_host = explode(':', $_SERVER['HTTP_HOST']);
-        define('HTTP_HOST', $_host[0]);
-
-        // 获取scheme
-        define('HTTP_SCHEME', (is_ssl() ? 'https' : 'http'));
-
-        // 获取域名
-        define('HTTP_DOMAIN', HTTP_SCHEME . '://' . $_SERVER['HTTP_HOST']);
+        // 系统主页地址配置
+        $config['TOP_HOME_DOMAIN'] = request()->domain();
+        $config['HOME_DOMAIN']     = request()->domain();
+        $config['HOME_PAGE']       = $config['HOME_DOMAIN'] . __ROOT__;
+        $config['TOP_HOME_PAGE']   = $config['TOP_HOME_DOMAIN'] . __ROOT__;
 
         C($config);
     }

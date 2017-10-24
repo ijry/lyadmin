@@ -6,16 +6,20 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Model;
 
-use Common\Model\ModelModel;
-use Util\Tree;
+use Common\Model\Model;
+use lyf\Tree;
 
 /**
  * 导航模型
  * @author jry <598821125@qq.com>
  */
-class NavModel extends ModelModel
+class NavModel extends Model
 {
     /**
      * 数据库表名
@@ -58,23 +62,23 @@ class NavModel extends ModelModel
                 if (!$result['url']) {
                     $result['href'] = C('HOME_PAGE');
                 } else {
-                    if (stristr($result['url'], (is_ssl() ? 'https://' : 'http://'))) {
+                    if (strpos($result['url'], "http") === 0) {
                         $result['href'] = $result['url'];
                     } else {
-                        $result['href'] = U($result['url'], '', true, true);
+                        $result['href'] = U($result['url'], '', true, !C('IS_API'));
                     }
                 }
                 break;
             case 'module':
                 $result['module_name'] = $result['value'];
-                $result['href']        = U('/' . ucfirst($result['value']), '', true, true);
+                $result['href']        = U('/' . ucfirst($result['value']), '', false, !C('IS_API'));
                 break;
             case 'page':
                 $result['content'] = $result['value'];
-                $result['href']    = U('Home/Nav/page', array('id' => $result['id']), true, true);
+                $result['href']    = U('Home/Nav/page', array('id' => $result['id']), true, !C('IS_API'));
                 break;
             case 'post':
-                $result['href'] = U('Home/Nav/lists', array('cid' => $result['id']), true, true);
+                $result['href'] = U('Home/Nav/lists', array('cid' => $result['id']), true, !C('IS_API'));
                 break;
         }
     }
@@ -94,7 +98,7 @@ class NavModel extends ModelModel
      * 导航类型
      * @author jry <598821125@qq.com>
      */
-    public function nav_type($id = 0)
+    public function nav_type($id = '')
     {
         $list['link']   = '链接';
         $list['module'] = '模块';
@@ -107,7 +111,7 @@ class NavModel extends ModelModel
      * 根据导航类型获取值
      * @author jry <598821125@qq.com>
      */
-    public function get_value_by_type($value)
+    public function get_value_by_type($value = '')
     {
         if (!$value) {
             switch (I('post.type')) {
@@ -167,15 +171,8 @@ class NavModel extends ModelModel
      */
     public function getNavTree($id = 0, $group = 'main', $field = true)
     {
-        if (!in_array(MODULE_NAME, array('Home', 'Admin', 'Common', 'Install')) && is_file(APP_PATH . MODULE_NAME . '/Model/NavModel.class.php')) {
-            $module_nav_tree = D(MODULE_NAME . '/Nav')->getNavTree($id, $group, $field);
-            if ($module_nav_tree) {
-                return $module_nav_tree;
-            }
-        }
-
         // 开启默认模块并且使用默认模块布局
-        if (C('DEFAULT_MODULE_LAYOUT') && C('DEFAULT_PUBLIC_LAYOUT') && is_file(APP_PATH . C('DEFAULT_MODULE') . '/Model/NavModel.class.php')) {
+        if (C('DEFAULT_MODULE_LAYOUT') && C('DEFAULT_PUBLIC_LAYOUT') && is_file(APP_DIR . C('DEFAULT_MODULE') . '/Model/NavModel.class.php')) {
             $module_nav_tree = D(C('DEFAULT_MODULE') . '/Nav')->getNavTree($id, $group, $field);
             if ($module_nav_tree) {
                 return $module_nav_tree;
@@ -205,6 +202,26 @@ class NavModel extends ModelModel
             return $this->getSameLevelNavTree($id);
         }
         return $list;
+    }
+
+    /**
+     * 获取导航树，指定导航则返回指定导航的子导航树，不指定则返回所有导航树，指定导航若无子导航则返回同级导航
+     * @param  integer $id    导航ID
+     * @param  boolean $field 查询字段
+     * @return array          导航树
+     * @author jry <598821125@qq.com>
+     */
+    public function getNavTreeChild($id = 0, $group = 'main', $field = true, $module = '')
+    {
+        if (!$module) {
+            $module = request()->module();
+        }
+        if (!in_array($module, array('Home', 'Admin', 'Common', 'Install')) && is_file(APP_DIR . $module . '/Model/NavModel.class.php')) {
+            $module_nav_tree = D($module . '/Nav')->getNavTree($id, $group, $field);
+            if ($module_nav_tree) {
+                return $module_nav_tree;
+            }
+        }
     }
 
     /**

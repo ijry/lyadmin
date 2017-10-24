@@ -1,0 +1,40 @@
+<case value="date">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
+                <input type="text" id="[type]{$group_k|default=''}_date_{$[type]k}"
+                    class="form-control input date" name="{$[type]form.name}" value="
+<?php
+    if(isset($[type]form['value'])) {
+        if(is_numeric($[type]form['value'])) {
+            echo time_format($[type]form['value'], 'Y-m-d');
+        } else {
+            echo $[type]form['value'];
+        }
+    } else {
+        echo(date('Y-m-d'));
+    }
+?>" {$[type]form.extra.attr|default=''}>
+            </div>
+            <script type="text/javascript">
+                $(function(){
+                    $('#[type]{$group_k|default=''}_date_{$[type]k}').datetimepicker({
+                        format      : 'yyyy-mm-dd',
+                        autoclose   : true,
+                        minView     : 'month',
+                        todayBtn    : 'linked',
+                        language    : 'zh-CN',
+                        fontAwesome : true
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

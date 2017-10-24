@@ -1,0 +1,18 @@
+<case value="num">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <input type="text" class="form-control input num" name="{$[type]form.name}" value="{$[type]form.value|default=''}" placeholder="{$[type]form.tip|default=''}" {$[type]form.extra.attr|default=''}>
+            <notempty name="[type]form.tip">
+                <div>
+                    <span class="check-tips text-muted small">{$[type]form.tip|default=''}</span>
+                </div>
+            </notempty>
+        </div>
+    </div>
+</case>

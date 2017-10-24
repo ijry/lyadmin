@@ -15,7 +15,7 @@
                 <span>参数设置</span>
             </div>
             <div class="panel-body">
-                <form class="form" action="__SELF__" method="post" target="_self">
+                <form class="form" action="{:url('')}" method="post" target="_self">
                     <h2>数据库连接信息</h2>
                     <div class="form-group">
                         <label class="control-label">数据库连接类型</label>
@@ -32,9 +32,15 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="control-label">数据库端口</label>
+                        <div class="control-group">
+                            <input class="form-control" type="text" name="db[DB_PORT]" value="3306">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label">数据库名</label>
                         <div class="control-group">
-                            <input class="form-control" type="text" name="db[DB_NAME]" value="{:C('PRODUCT_MODEL')}">
+                            <input class="form-control" type="text" name="db[DB_NAME]" value="lingyun_{:C('MODEL_NAME')}">
                         </div>
                     </div>
                     <div class="form-group">
@@ -63,12 +69,12 @@
                     <div class="form-group">
                         <label class="control-label">数据表前缀，同一个数据库运行多个系统时请修改为不同的前缀</label>
                         <div class="control-group">
-                            <input class="form-control" type="text" name="db[DB_PREFIX]" value="{$Think.config.ORIGINAL_TABLE_PREFIX}">
+                            <input class="form-control" type="text" name="db[DB_PREFIX]" value="{:C('ORIGINAL_TABLE_PREFIX')}">
                         </div>
                     </div>
+                    <input type="submit" class="btn btn-primary btn-block ajax-post" target-form="form" value="下一步">
+                    <a class="btn btn btn-default btn-block" href="{:U('step2')}">上一步</a>
                 </form>
-                <input type="submit" class="btn btn-primary btn-block ajax-post" target-form="form" value="下一步">
-                <a class="btn btn btn-default btn-block" href="{:U('step2')}">上一步</a>
             </div>
             <div class="panel-footer">
                 <span>版权所有 (c) 2014－<php>echo date("Y",time());</php>{:C('INSTALL_COMPANY_NAME')} 保留所有权利。</span>

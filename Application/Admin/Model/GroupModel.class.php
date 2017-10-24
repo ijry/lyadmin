@@ -6,15 +6,19 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Model;
 
-use Common\Model\ModelModel;
+use Common\Model\Model;
 
 /**
  * 部门模型
  * @author jry <598821125@qq.com>
  */
-class GroupModel extends ModelModel
+class GroupModel extends Model
 {
     /**
      * 数据库表名
@@ -55,7 +59,7 @@ class GroupModel extends ModelModel
             $group_info = $this->find($user_group);
             // 获得当前登录用户所属部门的权限列表
             $group_auth = json_decode($group_info['menu_auth'], true);
-            if (in_array($current_menu['id'], $group_auth[MODULE_NAME])) {
+            if (in_array($current_menu['id'], $group_auth[request()->module()])) {
                 return true;
             }
         } else {

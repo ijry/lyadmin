@@ -6,10 +6,14 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Think\Page;
-use Util\Sql;
+use lyf\Page;
+use lyf\Sql;
 
 /**
  * 扩展后台管理页面
@@ -27,18 +31,17 @@ class AddonController extends AdminController
         // 获取所有插件信息
         $p            = !empty($_GET["p"]) ? $_GET['p'] : 1;
         $addon_object = D('Addon');
-        $addons       = $addon_object
-            ->getAllAddon();
+        $addons       = $addon_object->getAllAddon();
 
-        // 使用Builder快速建立列表页面。
-        $builder = new \Common\Builder\ListBuilder();
+        // 使用Builder快速建立列表页面
+        $builder = new \lyf\builder\ListBuilder();
         $builder->setMetaTitle('插件列表') // 设置页面标题
             ->addTopButton('resume') // 添加启用按钮
             ->addTopButton('forbid') // 添加禁用按钮
-            ->addTableColumn('name', '标识')
+            ->addTableColumn('name', '标识', '', '', '80')
             ->addTableColumn('title', '名称')
-            ->addTableColumn('description', '描述')
-            ->addTableColumn('status', '状态')
+            ->addTableColumn('description', '描述', '', '', '250')
+            ->addTableColumn('status_icon', '状态')
             ->addTableColumn('author', '作者')
             ->addTableColumn('version', '版本')
             ->addTableColumn('right_button', '操作', 'btn')
@@ -52,20 +55,21 @@ class AddonController extends AdminController
      */
     public function config()
     {
-        if (IS_POST) {
+        $addon_model = D('Addon');
+        if (request()->isPost()) {
             $id     = (int) I('id');
             $config = I('config');
-            $flag   = D('Addon')
+            $flag   = $addon_model
                 ->where("id={$id}")
                 ->setField('config', json_encode($config));
             if ($flag !== false) {
                 $this->success('保存成功', U('index'));
             } else {
-                $this->error('保存失败');
+                $this->error('保存失败：' . $addon_model->getError());
             }
         } else {
             $id    = (int) I('id');
-            $addon = D('Addon')->find($id);
+            $addon = $addon_model->find($id);
             if (!$addon) {
                 $this->error('插件未安装');
             }
@@ -81,13 +85,19 @@ class AddonController extends AdminController
             $addon['config']        = include $data->config_file;
             if ($db_config) {
                 $db_config = json_decode($db_config, true);
-                foreach ($addon['config'] as $key => $value) {
-                    if ($value['type'] != 'group') {
-                        $addon['config'][$key]['value'] = $db_config[$key];
-                    } else {
-                        foreach ($value['options'] as $gourp => $options) {
-                            foreach ($options['options'] as $gkey => $value) {
-                                $addon['config'][$key]['options'][$gourp]['options'][$gkey]['value'] = $db_config[$gkey];
+                if (count($addon['config']) >= 1) {
+                    foreach ($addon['config'] as $key => $value) {
+                        if ($value['type'] != 'group' && isset($db_config[$key])) {
+                            $addon['config'][$key]['value'] = $db_config[$key];
+                        } else {
+                            if (isset($value['options'])) {
+                                foreach ($value['options'] as $gourp => $options) {
+                                    if (isset($options['options'])) {
+                                        foreach ($options['options'] as $gkey => $value) {
+                                            $addon['config'][$key]['options'][$gourp]['options'][$gkey]['value'] = $db_config[$gkey];
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -111,8 +121,8 @@ class AddonController extends AdminController
                 $this->assign('custom_config', $this->fetch($addon['addon_path'] . $addon['custom_config']));
                 $this->display($addon['addon_path'] . $addon['custom_config']);
             } else {
-                //使用FormBuilder快速建立表单页面。
-                $builder = new \Common\Builder\FormBuilder();
+                // 使用FormBuilder快速建立表单页面
+                $builder = new \lyf\builder\FormBuilder();
                 $builder->setMetaTitle('插件设置') //设置页面标题
                     ->setPostUrl(U('config')) //设置表单提交地址
                     ->addFormItem('id', 'hidden', 'ID', 'ID')
@@ -124,13 +134,28 @@ class AddonController extends AdminController
     }
 
     /**
+     * 安装插件之前
+     * @author jry <598821125@qq.com>
+     */
+    public function install_before($addon_name)
+    {
+        // 使用FormBuilder快速建立表单页面
+        $builder = new \lyf\builder\FormBuilder();
+        $builder->setMetaTitle('准备安装插件') // 设置页面标题
+            ->setPostUrl(U('install')) // 设置表单提交地址
+            ->addFormItem('addon_name', 'hidden', 'addon_name', 'addon_name')
+            ->addFormItem('clear', 'radio', '清除历史数据', '是否清除历史数据', array('1' => '是', '0' => '否'))
+            ->setFormData(array('addon_name' => $addon_name))
+            ->display();
+    }
+
+    /**
      * 安装插件
      * @author jry <598821125@qq.com>
      */
-    public function install()
+    public function install($addon_name, $clear = true)
     {
-        $addon_name = trim(I('addon_name'));
-        $class      = get_addon_class($addon_name);
+        $class = get_addon_class($addon_name);
         if (!class_exists($class)) {
             $this->error('插件不存在');
         }
@@ -156,10 +181,22 @@ class AddonController extends AdminController
             }
         }
 
+        // 清除旧数据
+        $sql_object = new Sql();
+        $uninstall_sql_status = true;
+        if ($clear) {
+            $sql_file             = realpath(C('ADDON_PATH') . $addon_name) . '/Sql/uninstall.sql';
+            if (file_exists($sql_file)) {
+                $uninstall_sql_status = $sql_object->execute_sql_from_file($sql_file);
+            }
+        }
+        if (!$uninstall_sql_status) {
+            $this->error('安装失败');
+        }
+
         // 安装数据库
         $sql_file = realpath(C('ADDON_PATH') . $addon_name) . '/Sql/install.sql';
         if (file_exists($sql_file)) {
-            $sql_object = new Sql();
             $sql_status = $sql_object->execute_sql_from_file($sql_file);
             if (!$sql_status) {
                 $this->error('执行插件SQL安装语句失败' . session('addons_install_error'));
@@ -168,7 +205,7 @@ class AddonController extends AdminController
 
         $addon_object = D('Addon');
         $data         = $addon_object->create($info);
-        if (is_array($addons->admin_list) && $addons->admin_list !== array()) {
+        if ((is_array($addons->admin_list) && $addons->admin_list !== array()) || $addons->custom_adminlist) {
             $data['adminlist'] = 1;
         } else {
             $data['adminlist'] = 0;
@@ -193,11 +230,33 @@ class AddonController extends AdminController
     }
 
     /**
+     * 卸载模块之前
+     * @author jry <598821125@qq.com>
+     */
+    public function uninstall_before($id)
+    {
+        // 使用FormBuilder快速建立表单页面
+        $builder = new \lyf\builder\FormBuilder();
+        $builder->setMetaTitle('准备卸载插件') // 设置页面标题
+            ->setPostUrl(U('uninstall')) // 设置表单提交地址
+            ->addFormItem('id', 'hidden', 'ID', 'ID')
+            ->addFormItem('clear', 'radio', '是否清除数据', '是否清除数据', array('1' => '是', '0' => '否'))
+            ->setFormData(array('id' => $id))
+            ->display();
+    }
+
+    /**
      * 卸载插件
      * @author jry <598821125@qq.com>
      */
-    public function uninstall()
+    public function uninstall($id, $clear = false)
     {
+        // 演示模式
+        if (APP_DEMO === true) {
+            $this->error('演示模式不允许该操作！');
+        }
+
+        // 获取插件信息
         $addon_object = D('Addon');
         $id           = trim(I('id'));
         $db_addons    = $addon_object->find($id);
@@ -221,7 +280,7 @@ class AddonController extends AdminController
 
         // 卸载数据库
         $sql_file = realpath(C('ADDON_PATH') . $db_addons['name']) . '/Sql/uninstall.sql';
-        if (file_exists($sql_file)) {
+        if ($clear && file_exists($sql_file)) {
             $sql_object = new Sql();
             $sql_status = $sql_object->execute_sql_from_file($sql_file);
             if (!$sql_status) {
@@ -260,13 +319,13 @@ class AddonController extends AdminController
 
     /**
      * 插件后台显示页面
-     * @param string $name 插件名
+     * @param string $addon_name 插件名
      * @author jry <598821125@qq.com>
      */
-    public function adminList($name, $tab = 1)
+    public function adminList($addon_name, $tab = 1)
     {
         // 获取插件实例
-        $addon_class = get_addon_class($name);
+        $addon_class = get_addon_class($addon_name);
         if (!class_exists($addon_class)) {
             $this->error('插件不存在');
         } else {
@@ -275,8 +334,14 @@ class AddonController extends AdminController
 
         // 自定义插件后台页面
         if ($addon->custom_adminlist) {
-            $this->assign('custom_adminlist', $this->fetch($addon->custom_adminlist));
-            $this->display($addon->custom_adminlist);
+            if (strpos($addon->custom_adminlist, "://") > 0) {
+                // 指定插件的控制器的某个方法为默认管理页面
+                redirect(addons_url($addon->custom_adminlist));
+            } else {
+                // 自定义一个后台管理默认页面
+                $this->assign('custom_adminlist', $this->fetch($addon->custom_adminlist));
+                $this->display($addon->custom_adminlist);
+            }
         } else {
             // 获取插件的$admin_list配置
             $admin_list = $addon->admin_list;
@@ -284,12 +349,12 @@ class AddonController extends AdminController
             foreach ($admin_list as $key => $val) {
                 $tab_list[$key]['title'] = $val['title'];
                 $tab_list[$key]['href']  = U('Admin/Addon/adminList', array(
-                    'name' => $name,
+                    'addon_name' => $addon_name,
                     'tab'  => $key,
                 ));
             }
             $admin = $admin_list[$tab];
-            $param = D('Addons://' . $name . '/' . $admin['model'] . '')->adminList;
+            $param = D('Addons://' . $addon_name . '/' . $admin['model'] . '')->adminList;
             if ($param) {
                 // 搜索
                 $keyword                           = (string) I('keyword');
@@ -312,13 +377,13 @@ class AddonController extends AdminController
                         ->where($map)
                         ->count(), C('ADMIN_PAGE_ROWS'));
 
-                // 使用Builder快速建立列表页面。
-                $builder = new \Common\Builder\ListBuilder();
+                // 使用Builder快速建立列表页面
+                $builder = new \lyf\builder\ListBuilder();
                 $builder->setMetaTitle($addon->info['title']) // 设置页面标题
-                    ->AddTopButton('addnew', array('href' => U('Admin/Addon/adminAdd', array('name' => $name, 'tab' => $tab)))) // 添加新增按钮
+                    ->AddTopButton('addnew', array('href' => U('Admin/Addon/adminAdd', array('addon_name' => $addon_name, 'tab' => $tab)))) // 添加新增按钮
                     ->AddTopButton('resume', array('model' => $param['model'])) // 添加启用按钮
                     ->AddTopButton('forbid', array('model' => $param['model'])) // 添加禁用按钮
-                    ->setSearch('请输入关键字', U('Admin/Addon/adminList', array('name' => $name, 'tab' => $tab)))
+                    ->setSearch('请输入关键字', U('Admin/Addon/adminList', array('addon_name' => $addon_name, 'tab' => $tab)))
                     ->SetTabNav($tab_list, $tab) // 设置Tab按钮列表
                     ->setTableDataList($data_list) // 数据列表
                     ->setTableDataPage($page->show()); // 数据列表分页
@@ -339,7 +404,7 @@ class AddonController extends AdminController
                 $attr['title'] = '编辑';
                 $attr['class'] = 'label label-info-outline label-pill';
                 $attr['href']  = U('Admin/Addon/adminEdit', array(
-                    'name' => $name,
+                    'addon_name' => $addon_name,
                     'tab'  => $tab,
                     'id'   => '__data_id__',
                 ));
@@ -358,13 +423,13 @@ class AddonController extends AdminController
 
     /**
      * 插件后台数据增加
-     * @param string $name 插件名
+     * @param string $addon_name 插件名
      * @author jry <598821125@qq.com>
      */
-    public function adminAdd($name, $tab)
+    public function adminAdd($addon_name, $tab)
     {
         // 获取插件实例
-        $addon_class = get_addon_class($name);
+        $addon_class = get_addon_class($addon_name);
         if (!class_exists($addon_class)) {
             $this->error('插件不存在');
         } else {
@@ -374,10 +439,10 @@ class AddonController extends AdminController
         // 获取插件的$admin_list配置
         $admin_list         = $addon->admin_list;
         $admin              = $admin_list[$tab];
-        $addon_model_object = D('Addons://' . $name . '/' . $admin['model']);
+        $addon_model_object = D('Addons://' . $addon_name . '/' . $admin['model']);
         $param              = $addon_model_object->adminList;
         if ($param) {
-            if (IS_POST) {
+            if (request()->isPost()) {
                 $data = $addon_model_object->create();
                 if ($data) {
                     $result = $addon_model_object->add($data);
@@ -385,15 +450,20 @@ class AddonController extends AdminController
                     $this->error($addon_model_object->getError());
                 }
                 if ($result) {
-                    $this->success('新增成功', U('Admin/Addon/adminlist', array('name' => $name, 'tab' => $tab)));
+                    $this->success('新增成功', U('Admin/Addon/adminlist', array('addon_name' => $addon_name, 'tab' => $tab)));
                 } else {
                     $this->error('更新错误');
                 }
             } else {
-                // 使用FormBuilder快速建立表单页面。
-                $builder = new \Common\Builder\FormBuilder();
+                // 字段检查
+                if ($param['field']['addon_name'] || $param['field']['tab']) {
+                    $this->error('不允许使用addon_name和tab字段');
+                }
+
+                // 使用FormBuilder快速建立表单页面
+                $builder = new \lyf\builder\FormBuilder();
                 $builder->setMetaTitle('新增数据') //设置页面标题
-                    ->setPostUrl(U('Admin/Addon/adminAdd', array('name' => $name, 'tab' => $tab))) // 设置表单提交地址
+                    ->setPostUrl(U('Admin/Addon/adminAdd', array('addon_name' => $addon_name, 'tab' => $tab))) // 设置表单提交地址
                     ->setExtraItems($param['field'])
                     ->display();
             }
@@ -404,13 +474,13 @@ class AddonController extends AdminController
 
     /**
      * 插件后台数据编辑
-     * @param string $name 插件名
+     * @param string $addon_name 插件名
      * @author jry <598821125@qq.com>
      */
-    public function adminEdit($name, $tab, $id)
+    public function adminEdit($addon_name, $tab, $id)
     {
         // 获取插件实例
-        $addon_class = get_addon_class($name);
+        $addon_class = get_addon_class($addon_name);
         if (!class_exists($addon_class)) {
             $this->error('插件不存在');
         } else {
@@ -420,10 +490,10 @@ class AddonController extends AdminController
         // 获取插件的$admin_list配置
         $admin_list         = $addon->admin_list;
         $admin              = $admin_list[$tab];
-        $addon_model_object = D('Addons://' . $name . '/' . $admin['model']);
+        $addon_model_object = D('Addons://' . $addon_name . '/' . $admin['model']);
         $param              = $addon_model_object->adminList;
         if ($param) {
-            if (IS_POST) {
+            if (request()->isPost()) {
                 $data = $addon_model_object->create();
                 if ($data) {
                     $result = $addon_model_object->save($data);
@@ -431,15 +501,20 @@ class AddonController extends AdminController
                     $this->error($addon_model_object->getError());
                 }
                 if ($result) {
-                    $this->success('更新成功', U('Admin/Addon/adminlist', array('name' => $name, 'tab' => $tab)));
+                    $this->success('更新成功', U('Admin/Addon/adminlist', array('addon_name' => $addon_name, 'tab' => $tab)));
                 } else {
-                    $this->error('更新错误');
+                    $this->error('更新错误：' . $addon_model_object->getError());
                 }
             } else {
-                // 使用FormBuilder快速建立表单页面。
-                $builder = new \Common\Builder\FormBuilder();
+                // 字段检查
+                if ($param['field']['addon_name'] || $param['field']['tab']) {
+                    $this->error('不允许使用addon_name和tab字段');
+                }
+
+                // 使用FormBuilder快速建立表单页面
+                $builder = new \lyf\builder\FormBuilder();
                 $builder->setMetaTitle('编辑数据') // 设置页面标题
-                    ->setPostUrl(U('admin/addon/adminedit', array('name' => $name, 'tab' => $tab))) // 设置表单提交地址
+                    ->setPostUrl(U('admin/addon/adminedit', array('addon_name' => $addon_name, 'tab' => $tab))) // 设置表单提交地址
                     ->addFormItem('id', 'hidden', 'ID', 'ID')
                     ->setExtraItems($param['field'])
                     ->setFormData(M($param['model'])->find($id))

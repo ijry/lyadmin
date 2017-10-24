@@ -6,8 +6,13 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 
-require_once APP_PATH . 'Common/Common/developer.php'; //加载开发者二次开发公共函数库
+require_once APP_DIR . 'Common/Common/developer.php'; // 加载开发者二次开发公共函数库
+require_once APP_DIR . 'Common/Common/extra.php'; // 加载兼容公共函数库
 
 /**
  * 处理插件钩子
@@ -71,7 +76,7 @@ function format_data($data = null)
     if (!$data) {
         $data = $_POST;
     }
-    $data_object = new \Util\Date;
+    $data_object = new \lyf\Date;
     foreach ($data as $key => $val) {
         if (!is_array($val)) {
             $val = trim($val);
@@ -93,9 +98,14 @@ function format_data($data = null)
 
 /**
  * 获取所有数据并转换成一维数组
+ * $model string 查询模型
+ * $map array 查询条件
+ * $extra string 额外增加数据
+ * $key string 结果数组key
+ * $config array Tree参数
  * @author jry <598821125@qq.com>
  */
-function select_list_as_tree($model, $map = null, $extra = null, $key = 'id')
+function select_list_as_tree($model, $map = null, $extra = null, $key = 'id', $param = null)
 {
     //获取列表
     $con['status'] = array('eq', 1);
@@ -110,8 +120,17 @@ function select_list_as_tree($model, $map = null, $extra = null, $key = 'id')
     }
 
     //转换成树状列表(非严格模式)
-    $tree = new \Util\Tree();
-    $list = $tree->array2tree($list, 'title', 'id', 'pid', 0, false);
+    $tree             = new \lyf\Tree();
+    $_param           = array();
+    $_param['title']  = 'title';
+    $_param['pk']     = 'id';
+    $_param['pid']    = 'pid';
+    $_param['root']   = 0;
+    $_param['scrict'] = true;
+    if ($param) {
+        $_param = array_merge($_param, $param);
+    }
+    $list = $tree->array2tree($list, $_param['title'], $_param['pk'], $_param['pid'], $_param['root'], $_param['scrict']);
 
     if ($extra) {
         $result[0] = $extra;
@@ -130,16 +149,31 @@ function select_list_as_tree($model, $map = null, $extra = null, $key = 'id')
  * @return string
  * @author jry <598821125@qq.com>
  */
-function parse_content($str)
+function parse_content($str, $lazy = true)
 {
-    // 将img标签的src改为lazy-src用户前台图片lazyload加载
-    if (C('STATIC_DOMAIN')) {
-        $tmp = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . C('STATIC_DOMAIN') . "$1'>", $str);
-        $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='" . C('STATIC_DOMAIN') . "$1'>", $tmp);
+    if (C('IS_API')) {
+        $data_src = false;
     } else {
-        $domain = (is_ssl() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
-        $tmp    = preg_replace('/<img.*?src="(.*?Uploads.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . $domain . "$1'>", $str);
-        $tmp    = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='img-responsive' style='display:inline-block;' src='" . $domain . "$1'>", $tmp);
+        if ($lazy) {
+            $data_src = true;
+        } else {
+            $data_src = false;
+        }
+    }
+    if ($data_src) {
+        // 将img标签的src改为data-src用户前台图片lazyload加载
+        if (C('STATIC_DOMAIN')) {
+            $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . C('STATIC_DOMAIN') . "$1'>", $str);
+        } else {
+            $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' data-src='" . C('TOP_HOME_DOMAIN') . "$1'>", $str);
+        }
+    } else {
+        // 将img标签的src补充域名
+        if (C('STATIC_DOMAIN')) {
+            $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' src='" . C('STATIC_DOMAIN') . "$1'>", $str);
+        } else {
+            $tmp = preg_replace('/<img.*?src="(\/.*?)"(.*?)>/i', "<img class='lazy lazy-fadein img-responsive' style='display:inline-block;' src='" . C('TOP_HOME_DOMAIN') . "$1'>", $str);
+        }
     }
     return $tmp;
 }
@@ -157,7 +191,7 @@ function parse_content($str)
  */
 function cut_str($str, $start, $length, $charset = 'utf-8', $suffix = true)
 {
-    return \Util\Str::cutStr(
+    return \lyf\Str::cutStr(
         $str, $start, $length, $charset, $suffix
     );
 }
@@ -170,7 +204,7 @@ function cut_str($str, $start, $length, $charset = 'utf-8', $suffix = true)
  */
 function html2text($str)
 {
-    return \Util\Str::html2text($str);
+    return \lyf\Str::html2text($str);
 }
 
 /**
@@ -181,19 +215,10 @@ function html2text($str)
  * @return string
  * @author jry <598821125@qq.com>
  */
-function friendly_date($sTime, $type = 'mohu', $alt = 'false')
+function friendly_date($sTime, $type = 'normal', $alt = 'false')
 {
-    $date = new \Util\Date((int) $sTime);
+    $date = new \lyf\Date((int) $sTime);
     return $date->friendlyDate($type, $alt);
-}
-
-/**
- * 用于生成插入datetime类型字段用的字符串
- * @param string $str 支持偏移字符串
- */
-function datetime($str = 'now')
-{
-    return @date("Y-m-d H:i:s", strtotime($str));
 }
 
 /**
@@ -204,8 +229,11 @@ function datetime($str = 'now')
  */
 function time_format($time = null, $format = 'Y-m-d H:i')
 {
-    $time = $time === null ? time() : intval($time);
-    return date($format, $time);
+    if (!$time) {
+        return '';
+    } else {
+        return date($format, intval($time));
+    }
 }
 
 /**
@@ -217,7 +245,7 @@ function time_format($time = null, $format = 'Y-m-d H:i')
 function user_md5($str, $auth_key = '')
 {
     if (!$auth_key) {
-        $auth_key = C('AUTH_KEY') ?: 'OpenCMF';
+        $auth_key = C('AUTH_KEY') ?: 'CoreThink';
     }
     return '' === $str ? '' : md5(sha1($str) . $auth_key);
 }
@@ -258,6 +286,31 @@ function get_cover($id = null, $type = null)
 }
 
 /**
+ * 是否微信访问
+ * @return bool
+ * @author jry <598821125@qq.com>
+ */
+function is_weixin()
+{
+    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 当前请求的host(不包含端口)
+ * @access public
+ * @return string
+ */
+function hostname()
+{
+    $host = explode(':', $_SERVER['HTTP_HOST']);
+    return $host[0];
+}
+
+/**
  * 自动生成URL，支持在后台生成前台链接
  * @param string $url URL表达式，格式：'[模块/控制器/操作#锚点@域名]?参数1=值1&参数2=值2...'
  * @param string|array $vars 传入的参数，支持数组和字符串
@@ -266,7 +319,7 @@ function get_cover($id = null, $type = null)
  * @return string
  * @author jry <598821125@qq.com>
  */
-function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
+function url_home($url = '', $vars = '', $suffix = true, $domain = true)
 {
     $url = U($url, $vars, $suffix, $domain);
     if (MODULE_MARK === 'Admin') {
@@ -291,36 +344,72 @@ function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
     }
 }
 
-/**
- * 检测是否使用手机访问
- * @access public
- * @return bool
- */
-function is_wap()
+// 兼容旧版本
+function oc_url($url = '', $vars = '', $suffix = true, $domain = true)
 {
-    if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], "wap")) {
-        return true;
-    } elseif (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtoupper($_SERVER['HTTP_ACCEPT']), "VND.WAP.WML")) {
-        return true;
-    } elseif (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) {
-        return true;
-    } elseif (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up.browser|up.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) {
-        return true;
+    url_home($url, $vars, $suffix, $domain);
+}
+
+
+/**
+ * 自动生成URL，支持在前台生成后台链接
+ * @param string $url URL表达式，格式：'[模块/控制器/操作#锚点@域名]?参数1=值1&参数2=值2...'
+ * @param string|array $vars 传入的参数，支持数组和字符串
+ * @param string|boolean $suffix 伪静态后缀，默认为true表示获取配置值
+ * @param boolean $domain 是否显示域名
+ * @return string
+ * @author jry <598821125@qq.com>
+ */
+function url_admin($url = '', $vars = '', $suffix = true, $domain = true)
+{
+    if (MODULE_MARK === 'Home') {
+        $url_model = D('Admin/Config')->where(array('name' => 'URL_MODEL'))->getField('value');
+        C('URL_MODEL', 3); // 临时改变URL模式
+        $url = U($url, $vars, $suffix, $domain);
+        C('URL_MODEL', $url_model); // 临时改变URL模式
+        $result = strtr($url, array('index.php' => 'admin.php'));
+        return $result;
     } else {
-        return false;
+        return $url = U($url, $vars, $suffix, $domain);
     }
 }
 
 /**
- * 是否微信访问
- * @return bool
+ * 判断模块是否安装并且开启
+ * @param string $module 模块名
+ * @return boolean
  * @author jry <598821125@qq.com>
  */
-function is_weixin()
+function exist_module($module)
 {
-    if (strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== false) {
-        return true;
-    } else {
-        return false;
+    if ($module) {
+        $map           = array();
+        $map['name']   = $module;
+        $map['status'] = 1;
+        $result        = D('Admin/Module')->where($map)->find();
+        if (is_dir(APP_PATH . $result['name'])) {
+            return $result;
+        }
     }
+    return false;
+}
+
+/**
+ * 判断插件是否安装并且开启
+ * @param string $module 插件名
+ * @return boolean
+ * @author jry <598821125@qq.com>
+ */
+function exist_addon($addon)
+{
+    if ($addon) {
+        $map           = array();
+        $map['name']   = $addon;
+        $map['status'] = 1;
+        $result        = D('Admin/Addon')->where($map)->find();
+        if (is_dir(C('ADDON_PATH') . $result['name'])) {
+            return $result;
+        }
+    }
+    return false;
 }

@@ -1,0 +1,119 @@
+<case value="picture">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right row">
+            <div  id="[type]{$group_k|default=''}_upload_box_{$[type]k}" class="wu-example">
+                <!--用来存放文件信息-->
+                <div id="[type]{$group_k|default=''}_upload_list_{$[type]k}" class="uploader-list col-xs-12 img-box">
+                    <notempty name="[type]form.value">
+                        <div id="[type]{$group_k|default=''}_upload_preview_{$[type]k}" class="col-xs-6 col-sm-3 file-item thumbnail">
+                            <i class="fa fa-times-circle remove-picture"></i>
+                            <img src="{$[type]form.value|get_cover}" data-id="{$[type]form.value|default=''}">
+                        </div>
+                    <else />
+                        <div id="[type]{$group_k|default=''}_upload_preview_{$[type]k}" class="col-sm-3 file-item thumbnail hidden">
+                            <i class="fa fa-times-circle remove-picture"></i>
+                            <img>
+                        </div>
+                    </notempty>
+                </div>
+                <div class="btns col-xs-12">
+                    <input type="hidden" id="[type]{$group_k|default=''}_upload_input_{$[type]k}" name="{$[type]form.name}" value="{$[type]form.value|default=''}">
+                    <div id="[type]{$group_k|default=''}_upload_{$[type]k}" class="btn btn-primary-outline btn-pill">上传图片</div>
+                    <button id="ctlBtn" class="btn btn-default hidden">开始上传</button>
+                    <notempty name="[type]form.tip">
+                        <span class="check-tips text-muted small">{$[type]form.tip|default=''}</span>
+                    </notempty>
+                </div>
+            </div>
+
+            <script type="text/javascript" src="__PUBLIC__/libs/webuploader/webuploader.min.js"></script>
+            <script type="text/javascript">
+                $(function(){
+                    var uploader_[type]{$group_k|default=''}_upload_{$[type]k} = WebUploader.create({
+                        withCredentials: true,                                                             // 跨域请求提供凭证
+                        auto: true,                                                                        // 选完文件后，是否自动上传
+                        duplicate: true,                                                                   // 同一文件是否可以重复上传
+                        server: '{:U(MODULE_MARK."/Upload/upload", array("dir" => "image", "module_name" => request()->module(), "upload_driver" => $[type]form["extra"]["self"]["upload_driver"] ? : ''), true, true)}', // 文件接收服务端
+                        pick: '#[type]{$group_k|default=''}_upload_{$[type]k}',                            // 选择文件的按钮
+                        resize: false,                                                                     // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                        //fileNumLimit: 1,                                                                 // 验证文件总数量, 超出则不允许加入队列
+                        fileSingleSizeLimit:<?php echo isset($[type]form['extra']['self']['size']) ? : C('UPLOAD_IMAGE_SIZE'); ?>*1024*1024, // 验证单个文件大小是否超出限制, 超出则不允许加入队列
+                        // 文件过滤
+                        accept: {
+                            title: 'Images',
+                            extensions: "<?php echo isset($[type]form['extra']['self']['ext']) ? : 'gif,jpg,jpeg,bmp,png'; ?>",
+                            mimeTypes: 'image/gif,image/jpg,image/jpeg,image/bmp,image/png'
+                        }
+                    });
+
+                    // 文件上传过程中创建进度条实时显示。
+                    uploader_[type]{$group_k|default=''}_upload_{$[type]k}.on( 'uploadProgress', function(file, percentage ) {
+                        $('#[type]{$group_k|default=''}_upload_preview_{$[type]k}').removeClass('hidden');
+                        var $li = $( '#[type]{$group_k|default=''}_upload_preview_{$[type]k}'),
+                            $percent = $li.find('.progress .progress-bar');
+                        // 避免重复创建
+                        if ( !$percent.length ) {
+                            $percent = $('<div class="progress"><div class="progress-bar"></div></div>')
+                                    .appendTo( $li )
+                                    .find('.progress-bar');
+                        }
+                        $percent.css('width', percentage * 100 + '%');
+                    });
+
+                    // 完成上传完了，成功或者失败，先删除进度条。
+                    uploader_[type]{$group_k|default=''}_upload_{$[type]k}.on('uploadComplete', function(file) {
+                        $( '#[type]{$group_k|default=''}_upload_preview_{$[type]k}' ).find('.progress').remove();
+                    });
+
+                    // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+                    uploader_[type]{$group_k|default=''}_upload_{$[type]k}.on('uploadSuccess', function(file , response) {
+                        $('#[type]{$group_k|default=''}_upload_preview_{$[type]k}').addClass('upload-state-done');
+                        if (eval('response').status == 0) {
+                            $.alertMessager(response.message);
+                        } else {
+                            $( '#[type]{$group_k|default=''}_upload_input_{$[type]k}').attr('value', response.id);
+                            $( '#[type]{$group_k|default=''}_upload_preview_{$[type]k} img').attr('src', response.url);
+                        }
+                    });
+
+                    // 上传错误
+                    uploader_[type]{$group_k|default=''}_upload_{$[type]k}.on("error",function (type){
+                        if (type=="Q_TYPE_DENIED") {
+                            $.alertMessager('该文件格式不支持');
+                        } else if(type=="F_EXCEED_SIZE") {
+                            $.alertMessager("文件大小不允许超过{:C('UPLOAD_IMAGE_SIZE')}MB");
+                        } else if(type=="Q_EXCEED_NUM_LIMIT") {
+                            $.alertMessager("超过允许的文件数量");
+                        } else {
+                            $.alertMessager(type);
+                        }
+                    });
+
+                    // 文件上传失败，显示上传出错。
+                    uploader_[type]{$group_k|default=''}_upload_{$[type]k}.on('uploadError', function(file) {
+                        $.alertMessager('error');
+                        var $li = $('#[type]{$group_k|default=''}_upload_preview_{$[type]k}'),
+                            $error = $li.find('div.error');
+                        // 避免重复创建
+                        if (!$error.length) {
+                            $error = $('<div class="error"></div>').appendTo($li);
+                        }
+                        $error.text('上传失败');
+                    });
+
+                    // 删除图片
+                    $(document).on('click', '#[type]{$group_k|default=''}_upload_list_{$[type]k} .remove-picture', function() {
+                        $('#[type]{$group_k|default=''}_upload_input_{$[type]k}' ).val('') //删除后覆盖原input的值为空
+                        $('#[type]{$group_k|default=''}_upload_preview_{$[type]k}').addClass('hidden');
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>

@@ -6,6 +6,10 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 // 模块信息配置
 return array(
     // 模块信息
@@ -17,7 +21,7 @@ return array(
         'description' => '核心系统',
         'developer'   => '南京科斯克网络科技有限公司',
         'website'     => 'http://www.lingyun.net',
-        'version'     => '1.1.0',
+        'version'     => '1.6.2',
     ),
 
     // 后台菜单及权限节点配置
@@ -65,200 +69,232 @@ return array(
             'title' => '设置状态',
             'url'   => 'Admin/Nav/setStatus',
         ),
-        '13' => array(
+        '9'  => array(
             'pid'   => '2',
-            'title' => '配置管理',
-            'icon'  => 'fa fa-cogs',
-            'url'   => 'Admin/Config/index',
+            'title' => '幻灯管理',
+            'icon'  => 'fa fa-image',
+            'url'   => 'Admin/Slider/index',
         ),
-        '14' => array(
-            'pid'   => '13',
+        '10' => array(
+            'pid'   => '9',
+            'title' => '新增',
+            'url'   => 'Admin/Slider/add',
+        ),
+        '11' => array(
+            'pid'   => '9',
+            'title' => '编辑',
+            'url'   => 'Admin/Slider/edit',
+        ),
+        '12' => array(
+            'pid'   => '9',
+            'title' => '设置状态',
+            'url'   => 'Admin/Slider/setStatus',
+        ),
+        '17' => array(
+            'pid'    => '2',
+            'title'  => '配置管理',
+            'icon'   => 'fa fa-cogs',
+            'url'    => 'Admin/Config/index',
+            'is_dev' => 1,
+        ),
+        '18' => array(
+            'pid'   => '17',
             'title' => '新增',
             'url'   => 'Admin/Config/add',
         ),
-        '15' => array(
-            'pid'   => '13',
+        '19' => array(
+            'pid'   => '17',
             'title' => '编辑',
             'url'   => 'Admin/Config/edit',
         ),
-        '16' => array(
-            'pid'   => '13',
+        '20' => array(
+            'pid'   => '17',
             'title' => '设置状态',
             'url'   => 'Admin/Config/setStatus',
         ),
-        '17' => array(
+        '21' => array(
             'pid'   => '2',
             'title' => '上传管理',
             'icon'  => 'fa fa-upload',
             'url'   => 'Admin/Upload/index',
         ),
-        '18' => array(
-            'pid'   => '17',
+        '22' => array(
+            'pid'   => '21',
             'title' => '上传文件',
             'url'   => 'Admin/Upload/upload',
         ),
-        '19' => array(
-            'pid'   => '17',
+        '23' => array(
+            'pid'   => '21',
             'title' => '删除文件',
             'url'   => 'Admin/Upload/delete',
         ),
-        '20' => array(
-            'pid'   => '17',
+        '24' => array(
+            'pid'   => '21',
             'title' => '设置状态',
             'url'   => 'Admin/Upload/setStatus',
         ),
-        '21' => array(
-            'pid'   => '17',
+        '25' => array(
+            'pid'   => '21',
             'title' => '下载远程图片',
             'url'   => 'Admin/Upload/downremoteimg',
         ),
-        '22' => array(
-            'pid'   => '17',
+        '26' => array(
+            'pid'   => '21',
             'title' => '文件浏览',
             'url'   => 'Admin/Upload/fileManager',
         ),
-        '23' => array(
+        '27' => array(
             'pid'   => '1',
             'title' => '系统权限',
             'icon'  => 'fa fa-folder-open-o',
         ),
-        '24' => array(
-            'pid'   => '23',
+        '28' => array(
+            'pid'   => '27',
             'title' => '用户管理',
             'icon'  => 'fa fa-user',
             'url'   => 'Admin/User/index',
         ),
-        '25' => array(
-            'pid'   => '24',
-            'title' => '新增',
-            'url'   => 'Admin/User/add',
-        ),
-        '26' => array(
-            'pid'   => '24',
-            'title' => '编辑',
-            'url'   => 'Admin/User/edit',
-        ),
-        '27' => array(
-            'pid'   => '24',
-            'title' => '设置状态',
-            'url'   => 'Admin/User/setStatus',
-        ),
-        '28' => array(
-            'pid'   => '23',
-            'title' => '管理员管理',
-            'icon'  => 'fa fa-lock',
-            'url'   => 'Admin/Access/index',
-        ),
         '29' => array(
             'pid'   => '28',
             'title' => '新增',
-            'url'   => 'Admin/Access/add',
+            'url'   => 'Admin/User/add',
         ),
         '30' => array(
             'pid'   => '28',
             'title' => '编辑',
-            'url'   => 'Admin/Access/edit',
+            'url'   => 'Admin/User/edit',
         ),
         '31' => array(
             'pid'   => '28',
             'title' => '设置状态',
-            'url'   => 'Admin/Access/setStatus',
+            'url'   => 'Admin/User/setStatus',
         ),
         '32' => array(
-            'pid'   => '23',
-            'title' => '用户组管理',
-            'icon'  => 'fa fa-sitemap',
-            'url'   => 'Admin/Group/index',
+            'pid'   => '27',
+            'title' => '管理员管理',
+            'icon'  => 'fa fa-lock',
+            'url'   => 'Admin/Access/index',
         ),
         '33' => array(
             'pid'   => '32',
             'title' => '新增',
-            'url'   => 'Admin/Group/add',
+            'url'   => 'Admin/Access/add',
         ),
         '34' => array(
             'pid'   => '32',
             'title' => '编辑',
-            'url'   => 'Admin/Group/edit',
+            'url'   => 'Admin/Access/edit',
         ),
         '35' => array(
             'pid'   => '32',
             'title' => '设置状态',
-            'url'   => 'Admin/Group/setStatus',
+            'url'   => 'Admin/Access/setStatus',
         ),
         '36' => array(
+            'pid'   => '27',
+            'title' => '用户组管理',
+            'icon'  => 'fa fa-sitemap',
+            'url'   => 'Admin/Group/index',
+        ),
+        '37' => array(
+            'pid'   => '36',
+            'title' => '新增',
+            'url'   => 'Admin/Group/add',
+        ),
+        '38' => array(
+            'pid'   => '36',
+            'title' => '编辑',
+            'url'   => 'Admin/Group/edit',
+        ),
+        '39' => array(
+            'pid'   => '36',
+            'title' => '设置状态',
+            'url'   => 'Admin/Group/setStatus',
+        ),
+        '40' => array(
             'pid'   => '1',
             'title' => '扩展中心',
             'icon'  => 'fa fa-folder-open-o',
         ),
-        '44' => array(
-            'pid'   => '36',
+        '48' => array(
+            'pid'   => '40',
             'title' => '功能模块',
             'icon'  => 'fa fa-th-large',
             'url'   => 'Admin/Module/index',
         ),
-        '45' => array(
-            'pid'   => '44',
+        '49' => array(
+            'pid'   => '48',
+            'title' => '安装检查',
+            'url'   => 'Admin/Module/install_before',
+        ),
+        '50' => array(
+            'pid'   => '48',
             'title' => '安装',
             'url'   => 'Admin/Module/install',
         ),
-        '46' => array(
-            'pid'   => '44',
+        '51' => array(
+            'pid'   => '48',
+            'title' => '卸载检查',
+            'url'   => 'Admin/Module/uninstall_before',
+        ),
+        '52' => array(
+            'pid'   => '48',
             'title' => '卸载',
             'url'   => 'Admin/Module/uninstall',
         ),
-        '47' => array(
-            'pid'   => '44',
+        '53' => array(
+            'pid'   => '48',
             'title' => '更新信息',
             'url'   => 'Admin/Module/updateInfo',
         ),
-        '48' => array(
-            'pid'   => '44',
+        '54' => array(
+            'pid'   => '48',
             'title' => '设置状态',
             'url'   => 'Admin/Module/setStatus',
         ),
-        '49' => array(
-            'pid'   => '36',
+        '55' => array(
+            'pid'   => '40',
             'title' => '插件管理',
             'icon'  => 'fa fa-th',
             'url'   => 'Admin/Addon/index',
         ),
-        '50' => array(
-            'pid'   => '49',
+        '56' => array(
+            'pid'   => '55',
             'title' => '安装',
             'url'   => 'Admin/Addon/install',
         ),
-        '51' => array(
-            'pid'   => '49',
+        '57' => array(
+            'pid'   => '55',
             'title' => '卸载',
             'url'   => 'Admin/Addon/uninstall',
         ),
-        '52' => array(
-            'pid'   => '49',
+        '58' => array(
+            'pid'   => '55',
             'title' => '运行',
             'url'   => 'Admin/Addon/execute',
         ),
-        '53' => array(
-            'pid'   => '49',
+        '59' => array(
+            'pid'   => '55',
             'title' => '设置',
             'url'   => 'Admin/Addon/config',
         ),
-        '54' => array(
-            'pid'   => '49',
+        '60' => array(
+            'pid'   => '55',
             'title' => '后台管理',
             'url'   => 'Admin/Addon/adminList',
         ),
-        '55' => array(
-            'pid'   => '54',
+        '61' => array(
+            'pid'   => '60',
             'title' => '新增数据',
             'url'   => 'Admin/Addon/adminAdd',
         ),
-        '56' => array(
-            'pid'   => '54',
+        '62' => array(
+            'pid'   => '60',
             'title' => '编辑数据',
             'url'   => 'Admin/Addon/adminEdit',
         ),
-        '57' => array(
-            'pid'   => '54',
+        '63' => array(
+            'pid'   => '60',
             'title' => '设置状态',
             'url'   => 'Admin/Addon/setStatus',
         ),

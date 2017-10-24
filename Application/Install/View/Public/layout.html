@@ -6,12 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
     <link rel="stylesheet" type="text/css" href="__LYUI__/css/lyui.min.css">
+    <style type="text/css" media="screen">
+        /* 主导航inverse */
+        .main-nav.navbar-inverse {
+            background: #3399ff;
+            border: 0;
+        }
+        .navbar-inverse .navbar-collapse {
+            border-color: #3399ff;
+        }
+        .main-nav.navbar-inverse .navbar-brand {
+            font-size: 20px;
+            color: #fff;
+        }
+        .main-nav.navbar-inverse .navbar-nav>li>a {
+            color: #fff;
+        }
+        .main-nav.navbar-inverse .navbar-nav>li>a:focus,
+        .main-nav.navbar-inverse .navbar-nav>li>a:hover,
+        .main-nav.navbar-inverse .navbar-nav>li.active>a,
+        .main-nav.navbar-inverse .navbar-nav>li.active>a:hover {
+            background: #34d293;
+            color: #fff;
+        }
+        @media (max-width: 768px) {
+            .main-nav.navbar-inverse .navbar-toggle {
+                border: 0;
+            }
+            .main-nav.navbar-inverse .navbar-toggle:hover{
+                background-color: #fff;
+            }
+            .main-nav.navbar-inverse .navbar-toggle:hover .icon-bar {
+                background-color: #888;
+            }
+        }
+    </style>
     <script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="__LYUI__/js/lyui.min.js"></script>
+    <script type="text/javascript">
+        window.lingyun = {
+            "app_debug"     : "<?php echo C('app_debug'); ?>",
+            "app_debug_msg" : "调试模式已关闭",
+            "top_home_page" : "{:C('TOP_HOME_PAGE')}",
+            "home_page"     : "{:C('HOME_PAGE')}",
+            "var_root "     : "__ROOT__"
+        }
+    </script>
     <block name="script"></block>
 </head>
-<body style="background-color: #f6f6f6;">
-    <div class="navbar navbar-inverse navbar-static-top">
+<body style="background-color: #f6f6f6;padding-top: 65px;">
+    <div class="navbar navbar-inverse main-nav navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">

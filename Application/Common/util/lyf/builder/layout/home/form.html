@@ -1,0 +1,17 @@
+<extend name="$_home_public_layout"/>
+
+<block name="style">
+    <include file="./Application/Common/util/lyf/builder/style.html" />
+</block>
+
+<block name="main">
+    <div class="container m-b">
+	    <div class="panel-body bg-white">
+	    	<include file="$_formbuilder_layout" builderpath="./Application/Common/util/lyf/builder" />
+	    </div>
+    </div>
+</block>
+
+<block name="script">
+    <include file="./Application/Common/util/lyf/builder/javascript.html" />
+</block>

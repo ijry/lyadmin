@@ -1,8 +1,12 @@
 <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/bootstrap_validator/css/bootstrapValidator.min.css">
 <style type="text/css">
     /* 验证码样式 */
+    #register-modal .input-group {
+        width: 100%;
+    }
     .verifyimg-box {
         padding: 0px;
+        width: 140px;
     }
     .verifyimg-box .verifyimg {
         width: 138px;
@@ -22,7 +26,7 @@
             <div class="modal-body">
                 <form action="{:U('User/User/login', '', true, true)}" method="POST" class="form login-form-model" role="form">
                     <div class="form-group">
-                        <input type="text" class="form-control input-lg" placeholder="邮箱/手机号/用户名" name="username">
+                        <input type="text" class="form-control input-lg" placeholder="邮箱/手机号/用户名" name="account">
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control input-lg" placeholder="请输入密码" name="password">
@@ -59,7 +63,7 @@
             <div class="modal-body">
                 <!-- 后台管理员允许注册方式才会显示 -->
                 <php>
-                    if (D('Admin/Module')->where('name="User"')->find() && is_dir(APP_PATH . 'User/')) {
+                    if (D('Admin/Module')->where('name="User"')->find() && is_dir(APP_DIR . 'User/')) {
                         $allow_reg_type = C('user_config.allow_reg_type');
                         $user_type_list = D('User/Type')->where('status = 1')->select();
                     } else {

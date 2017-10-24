@@ -46,12 +46,12 @@
         <div class="row">
             <div class="col-xs-12">
                 <?php if (isset($data_list)): ?>
-                    <div class="panel row">
+                    <div class="panel">
                         <div class="article-list panel-body">
                             <volist name="data_list" id="vo">
                                 <div class="media">
                                     <div class="media-left">
-                                        <a href="{:U( MODULE_NAME. '/Nav/post', array('id' => $vo['id']))}">
+                                        <a href="{:U( request()->module(). '/Nav/post', array('id' => $vo['id']))}">
                                             <img class="list-cover lazy" data-src="{$vo.cover_url}">
                                         </a>
                                     </div>

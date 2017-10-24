@@ -16,15 +16,28 @@
     <link rel="apple-touch-icon" type="image/x-icon" href="__ROOT__/favicon.ico">
     <link rel="shortcut icon" type="image/x-icon" href="__ROOT__/logo.png">
     <link rel="stylesheet" type="text/css" href="__LYUI__/css/lyui.min.css">
-    <link rel="stylesheet" type="text/css" href="__ADMIN_CSS__/{:C('ADMIN_THEME')}.css">
+    <link rel="stylesheet" type="text/css" href="__ADMIN_CSS__/<?php if(C('ADMIN_THEME')){echo C('ADMIN_THEME');}else{echo 'admin';} ?>.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/animate/animate.min.css">
     <block name="style"></block>
     <!--[if lt IE 9]>
-        <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
-        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <script src="//cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
+        <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        window.jQuery || document.write('<script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"><\/script>');
+        window.lingyun = {
+            "app_debug"     : "<?php echo C('app_debug'); ?>",
+            "app_debug_msg" : "调试模式已关闭",
+            "top_home_page" : "{:C('TOP_HOME_PAGE')}",
+            "home_page"     : "{:C('HOME_PAGE')}",
+            "var_root "     : "__ROOT__",
+            "default_img"   : "{:get_cover('', 'default')}"
+        }
+    </script>
 </head>
 <body class="{$_page_name}">
+    <?php $main_nav_limit = $_COOKIE['ly_main_nav_limit'] ? : 6; ?>
     <div class="clearfix full-header">
         <block name="full-header">
             <?php if (!C('ADMIN_TABS')): ?>
@@ -40,14 +53,16 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <php>if(C('WEB_SITE_LOGO')):</php>
-                                    <a class="navbar-brand" target="_blank" href="__ROOT__/">
-                                        <img class="logo img-responsive" src="{$Think.config.WEB_SITE_LOGO|get_cover}">
+                                    <a class="navbar-brand" href="__ROOT__/admin.php">
+                                        <img class="logo img-responsive" src="<?php echo get_cover(C('WEB_SITE_LOGO')); ?>">
                                     </a>
                                 <php>else:</php>
-                                    <a class="navbar-brand" target="_blank" href="__ROOT__/">
+                                    <a class="navbar-brand" href="__ROOT__/admin.php">
                                         <span>{:C('LOGO_DEFAULT')}</span>
                                     </a>
                                 <php>endif;</php>
+                                <!-- 一键切换后台模式 -->
+                                <span class="hidden-xs btn btn-sm ajax-get pull-right m-t-sm m-r-xs" style="" href="{:U('Admin/Config/toggle', array('name' => 'ADMIN_TABS'))}"><i class="fa fa-navicon" style="font-size: 15px;"></i></span>
                             </div>
                             <div class="navbar-header navbar-header-inverse">
                                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-top">
@@ -57,65 +72,130 @@
                                     <span class="icon-bar"></span>
                                 </button>
                                 <php>if(C('WEB_SITE_LOGO_INVERSE')):</php>
-                                    <a class="navbar-brand" target="_blank" href="__ROOT__/">
-                                        <img class="logo img-responsive" src="{$Think.config.WEB_SITE_LOGO_INVERSE|get_cover}">
+                                    <a class="navbar-brand" href="__ROOT__/admin.php">
+                                        <img class="logo img-responsive" src="<?php echo get_cover(C('WEB_SITE_LOGO_INVERSE')); ?>">
                                     </a>
                                 <php>else:</php>
-                                    <a class="navbar-brand" target="_blank" href="__ROOT__/">
-                                        <span>{:C('LOGO_DEFAULT')}</span>
+                                    <a class="navbar-brand" href="__ROOT__/admin.php">
+                                        <span>{:C('LOGO_INVERSE')}</span>
                                     </a>
                                 <php>endif;</php>
+                                <!-- 一键切换后台模式 -->
+                                <span class="hidden-xs btn btn-sm ajax-get pull-right m-t-sm m-r-xs" style="" href="{:U('Admin/Config/toggle', array('name' => 'ADMIN_TABS'))}"><i class="fa fa-navicon" style="font-size: 15px;"></i></span>
                             </div>
                             <div class="collapse navbar-collapse navbar-collapse-top">
                                 <ul class="nav navbar-nav">
                                     <!-- 主导航 -->
                                     <li><a href="{:U('Admin/Index/index')}"><i class="fa fa-home"></i> 首页</a></li>
-                                    <?php if (count($_menu_list) > 6): ?>
-                                        <volist name="_menu_list" id="vo" offset="0" length="6">
-                                            <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
-                                                <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
-                                                    <i class="fa {$vo.icon}"></i>
-                                                    <span>{$vo.title}</span>
-                                                </a>
-                                            </li>
+                                    <?php if (request()->isMobile()): ?>
+                                        <volist name="_menu_list" id="vo">
+                                            <?php if(!($vo['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                <li class="dropdown <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'active'; ?>">
+                                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                        <i class="fa {$vo.icon}"></i>
+                                                        <span>{$vo.title}</span>
+                                                        <b class="caret"></b>
+                                                    </a>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <volist name="vo._child" id="_ns_first">
+                                                            <?php if(!($_ns_first['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                                <li>
+                                                                    <a style="padding-left: 40px;" href="#">
+                                                                        <i class="{$_ns_first.icon}"></i>
+                                                                        <span class="nav-label">{$_ns_first.title}</span>
+                                                                    </a>
+                                                                </li>
+                                                                <notempty name="_ns_first._child">
+                                                                    <volist name="_ns_first._child" id="_ns_second">
+                                                                        <?php if(!($_ns_second['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                                            <li <?php if($_parent_menu_list[2]['url'] == $_ns_second['url']) echo 'class="active"'; ?>>
+                                                                                <a style="padding-left: 60px;" href="{:U($_ns_second['url'])}" >
+                                                                                    <i class="{$_ns_second.icon}"></i>
+                                                                                    <span class="nav-label">{$_ns_second.title}</span>
+                                                                                </a>
+                                                                            </li>
+                                                                        <?php endif; ?>
+                                                                    </volist>
+                                                                </notempty>
+                                                            <?php endif; ?>
+                                                        </volist>
+                                                    </ul>
+                                                </li>
+                                            <?php endif; ?>
                                         </volist>
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                                <i class="fa fa-th-large"></i> 更多 <b class="caret"></b>
-                                            </a>
-                                            <ul class="dropdown-menu" role="menu">
-                                                <volist name="_menu_list" id="vo" offset="6">
+                                    <?php else: ?>
+                                        <?php if (count($_menu_list) > ($main_nav_limit-1)): ?>
+                                            <volist name="_menu_list" id="vo" offset="0" length="$main_nav_limit-1">
+                                                <?php if(!($vo['is_dev'] && !C('DEVELOP_MODE'))): ?>
                                                     <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
                                                         <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
                                                             <i class="fa {$vo.icon}"></i>
                                                             <span>{$vo.title}</span>
                                                         </a>
                                                     </li>
-                                                </volist>
-                                            </ul>
-                                        </li>
-                                    <?php else: ?>
-                                        <volist name="_menu_list" id="vo">
-                                            <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
-                                                <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
-                                                    <i class="fa {$vo.icon}"></i>
-                                                    <span>{$vo.title}</span>
+                                                <?php endif; ?>
+                                            </volist>
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <i class="fa fa-th-large"></i> 更多 <b class="caret"></b>
                                                 </a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <volist name="_menu_list" id="vo" offset="$main_nav_limit-1">
+                                                        <?php if(!($vo['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                            <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
+                                                                <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
+                                                                    <i class="fa {$vo.icon}"></i>
+                                                                    <span>{$vo.title}</span>
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
+                                                    </volist>
+                                                </ul>
                                             </li>
-                                        </volist>
+                                        <?php else: ?>
+                                            <volist name="_menu_list" id="vo">
+                                                <?php if(!($vo['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                    <li <?php if($_parent_menu_list[0]['title'] == $vo['title']) echo 'class="active"'; ?>>
+                                                        <a href="{:U($vo['_child'][0]['_child'][0]['url'])}" target="<php>echo C(strtolower($vo['name']).'_config.target');</php>">
+                                                            <i class="fa {$vo.icon}"></i>
+                                                            <span>{$vo.title}</span>
+                                                        </a>
+                                                    </li>
+                                                <?php endif; ?>
+                                            </volist>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </ul>
                                 <ul class="nav navbar-nav navbar-right">
-                                    <li><a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left" class="btn ajax-get no-refresh"><i class="fa fa-trash"></i> 清空缓存</a></li>
-                                    <li><a target="_blank" href="__ROOT__/"><i class="fa fa-external-link"></i> 打开前台</a></li>
+                                    <li>
+                                        <a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left" class="btn ajax-get b-r-0 no-refresh">
+                                            <i class="fa fa-trash"></i>
+                                            <span>清空缓存</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a target="_blank" href="__ROOT__/"><i class="fa fa-external-link"></i>
+                                            <span>打开前台</span>
+                                        </a>
+                                    </li>
                                     <li class="dropdown">
                                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fa fa-user"></i> {$_user_auth.username} <b class="caret"></b>
+                                            <i class="fa fa-user"></i>
+                                            <span>{$_user_auth.username}</span>
+                                            <span style="margin-top: -2px;" class="badge badge-danger">{$_SESSION['ly_home_']['new_message']}</span>
+                                            <b class="caret"></b>
                                         </a>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a target="_blank" href="__ROOT__/"><i class="fa fa-external-link"></i> 打开前台</a></li>
-                                            <li><a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left;" class="btn text-left ajax-get no-refresh"><i class="fa fa-trash"></i> 清空缓存</a></li>
-                                            <li><a href="{:U('Admin/Public/logout')}" class="ajax-get"><i class="fa fa-sign-out"></i> 退出</a></li>
+                                            <li>
+                                                <a target="_blank" href="{:oc_url('User/Message/index', '', true, true)}">
+                                                    <i class="fa fa-bell"></i>
+                                                    <span>我的消息</span>
+                                                    <span style="margin-top: -2px;" class="badge badge-danger">{$_SESSION['ly_home_']['new_message']}</span>
+                                                </a>
+                                            </li>
+                                            <li><a href="{:U('Admin/Index/removeRuntime')}" style="border: 0;text-align: left" class="btn ajax-get no-refresh"><i class="fa fa-trash"></i> 清空缓存</a></li>
+                                            <li><a href="{:U('Admin/Login/logout')}" class="ajax-get"><i class="fa fa-sign-out"></i> 退出</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -133,37 +213,43 @@
                 <div class="container-fluid with-top-navbar">
                     <div class="row" style="background: #fff;">
                         <!-- 后台左侧导航 -->
-                        <div id="sidebar" class="col-xs-12 col-sm-3 sidebar tab-content">
-                            <!-- 模块菜单 -->
-                            <nav class="navside navside-default" role="navigation">
-                                <?php if($_current_menu_list['_child']): ?>
-                                    <ul class="nav navside-nav navside-first">
-                                        <volist name="_current_menu_list._child" id="_ns_first" key="fkey">
-                                            <li>
-                                                <a data-toggle="collapse" href="#navside-collapse-{$_ns_first.id}-{$fkey}">
-                                                    <i class="{$_ns_first.icon}"></i>
-                                                    <span class="nav-label">{$_ns_first.title}</span>
-                                                    <span class="angle fa fa-angle-down"></span>
-                                                    <span class="angle-collapse fa fa-angle-left"></span>
-                                                </a>
-                                                <notempty name="_ns_first._child">
-                                                    <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns_first.id}-{$fkey}">
-                                                        <volist name="_ns_first._child" id="_ns_second" key="skey">
-                                                            <li <?php if($_parent_menu_list[2]['url'] == $_ns_second['url']) echo 'class="active"'; ?>>
-                                                                <a href="{:U($_ns_second['url'])}" >
-                                                                    <i class="{$_ns_second.icon}"></i>
-                                                                    <span class="nav-label">{$_ns_second.title}</span>
-                                                                </a>
-                                                            </li>
-                                                        </volist>
-                                                    </ul>
-                                                </notempty>
-                                            </li>
-                                        </volist>
-                                    </ul>
-                                <?php endif; ?>
-                            </nav>
-                        </div>
+                        <?php if (!request()->isMobile()): ?>
+                            <div id="sidebar" class="col-xs-12 col-sm-3 sidebar tab-content">
+                                <!-- 模块菜单 -->
+                                <nav class="navside navside-default" role="navigation">
+                                    <?php if($_current_menu_list['_child']): ?>
+                                        <ul class="nav navside-nav navside-first">
+                                            <volist name="_current_menu_list._child" id="_ns_first" key="fkey">
+                                                <?php if(!($_ns_first['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                    <li>
+                                                        <a data-toggle="collapse" href="#navside-collapse-{$_ns.id}-{$fkey}">
+                                                            <i class="{$_ns_first.icon}"></i>
+                                                            <span class="nav-label">{$_ns_first.title}</span>
+                                                            <span class="angle fa fa-angle-down"></span>
+                                                            <span class="angle-collapse fa fa-angle-left"></span>
+                                                        </a>
+                                                        <notempty name="_ns_first._child">
+                                                            <ul class="nav navside-nav navside-second collapse in" id="navside-collapse-{$_ns.id}-{$fkey}">
+                                                                <volist name="_ns_first._child" id="_ns_second" key="skey">
+                                                                    <?php if(!($_ns_second['is_dev'] && !C('DEVELOP_MODE'))): ?>
+                                                                        <li <?php if($_parent_menu_list[2]['url'] == $_ns_second['url']) echo 'class="active"'; ?>>
+                                                                            <a href="{:U($_ns_second['url'])}" >
+                                                                                <i class="{$_ns_second.icon}"></i>
+                                                                                <span class="nav-label">{$_ns_second.title}</span>
+                                                                            </a>
+                                                                        </li>
+                                                                    <?php endif; ?>
+                                                                </volist>
+                                                            </ul>
+                                                        </notempty>
+                                                    </li>
+                                                <?php endif; ?>
+                                            </volist>
+                                        </ul>
+                                    <?php endif; ?>
+                                </nav>
+                            </div>
+                        <?php endif; ?>
 
                         <!-- 右侧内容 -->
                         <div id="main" class="col-xs-12 col-sm-9 main"  style="overflow-y: scroll;">
@@ -184,7 +270,7 @@
                                 <div class="navbar navbar-default" role="navigation">
                                     <div class="container－fluid">
                                         <div class="navbar-header">
-                                            <a class="navbar-brand" target="_blank" href="http://www.lingyun.net">
+                                            <a class="navbar-brand" target="_blank" href="https://www.lingyun.net">
                                                 <span>零云</span>
                                             </a>
                                         </div>
@@ -197,7 +283,7 @@
                                                 </li>
                                             </ul>
                                             <ul class="nav navbar-nav navbar-right">
-                                                <li><a target="_blank" href="http://www.lingyun.net" class="text-muted pull-right">Powered By 零云</a></li>
+                                                <li><a class="text-muted pull-right">Powered By 零云</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -206,8 +292,6 @@
                         </div>
                     </div>
                 </div>
-            <?php else: ?>
-                <block name="main"></block>
             <?php endif; ?>
         </block>
     </div>
@@ -222,14 +306,12 @@
             <script type="text/javascript" src="__LYUI__/js/lyui.min.js"></script>
             <script type="text/javascript" src="__ADMIN_JS__/admin.js"></script>
             <script type="text/javascript">
-                // 如果是多标签方式自动跳转后台首页
-                var admin_tabs = '{$_admin_tabs}';
-                if(admin_tabs == '1' && !(self.frameElement != null && (self.frameElement.tagName == "IFRAME" || self.frameElement.tagName == "iframe"))){
-                    parent.parent.location = "{:U('Admin/Index/index')}";
-                }
-                if(admin_tabs == '0' && (self.frameElement != null && (self.frameElement.tagName == "IFRAME" || self.frameElement.tagName == "iframe"))){
-                    parent.parent.location = "{:U('Admin/Index/index')}";
-                }
+                $(function(){
+                    // 计算相关参数用于决定顶部导航显示数量
+                    var total_width = $(window).width();
+                    var main_nav_limit = parseInt((total_width-220-297)/90);
+                    $.cookie('ly_main_nav_limit', main_nav_limit, { expires: 100 });
+                });
             </script>
             <block name="script"></block>
         </div>

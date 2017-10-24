@@ -6,8 +6,15 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 return array(
-    'app_init'     => array('Common\Behavior\InitModuleBehavior'), //初始化安装的模块行为扩展
-    'app_begin'    => array('Common\Behavior\InitConfigBehavior'), //初始化系统配置行为扩展
-    'action_begin' => array('Common\Behavior\InitHookBehavior'), //初始化插件钩子行为扩展
+    'app_init'  => array('Common\Behavior\InitModuleBehavior'), //初始化安装的模块行为扩展
+    'app_begin' => array(
+        'Common\Behavior\InitHookBehavior', //初始化插件钩子行为扩展
+        'Common\Behavior\InitConfigBehavior', //初始化系统配置行为扩展
+    ),
+    'app_end'   => array('Behavior\CronRunBehavior'), //定时任务行为扩展
 );

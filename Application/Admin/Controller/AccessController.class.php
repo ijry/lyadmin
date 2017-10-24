@@ -6,9 +6,13 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
+// | 版权申明：零云不是一个自由软件，是零云官方推出的商业源码，严禁在未经许可的情况下
+// | 拷贝、复制、传播、使用零云的任意代码，如有违反，请立即删除，否则您将面临承担相应
+// | 法律责任的风险。如果需要取得官方授权，请联系官方http://www.lingyun.net
+// +----------------------------------------------------------------------
 namespace Admin\Controller;
 
-use Think\Page;
+use lyf\Page;
 
 /**
  * 管理员控制器
@@ -54,8 +58,11 @@ class AccessController extends AdminController
             $val['group_title'] = $group_object->getFieldById($val['group'], 'title');
         }
 
-        // 使用Builder快速建立列表页面。
-        $builder = new \Common\Builder\ListBuilder();
+        $right_button['no']['title']     = '超级管理员无需操作';
+        $right_button['no']['attribute'] = 'class="label label-warning" href="#"';
+
+        // 使用Builder快速建立列表页面
+        $builder = new \lyf\builder\ListBuilder();
         $builder->setMetaTitle('管理员列表') // 设置页面标题
             ->addTopButton('addnew') // 添加新增按钮
             ->addTopButton('resume') // 添加启用按钮
@@ -73,6 +80,10 @@ class AccessController extends AdminController
             ->addRightButton('edit') // 添加编辑按钮
             ->addRightButton('forbid') // 添加禁用/启用按钮
             ->addRightButton('delete') // 添加删除按钮
+            ->alterTableData( // 修改列表数据
+                array('key' => 'id', 'value' => '1'),
+                array('right_button' => $right_button)
+            )
             ->display();
     }
 
@@ -82,25 +93,25 @@ class AccessController extends AdminController
      */
     public function add()
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $access_object = D('Access');
             $data          = $access_object->create();
             if ($data) {
                 if ($access_object->add($data)) {
                     $this->success('新增成功', U('index'));
                 } else {
-                    $this->error('新增失败');
+                    $this->error('新增失败：' . $access_object->getError());
                 }
             } else {
                 $this->error($access_object->getError());
             }
         } else {
-            //使用FormBuilder快速建立表单页面。
-            $builder = new \Common\Builder\FormBuilder();
-            $builder->setMetaTitle('新增配置') //设置页面标题
-                ->setPostUrl(U('add')) //设置表单提交地址
-                ->addFormItem('uid', 'uid', 'UID', '用户ID')
-                ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'))
+            // 使用FormBuilder快速建立表单页面
+            $builder = new \lyf\builder\FormBuilder();
+            $builder->setMetaTitle('新增') // 设置页面标题
+                ->setPostUrl(U('add')) // 设置表单提交地址
+                ->addFormItem('uid', 'num', 'UID', '用户ID', '', array('must' => 1))
+                ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'), array('must' => 1))
                 ->display();
         }
     }
@@ -111,28 +122,53 @@ class AccessController extends AdminController
      */
     public function edit($id)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
+            if (I('post.id') === '1') {
+                $this->error('超级管理员不能修改');
+            }
             $access_object = D('Access');
             $data          = $access_object->create();
             if ($data) {
                 if ($access_object->save($data)) {
                     $this->success('更新成功', U('index'));
                 } else {
-                    $this->error('更新失败');
+                    $this->error('更新失败：' . $access_object->getError());
                 }
             } else {
                 $this->error($access_object->getError());
             }
         } else {
-            // 使用FormBuilder快速建立表单页面。
-            $builder = new \Common\Builder\FormBuilder();
-            $builder->setMetaTitle('编辑配置') // 设置页面标题
+            // 使用FormBuilder快速建立表单页面
+            $builder = new \lyf\builder\FormBuilder();
+            $builder->setMetaTitle('编辑') // 设置页面标题
                 ->setPostUrl(U('edit')) // 设置表单提交地址
                 ->addFormItem('id', 'hidden', 'ID', 'ID')
-                ->addFormItem('uid', 'uid', 'UID', '用户ID')
-                ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'))
+                ->addFormItem('uid', 'num', 'UID', '用户ID', '', array('must' => 1))
+                ->addFormItem('group', 'select', '用户组', '不同用户组对应相应的权限', select_list_as_tree('Group'), array('must' => 1))
                 ->setFormData(D('Access')->find($id))
                 ->display();
         }
+    }
+
+    /**
+     * 设置一条或者多条数据的状态
+     * @author jry <598821125@qq.com>
+     */
+    public function setStatus($model = '', $strict = null)
+    {
+        if ('' == $model) {
+            $model = request()->controller();
+        }
+        $ids = I('request.ids');
+        if (is_array($ids)) {
+            if (in_array('1', $ids)) {
+                $this->error('超级管理员不允许操作');
+            }
+        } else {
+            if ($ids === '1') {
+                $this->error('超级管理员不允许操作');
+            }
+        }
+        parent::setStatus($model);
     }
 }
