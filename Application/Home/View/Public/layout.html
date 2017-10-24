@@ -72,12 +72,6 @@
                                                     <span class="fa fa-wxapp" style="color: #1aad19;font-weight: 700;"></span>
                                                 </a>
                                             </li>
-                                            <li>
-                                                <a target="_blank" href="{:U('Wallet/Recharge/index', '', true, true)}">
-                                                    <span class="text-primary">¥</span>
-                                                    <span>充值</span>
-                                                </a>
-                                            </li>
                                             <?php if($_user_auth): ?>
                                                 <li>
                                                     <a href="{:U('User/Message/index', '', true, true)}">
@@ -126,15 +120,6 @@
                                                     </a>
                                                 </li>
                                             <?php endif; ?>
-                                            <li>
-                                                <a onmouseover="this.style.cssText='color:gray; text-decoration:none;'" 
-                                                    onmouseout="this.style.cssText='color:white;text-decoration:none'"
-                                                    class="bg bg-primary" style="color: #fff;"
-                                                    href="{:U('User/Cert/index', '', true, true)}">
-                                                    <span>实名认证</span>
-                                                    <span></span>
-                                                </a>
-                                            </li>
                                         </ul>
                                     </div>
                                 </div>

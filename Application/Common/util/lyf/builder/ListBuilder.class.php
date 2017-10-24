@@ -691,7 +691,7 @@ class ListBuilder extends Controller
 
             // 根据表格标题字段指定类型编译列表数据
             foreach ($this->_table_column_list as &$column) {
-                $column_value = &$data[$_name[0]];
+                $column_value = &$data[$column['name']];
 
                 // 指定类型
                 switch ($column['type']) {
