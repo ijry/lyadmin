@@ -1,8 +1,7 @@
-Thunbs.db
+Thumbs.db
 .idea
 *.log
 node_modules/
 /Runtime/
 !*.md
 !/vendor
-
