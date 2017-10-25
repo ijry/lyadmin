@@ -2,11 +2,18 @@
 
 ## 项目介绍
 
-lyadmin是一套轻量级通用后台，采用Bootstrap3制作，自带权限管理，模块化开发。
+lyadmin是一套轻量级通用后台，采用ThinkPHP+Bootstrap3制作，内置系统设置、上传管理、权限管理、模块管理、插件管理等功能，独有的Builder页面自动生成技术节省50%开发成本，先进的模块化开发的支持让开发成本一降再降，致力于为个人和中小型企业打造全方位的PHP企业级开发解决方案。另外提供整套企业开发解决方案，集PC、手机、微信、App、小程序五端于一体，更有用户中心模块、门户模块、钱包支付中心模块、商城模块、OAuth2统一登陆、内部Git模块、Docker模块可供选择
+
+lysite是lyadmin开源通用后台的一个版本分支，本质上是lyadmin的一个模块，旨在探索用户对更深层次的系统需求以及反应。lysite是一套基于开源通用后台衍生开发的通用建站系统，主要目标致力于打造一套建设企业官网和小型博客等站点的专用建站系统。系统采用模块化开发，不对lyadmin核心做任何特殊修改。支持模板功能，模板的开发规范见下文。
 
 ## 官网：
 
 http://lyadmin.lingyun.net
+
+## 下载地址
+lyadmin1.2.0: ![https://gitee.com/jry/lyadmin/tree/master](https://gitee.com/jry/lyadmin/tree/master)
+lysite1.0.0: ![https://gitee.com/jry/lyadmin/tree/lysite](https://gitee.com/jry/lyadmin/tree/lysite)
+lyadmin2.0.0: ![https://gitee.com/jry/lyadmin/tree/2.0](https://gitee.com/jry/lyadmin/tree/2.0)
 
 ## 后台截图
 
