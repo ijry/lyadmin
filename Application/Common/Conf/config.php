@@ -13,7 +13,8 @@
 $_config = array(
     /**
      * 根据零云用户协议：
-     * 任何情况下使用零云均需获取官方授权，违者追究法律责任，授权联系：http://www.lingyun.net
+     * 任何情况下使用零云商业版均需获取官方授权，违者追究法律责任，授权联系：http://www.lingyun.net
+     * 下面有一些配置看着不像是lyadmin里面的请不用管，只是为了产品核心来源记录需要，这些配置会被/Data/extra.php中的配置覆盖。
      */
     'PRODUCT_NAME'         => 'lingyun', // 产品名称
     'PRODUCT_TITLE'        => '零云', // 产品标题
@@ -48,7 +49,7 @@ $_config = array(
     'VAR_SESSION_ID'       => 'session_id',
     'SESSION_OPTIONS'      => array(
         'expire' => 864000,
-        'type'   => 'Sql',
+        //'type'   => 'Sql',
     ),
 
     // 全局过滤配置
