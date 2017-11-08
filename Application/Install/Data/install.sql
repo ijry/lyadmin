@@ -324,7 +324,7 @@ DROP TABLE IF EXISTS `ly_admin_user`;
 
 CREATE TABLE `ly_admin_user` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UID',
-  `pid` int(11) unsigned NOT NULL COMMENT '上级',
+  `pid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '上级',
   `user_type` int(11) NOT NULL DEFAULT '1' COMMENT '用户类型',
   `nickname` varchar(63) DEFAULT NULL COMMENT '昵称',
   `username` varchar(31) NOT NULL DEFAULT '' COMMENT '用户名',
