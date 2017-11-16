@@ -19,3 +19,13 @@
 //$_SERVER[ENV_PRE.'DB_PORT']   = '3306';
 //$_SERVER[ENV_PRE.'DB_PREFIX'] = 'ly_';
 //$_SERVER[ENV_PRE.'APP_DEBUG'] = 'false';
+
+// 兼容Coding.net的动态Pages
+if ($_ENV['MYSQL_HOST']) {
+	$_SERVER[ENV_PRE.'DEV_MODE'] = 'true';
+	$_SERVER[ENV_PRE.'DB_HOST']  = $_ENV['MYSQL_HOST'];
+	$_SERVER[ENV_PRE.'DB_NAME']  = $_ENV['MYSQL_DBNAME'];
+	$_SERVER[ENV_PRE.'DB_USER']  = $_ENV['MYSQL_USERNAME'];
+	$_SERVER[ENV_PRE.'DB_PWD']   = $_ENV['MYSQL_PASSWORD'];
+	$_SERVER[ENV_PRE.'DB_PORT']  = $_ENV['MYSQL_PORT'];
+}
