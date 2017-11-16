@@ -107,7 +107,14 @@ if (!function_exists('yaml_parse_file')) {
  */
 function E($msg, $code = 0)
 {
-    throw new Think\Exception($msg, $code);
+    if (request()->isAjax()) {
+        $return['status'] = $code;
+        $return['info']   = $msg;
+        echo json_encode($return);
+        exit;
+    } else {
+        throw new Think\Exception($msg, $code);
+    }
 }
 
 /**
