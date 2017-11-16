@@ -21,6 +21,8 @@ class IndexController extends Controller
     // 初始化方法
     protected function _initialize()
     {
+        // 兼容2.0规范
+        C('APP_DEBUG', APP_DEBUG);
         $no_verify = array('index', 'step1', 'complete');
         if (in_array(request()->action(), $no_verify)) {
             return true;
