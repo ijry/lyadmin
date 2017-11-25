@@ -1,0 +1,92 @@
+<extend name="$_admin_public_layout"/>
+
+<block name="style">
+    <style type="text/css">
+        .overview {
+            width: 100%;
+            height: 120px;
+            background: #F1F1F1;
+            padding: 25px 40px;
+            text-align: center;
+        }
+        .overview h5{
+            color: #3399ff;
+            font-size: 20px;
+        }
+    </style>
+</block>
+
+<block name="breadcrumb"></block>
+
+<block name="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-md-2">
+                <include file="Index/side" />
+            </div>
+            <div class="col-xs-12 col-lg-12">
+                <h3 style="font-size: 14px;color: #333;">概况</h3>
+                <div class="m-b-md">
+                    <div class="row overview">
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h5>{$category_count|default='0'}</h5>
+                            <h6>分类总数</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h5>{$article_count|default='0'}</h5>
+                            <h6>文章总数</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h5>{$info.view_count|default='0'}</h5>
+                            <h6>访问次数</h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h5>{$theme_count|default='0'}</h5>
+                            <h6>我的模板</h6>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="font-size: 14px;color: #333;">当前模板</h3>
+                <div class="m-b-md">
+                    <div class="row overview" style="height: 130px;padding: 15px 20px; text-align: left;">
+                        <div class="col-xs-12 col-sm-3 item">
+                            <img style="border: 1px solid #eee;" src="{$theme_info.cover_url}" height="100">
+                        </div>
+                        <div class="col-xs-12 col-sm-5 item" style="font-size: 13px;">
+                            <p>模板标题：{$theme_info.title}</p>
+                            <p>
+                                <span class="label label-warning">私有模板</span>
+                                <span class="label label-success">免费</span>
+                            </p>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 item" style="font-size: 13px;">
+                            <a class="btn btn-primary btn-md m-t-md" href="{:U('Site/Index/theme_config', array(), true, true)}">
+                                <span class="fa fa-wrench"></span>
+                                <span>模板自定义配置</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="font-size: 14px;color: #333;">常用功能</h3>
+                <div>
+                    <div class="row overview" style="height: 60px;padding: 15px 40px;">
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h6>
+                                <?php if((request()->hostname() === 'localhost') || (request()->hostname() === '127.0.0.1')): ?>
+                                    <a target="_blank" href="{:U('Sites/Site/index', array())}">网站前台</a>
+                                <?php else: ?>
+                                    <a target="_blank" href="http://{$info.domain}.{:C('sites_config.root_domain')}">网站前台</a>
+                                <?php endif; ?>
+                            </h6>
+                        </div>
+                        <div class="col-xs-12 col-sm-3 item">
+                            <h6>
+                                <a href="{:U('Sites/Admin/article_add', array(), true, true)}">发布文章</a>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</block>

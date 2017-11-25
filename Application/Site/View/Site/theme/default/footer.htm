@@ -1,0 +1,23 @@
+<div id="footer" >
+	<div class="container" style="margin-bottom: 10px;">
+		<ul class="list-inline">
+			<li><a href="{$info.homepage}">首页</a></li>
+			<site:category_list name="cate">
+				<span class="footerSep">|</span>
+            	<li><a href="{$cate.href}">{$cate.title}</a></li>
+            </site:category_list>
+	    </ul>
+	</div>
+	<div class="container">
+		<ul class="list-inline pull-left">
+	        <li><a class="icp" href="http://www.miibeian.gov.cn/" target="_blank">{$info.icp}</a></li>
+	        <span class="footerSep">|</span>
+	        <li><span class="copyright">{$info.company}</span></li>
+	        <span class="footerSep">|</span>
+	        <li><a href="__ROOT__/admin.php">后台管理</a></li>
+	    </ul>
+	    <ul class="list-inline pull-right hidden-xs">
+	        <li><span>Powered By <a target="_blank" href="http://www.lyunweb.com">零云建站</a></span></li>
+	    </ul>
+	</div>
+</div>

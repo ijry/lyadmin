@@ -6,16 +6,9 @@
 // +----------------------------------------------------------------------
 // | Author: jry <598821125@qq.com>
 // +----------------------------------------------------------------------
-
-/**
- * 额外配置
- */
 return array(
-    'MODEL_NAME'             => 'lysite',
-    'MODEL_TITLE'            => '零云lysite',
-    'MODEL_VERSION'          => '1.0.0',
-    'LOGO_DEFAULT'           => '零云lysite',
-    'LOGO_INVERSE'           => '零云lysite',
-    'INSTALL_PRODUCT_NAME'   => '零云lysite',
-    'INSTALL_WEBSITE_DOMAIN' => 'http://lyadmin.lingyun.net',
+    // 路由配置
+    'URL_ROUTER_ON' => true,
+    'URL_MAP_RULES' => array(
+    ),
 );

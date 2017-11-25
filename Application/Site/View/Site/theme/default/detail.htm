@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{$article_info.title}-{$info.title}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{$info.theme_path}/css/style.css">
+    <script type="text/javascript" src="{$info.theme_path}/js/common.js"></script>
+</head>
+<body>
+    <!-- 引入网页头部 -->
+    <include file="$theme_path_header" />
+
+    <div class="container">
+        <ol class="breadcrumb" style="margin-top: 20px;">
+            <li><a href="/">首页</a></li>
+            <volist name="breadcrumb_list" id="bc">
+                <li><a href="{$bc.href}">{$bc.title}</a></li>
+            </volist>
+            <li class="active">{$article_info.title}</li>
+        </ol>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="panel panel-default panel-sites">
+                    <div class="panel-heading">
+                        <span class="title-left"></span>
+                        <span class="title">栏目分类</span>
+                    </div>
+                    <ul class="list-group">
+                        <volist name="category_list" id="vo">
+                            <li class="list-group-item">
+                                <a href="{$vo.href}">{$vo.title}</a>
+                            </li>
+                        </volist>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xs-9">
+                <div class="panel panel-default panel-sites">
+                    <h3 class="text-center">{$article_info.title}</h3>
+                    <p class="text-center">
+                        <span>发布时间：{$article_info.create_time_format}</span>
+                        <span>阅读次数：{$article_info.view_count}</span>
+                    </p>
+                    <div class="panel-body">
+                        <p>{$article_info.content}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入网页底部 -->
+    <include file="$theme_path_footer" />
+</body>
+</html>

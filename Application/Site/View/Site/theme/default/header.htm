@@ -1,0 +1,36 @@
+<div class="container" style="height: 120px;padding-top: 40px;">
+    <div class="row">
+        <div class="col-xs-4">
+            <a href="/">
+                <img height="45" alt="{$info.title}" src="{$info.logo_url}">
+            </a>
+        </div>
+        <div class="col-xs-8">
+        </div>
+    </div>
+</div>
+<nav id="main-nav" class="navbar navbar-inverse main-nav">
+    <div class="container">
+        <div class="row">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand visible-xs" href="#">
+                    <img height="35" alt="{$info.title}" src="{$info.logo_url}">
+                </a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="<?php if(!$category_info['id']) echo 'active'; ?>"><a href="{$info.homepage}">首页</a></li>
+                    <site:category_list name="cate">
+                        <li class="<?php if($category_info['id'] == $cate['id']) echo 'active'; ?>"><a href="{$cate.href}">{$cate.title}</a></li>
+                    </site:category_list>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
