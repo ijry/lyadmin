@@ -1,0 +1,42 @@
+<case value="summernote">
+    <div class="form-group item_{$[type]form.name} {$[type]form.extra.class|default=''}">
+        <label class="left control-label">
+            <?php if($[type]form['extra']['must']): ?>
+                <span style="color: red;">*</span>
+            <?php endif; ?>
+            <span>{$[type]form.title}：</span>
+        </label>
+        <div class="right">
+            <textarea name="{$[type]form.name}" id="[type]{$group_k|default=''}_kindeditor_{$[type]k}" class="form-control" {$[type]form.extra.attr|default=''}>
+                {$[type]form.value|default=''}
+            </textarea>
+            <script type="text/javascript" src="__PUBLIC__/libs/kindeditor/kindeditor-min.js" charset="utf-8"></script>
+            <script type="text/javascript">
+                $(function(){
+                    KindEditor.ready(function(K) {
+                        kindeditor_{$[type]k} = K.create('#[type]{$group_k|default=''}_kindeditor_{$[type]k}', {
+                            allowFileManager : true,
+                            filePostName : 'file',
+                            cssPath : [
+                                '__LYUI__/css/lyui.min.css',
+                                '__PUBLIC__/libs/kindeditor/plugins/code/prettify.css'
+                            ],
+                            width : '100%',
+                            height : "<?php echo $[type]form['extra']['self']['resizeType']?: '500px'?>",
+                            resizeType: <?php echo $[type]form['extra']['self']['resizeType']?: '1'?>,
+                            pasteType : <?php echo $[type]form['extra']['self']['pasteType']?: '2'?>,
+                            filterMode: <?php if(MODULE_MARK === 'Admin') {echo 'false';} else {echo 'true';} ?>,
+                            urlType : "<?php echo $[type]form['extra']['self']['urlType']?: 'absolute'?>",
+                            fileManagerJson : '{:U(MODULE_MARK."/Upload/fileManager", '', true, true)}',
+                            uploadJson : '{:U(MODULE_MARK."/Upload/upload", array("callback_type" => "kindeditor", "module_name" => request()->module(), "upload_driver" => $[type]form["extra"]["self"]["upload_driver"] ? : ''), true, true)}',
+                            extraFileUploadParams: {
+                                session_id : '{:session_id()}'
+                            },
+                            afterBlur: function(){this.sync();}
+                        });
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</case>
