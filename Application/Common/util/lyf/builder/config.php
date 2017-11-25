@@ -33,6 +33,7 @@ return array(
         'datetime'   => array('时间', 'int(11) UNSIGNED NOT NULL'),
         'picture'    => array('单张图片', 'int(11) UNSIGNED NOT NULL'),
         'pictures'   => array('多张图片', 'varchar(32) NOT NULL'),
+        'summernote' => array('HTML编辑器 summernote', 'text'),
         'kindeditor' => array('HTML编辑器 kindeditor', 'text'),
         'tags'       => array('标签', 'varchar(127) NOT NULL'),
     ),
