@@ -214,7 +214,7 @@ class Controller extends \think\Controller
             array(
                 'success' => '操作成功！',
                 'error'   => '操作失败！',
-                'url'     => ' ',
+                'url'     => '',
                 'ajax'    => request()->isAjax(),
             ),
             (array) $msg
