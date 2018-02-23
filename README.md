@@ -8,7 +8,7 @@ lysite是lyadmin开源通用后台的一个版本分支，本质上是lyadmin的
 
 ## 官网：
 
-http://lyadmin.lingyun.net
+https://www.lingyun.net/lyadmin.html
 
 ## 下载地址
 lyadmin1.2.0: https://gitee.com/jry/lyadmin/tree/master
