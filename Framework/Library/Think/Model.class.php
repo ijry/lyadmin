@@ -63,6 +63,10 @@ class Model
     // 链操作方法列表
     protected $methods = array('strict', 'order', 'alias', 'having', 'group', 'lock', 'distinct', 'auto', 'filter', 'validate', 'result', 'token', 'index', 'force', 'master');
 
+    // 禁止写入
+    protected $forbidWrite    = false;
+    protected $forbidWriteMsg = '已关闭数据库写入功能';
+
     /**
      * 架构函数
      * 取得DB类的实例对象 字段检查
@@ -318,6 +322,12 @@ class Model
      */
     public function add($data = '', $options = array(), $replace = false)
     {
+        // 支持关闭写入功能 @lyf
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+        // 判断数据为空
         if (empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if (!empty($this->data)) {
@@ -369,6 +379,12 @@ class Model
 
     public function addAll($dataList, $options = array(), $replace = false)
     {
+        // 支持关闭写入功能 @lyf
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+        // 判断数据为空
         if (empty($dataList)) {
             $this->error = L('_DATA_TYPE_INVALID_');
             return false;
@@ -422,6 +438,12 @@ class Model
      */
     public function save($data = '', $options = array())
     {
+        // 支持关闭写入功能 @lyf
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+        // 判断数据为空
         if (empty($data)) {
             // 没有传递数据，获取当前数据对象的值
             if (!empty($this->data)) {
@@ -501,6 +523,12 @@ class Model
      */
     public function delete($options = array())
     {
+        // 支持关闭写入功能 @lyf
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
+        // 获取主键
         $pk = $this->getPk();
         if (empty($options) && empty($this->options['where'])) {
             // 如果删除条件为空 则删除当前数据对象所对应的记录
@@ -896,6 +924,11 @@ class Model
      */
     public function setField($field, $value = '')
     {
+        // 支持关闭写入功能 @lyf
+        if (true === $this->forbidWrite) {
+            $this->error = $this->forbidWriteMsg;
+            return false;
+        }
         if (is_array($field)) {
             $data = $field;
         } else {

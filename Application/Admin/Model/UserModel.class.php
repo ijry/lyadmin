@@ -74,7 +74,7 @@ class UserModel extends Model
         $result['avatar_url'] = get_cover($result['avatar'], 'avatar');
 
         // 用户识别label
-        if (is_dir(APP_DIR . 'User') && (D('Admin/Module')->where('name="User" and status="1"')->count())) {
+        if (is_dir(APP_DIR . 'User') && (exist_module('User'))) {
             $cert_info = D('User/Cert')->isCert($result['id']);
         }
         if (isset($cert_info)) {
@@ -111,7 +111,7 @@ class UserModel extends Model
         if (!$id) {
             return false;
         }
-        if (is_dir(APP_DIR . 'User') && (D('Admin/Module')->where('name="User" and status="1"')->count())) {
+        if (is_dir(APP_DIR . 'User') && (exist_module('User'))) {
             $user_info = D('User/User')->detail($id);
         } else {
             $user_info = $this->find($id);

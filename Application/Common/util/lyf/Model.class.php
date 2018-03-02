@@ -35,7 +35,7 @@ class Model
     // 主键是否自动增长
     protected $autoinc = false;
     // 数据表前缀
-    protected $tableNamePrefix = null;
+    protected $tablePrefix = null;
     // 模型名称
     protected $name = '';
     // 数据库名称

@@ -329,8 +329,16 @@
                                                     <td><?php echo PHP_VERSION; ?></td>
                                                 </tr>
                                                 <tr>
-                                                    <td>MYSQL版本</td>
-                                                    <td><php>$system_info_mysql = M()->query("select version() as v;");</php>{$system_info_mysql.0.v}</td>
+                                                    <php>if(C('DB_TYPE') == 'mysql') {</php>
+                                                        <td>MYSQL版本</td>
+                                                        <td><php>$system_info_mysql = M()->query("select version() as v;");</php>{$system_info_mysql.0.v}</td>
+                                                    <php>} elseif(C('DB_TYPE') == 'sqlsrv') {</php>
+                                                        <td>SQLServer (MSSQL) 版本</td>
+                                                        <td><php>$system_info_mysql = M()->query("select @@version");echo $system_info_mysql[0][""]</php></td>
+                                                    <php>} else {</php>
+                                                        <td>SQL</td>
+                                                        <td>您使用的是{:C('DB_TYPE')}</td>
+                                                    <php>}</php>
                                                 </tr>
                                                 <tr>
                                                     <td>上传限制</td>
