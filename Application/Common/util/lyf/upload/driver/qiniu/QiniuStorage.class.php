@@ -15,7 +15,7 @@ class QiniuStorage
         $this->ak            = $config['accessKey'];
         $this->domain        = $config['domain'];
         $this->bucket        = $config['bucket'];
-        $this->QINIU_UP_HOST = $config['up_domain'];
+        $this->QINIU_UP_HOST = $config['up_domain'] ? : 'http://up.qiniu.com';
         $this->timeout       = isset($config['timeout']) ? $config['timeout'] : 3600;
     }
 
