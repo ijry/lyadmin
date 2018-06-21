@@ -13,7 +13,7 @@
 return array(
     'MODEL_NAME'             => 'lyadmin',
     'MODEL_TITLE'            => '零云lyadmin',
-    'MODEL_VERSION'          => '1.2.0',
+    'MODEL_VERSION'          => '1.2.1',
     'LOGO_DEFAULT'           => '零云lyadmin',
     'LOGO_INVERSE'           => '零云lyadmin',
     'INSTALL_PRODUCT_NAME'   => '零云lyadmin',

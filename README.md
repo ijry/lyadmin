@@ -11,9 +11,9 @@ lysite是lyadmin开源通用后台的一个版本分支，本质上是lyadmin的
 https://www.lingyun.net/lyadmin.html
 
 ## 下载地址
-lyadmin1.2.0: https://gitee.com/jry/lyadmin/tree/master
+lyadmin1.2.1: https://gitee.com/jry/lyadmin/tree/master
 
-lysite1.0.0:  https://gitee.com/jry/lyadmin/tree/lysite
+lysite1.1.0:  https://gitee.com/jry/lyadmin/tree/lysite
 
 lyadmin2.0.0: https://gitee.com/jry/lyadmin/tree/2.0
 
