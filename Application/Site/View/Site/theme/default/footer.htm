@@ -14,10 +14,12 @@
 	        <span class="footerSep">|</span>
 	        <li><span class="copyright">{$info.company}</span></li>
 	        <span class="footerSep">|</span>
-	        <li><a href="__ROOT__/admin.php">后台管理</a></li>
+	        <li><a href="{:U(request()->module() . '/Admin/index', array('site_id' => $_GET['site_id']), true, true)}">后台管理</a></li>
 	    </ul>
 	    <ul class="list-inline pull-right hidden-xs">
 	        <li><span>Powered By <a target="_blank" href="http://www.lyunweb.com">零云建站</a></span></li>
 	    </ul>
 	</div>
 </div>
+<!-- 站点统计代码 -->
+{$info.site_statics}

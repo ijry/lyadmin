@@ -27,7 +27,6 @@ class ArticleAdmin extends AdminController
      */
     public function article($cid = 0)
     {
-
         if ($cid) {
             $category_object = D('Site/Category');
             $category_info   = $category_object->find($cid);
@@ -56,7 +55,8 @@ class ArticleAdmin extends AdminController
             ->addTableColumn('id', 'ID')
             ->addTableColumn('title', '标题')
             ->addTableColumn('cover', '封面', 'picture')
-            ->addTableColumn('sort', '排序')
+            ->addTableColumn('source_id','来源','callback',array(D('Source'),'source_list'))
+            ->addTableColumn('sort', '排序', 'quickedit')
             ->addTableColumn('status', '状态', 'status')
             ->addTableColumn('right_button', '操作', 'btn')
             ->setTableDataList($data_list) // 数据列表
@@ -70,14 +70,14 @@ class ArticleAdmin extends AdminController
      * 新增文章
      * @author jry <598821125@qq.com>
      */
-    public function article_add($cid = null)
+    public function article_add($cid = null, $site_id = 1)
     {
         // 新增
         $article_model = D('Site/Article');
         if (request()->isPost()) {
             $data = $article_model->create();
             if ($data) {
-                $id = $article_model->add();
+                $id = $article_model->add($data);
                 if ($id) {
                     $this->success('新增成功', U('article', array('cid' => $cid)));
                 } else {
@@ -87,14 +87,18 @@ class ArticleAdmin extends AdminController
                 $this->error($article_model->getError());
             }
         } else {
-            $this->assign('info', $info);
+            // 站点信息
+            $index_model = D('Site/Index');
+            $con         = array();
+            $con['id']   = $site_id;
+            $info        = $index_model->where($con)->find();
 
             // 获取前台模版供选择
             // 获取模板信息
-            $theme_model     = D('Site/Theme');
-            $con             = array();
-            $con['id'] = C('Site_config.theme');
-            $theme_info      = $theme_model->where($con)->find();
+            $theme_model = D('Site/Theme');
+            $con         = array();
+            $con['id']   = $info['theme'];
+            $theme_info  = $theme_model->where($con)->find();
             if (!$theme_info) {
                 $this->error('请先在后台设置网站模板');
             }
@@ -116,11 +120,14 @@ class ArticleAdmin extends AdminController
                 ->setPostUrl(U('article_add')) // 设置表单提交地址
                 ->addFormItem('cid', 'select', '上级分类', '所属的上级分类', select_list_as_tree('Site/Category', array()), array('must' => 1))
                 ->addFormItem('title', 'text', '文章标题', '文章标题', '', array('must' => 1))
+                ->addFormItem('source_id','select','文章来源','文章来源',D('Source')->source_list())
                 ->addFormItem('abstract', 'textarea', '文章简介', '文章简介')
                 ->addFormItem('content', 'kindeditor', '文章内容', '文章内容', '', array('must' => 1, 'self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
+                ->addFormItem('tags','tags','标签','标签')
                 ->addFormItem('cover', 'picture_temp', '文章封面', '文章封面', null, array('must' => 1, 'self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('banner', 'picture_temp', 'Banner图片', 'Banner图片', null, array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('detail_template', 'select', '详情模版', '文章详情页模版', $template_detail)
+                ->addFormItem("is_recommend", "radio", "是否推荐", "是否推荐", array('1' => '推荐', '0' => '不推荐'))
                 ->display();
         }
     }
@@ -128,7 +135,7 @@ class ArticleAdmin extends AdminController
      * 编辑文章
      * @author jry <598821125@qq.com>
      */
-    public function article_edit($id, $cid = mull)
+    public function article_edit($id, $cid = null, $site_id = 1)
     {
         // 权限检测
         $article_model = D('Site/Article');
@@ -145,7 +152,7 @@ class ArticleAdmin extends AdminController
         if (request()->isPost()) {
             $data = $article_model->create();
             if ($data) {
-                if ($article_model->save() !== false) {
+                if ($article_model->save($data) !== false) {
                     $this->success('更新成功', U('article', array('cid' => $cid)));
                 } else {
                     $this->error('更新失败');
@@ -154,14 +161,18 @@ class ArticleAdmin extends AdminController
                 $this->error($article_model->getError());
             }
         } else {
-            $this->assign('info', $info);
+            // 站点信息
+            $index_model = D('Site/Index');
+            $con         = array();
+            $con['id']   = $site_id;
+            $info        = $index_model->where($con)->find();
 
             // 获取前台模版供选择
             // 获取模板信息
-            $theme_model     = D('Site/Theme');
-            $con             = array();
-            $con['id'] = C('Site_config.theme');
-            $theme_info      = $theme_model->where($con)->find();
+            $theme_model = D('Site/Theme');
+            $con         = array();
+            $con['id']   = $info['theme'];
+            $theme_info  = $theme_model->where($con)->find();
             if (!$theme_info) {
                 $this->error('请先在后台设置网站模板');
             }
@@ -184,11 +195,14 @@ class ArticleAdmin extends AdminController
                 ->addFormItem('id', 'hidden', 'ID', 'ID')
                 ->addFormItem('cid', 'select', '上级分类', '所属的上级分类', select_list_as_tree('Site/Category', array()), array('must' => 1))
                 ->addFormItem('title', 'text', '文章标题', '文章标题', '', array('must' => 1))
+                ->addFormItem('source_id','select','文章来源','文章来源',D('Source')->source_list())
                 ->addFormItem('abstract', 'textarea', '文章简介', '文章简介')
                 ->addFormItem('content', 'kindeditor', '文章内容', '文章内容', '', array('must' => 1, 'self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
+                ->addFormItem('tags','tags','标签','标签')
                 ->addFormItem('cover', 'picture_temp', '文章封面', '文章封面', null, array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('banner', 'picture_temp', 'Banner图片', 'Banner图片', null, array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('detail_template', 'select', '详情模版', '文章详情页模版', $template_detail)
+                ->addFormItem("is_recommend", "radio", "是否推荐", "是否推荐", array('1' => '推荐', '0' => '不推荐'))
                 ->setFormData($article_info)
                 ->display();
         }

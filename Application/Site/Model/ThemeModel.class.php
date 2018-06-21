@@ -33,11 +33,8 @@ class ThemeModel extends Model
      * @author jry <598821125@qq.com>
      */
     protected $_validate = array(
-        array('cid', 'require', '分类不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
         array('name', 'require', '名称不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
         array('title', 'require', '标题不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('cover', 'require', '封面不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('images', 'require', '预览图不能为空', self::MUST_VALIDATE, 'regex', self::MODEL_BOTH),
     );
 
     /**
@@ -57,8 +54,13 @@ class ThemeModel extends Model
      */
     protected function _after_find(&$result, $options)
     {
+        $result['name_path'] = str_replace(array('_'),array('/'), $result['name']);
         $result['user']               = D('Admin/User')->getUserInfo($result['uid']);
-        $result['cover_url']          = get_cover($result['cover'], 'default');
+        if (C('CURRENT_THEME')) {
+            $result['cover_url'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Sites/Site/theme/' . $result['name'] . '/cover.png';
+        } else {
+            $result['cover_url'] = __ROOT__ . '/Application/Sites/View/Site/theme/' . $result['name'] . '/cover.png';
+        }
         $result['create_time_format'] = time_format($result['create_time'], 'Y-m-d H:i:s');
     }
 
@@ -73,12 +75,87 @@ class ThemeModel extends Model
         }
     }
 
-    public function theme_list(){
-        $tarr=$this->where('status=1')->select();
-        $th_arr=array();
-        foreach ($tarr as $k1 => $v1) {
-            $th_arr[$v1["id"]]=$v1['name'];
+    /**
+     * 安装描述文件名
+     * @author jry <598821125@qq.com>
+     */
+    public function install_file()
+    {
+        return 'opencmf.php';
+    }
+
+    /**
+     * 获取主题列表
+     * @param string $addon_dir
+     * @author jry <598821125@qq.com>
+     */
+    public function getAll()
+    {
+        //获取所有模板（文件夹下必须有$install_file定义的安装描述文件）
+        $path           = './Application/Site/View/Site/theme/';
+        $dirs           = array_map('basename', glob($path . '*', GLOB_ONLYDIR));
+        $theme_dir_list = array();
+        foreach ($dirs as $dir) {
+            $config_file = $path . $dir . '/' . $this->install_file();
+            if (is_file($config_file)) {
+                $theme_dir_list[]                      = $dir;
+                $temp_arr                              = include $config_file;
+                $temp_arr['info']['status']            = -1; //未安装
+                $temp_arr['info']['name']              = $dir;
+                $theme_list[$temp_arr['info']['name']] = $temp_arr['info'];
+            }
         }
-        return $th_arr;
+        // extend目录扩展模板
+        $path           = './Application/Site/View/Site/theme/extend/';
+        $dirs           = array_map('basename', glob($path . '*', GLOB_ONLYDIR));
+        foreach ($dirs as $dir) {
+            $config_file = $path . $dir . '/' . $this->install_file();
+            if (is_file($config_file)) {
+                $theme_dir_list[]                      = 'extend' . '_' . $dir;
+                $temp_arr                              = include $config_file;
+                $temp_arr['info']['status']            = -1; //未安装
+                $temp_arr['info']['name']              = 'extend' . '_' . $dir;
+                $theme_list[$temp_arr['info']['name']] = $temp_arr['info'];
+            }
+        }
+
+        // 获取系统已经安装的主题信息
+        if ($theme_dir_list) {
+            $map['name'] = array('in', $theme_dir_list);
+        } else {
+            return false;
+        }
+        $installed_theme_list = $this->where($map)
+            ->field(true)
+            ->order('sort asc,id desc')
+            ->select();
+        if ($installed_theme_list) {
+            foreach ($installed_theme_list as $theme) {
+                $theme_list[$theme['name']] = $theme;
+            }
+        }
+
+        // 右侧按钮
+        foreach ($theme_list as &$val) {
+            switch ($val['status']) {
+                case '-1': //未安装
+                    $val['status']                               = '<i class="label label-primary">未安装</i>';
+                    if (C('DEVELOP_MODE')) {
+                        $val['right_button']['install']['title']     = '安装';
+                        $val['right_button']['install']['attribute'] = 'class="label label-success-outline label-pill" href="' . U('install_before', array('name' => $val['name'])) . '"';
+                    }
+                    break;
+                default:
+                    $val['status_icon'] = '<i class="label label-success">已安装</i>';
+                    $val['right_button']['update_info']['title']     = '更新信息';
+                    $val['right_button']['update_info']['attribute'] = 'class="label label-info-outline label-pill ajax-get" href="' . U('updateInfo', array('id' => $val['id'])) . '"';
+                    if (C('DEVELOP_MODE')) {
+                        $val['right_button']['uninstall']['title']       = '卸载';
+                        $val['right_button']['uninstall']['attribute']   = 'class="label label-danger-outline label-pill" href="' . U('uninstall_before', array('id' => $val['id'])) . '"';
+                    }
+                    break;
+            }
+        }
+        return $theme_list;
     }
 }

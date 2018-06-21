@@ -72,16 +72,12 @@
                     <div class="row overview" style="height: 60px;padding: 15px 40px;">
                         <div class="col-xs-12 col-sm-3 item">
                             <h6>
-                                <?php if((request()->hostname() === 'localhost') || (request()->hostname() === '127.0.0.1')): ?>
-                                    <a target="_blank" href="{:U('Sites/Site/index', array())}">网站前台</a>
-                                <?php else: ?>
-                                    <a target="_blank" href="http://{$info.domain}.{:C('sites_config.root_domain')}">网站前台</a>
-                                <?php endif; ?>
+                                <a target="_blank" href="{:url_home('Site/Index/index', array())}">网站前台</a>
                             </h6>
                         </div>
                         <div class="col-xs-12 col-sm-3 item">
                             <h6>
-                                <a href="{:U('Sites/Admin/article_add', array(), true, true)}">发布文章</a>
+                                <a href="{:U('Site/Article/article_add', array(), true, true)}">发布文章</a>
                             </h6>
                         </div>
                     </div>

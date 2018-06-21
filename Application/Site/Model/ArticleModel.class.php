@@ -21,6 +21,12 @@ use Common\Model\Model;
 class ArticleModel extends Model
 {
     /**
+     * 模块名称
+     * @author jry <598821125@qq.com>
+     */
+    public $moduleName = 'Site';
+
+    /**
      * 数据库真实表名
      * 一般为了数据库的整洁，同时又不影响Model和Controller的名称
      * 我们约定每个模块的数据表都加上相同的前缀，比如微信模块用weixin作为数据表前缀
@@ -58,9 +64,7 @@ class ArticleModel extends Model
         $result['cover_url']          = get_cover($result['cover'], 'default');
         $result['banner_url']         = get_cover($result['banner']);
         $result['create_time_format'] = time_format($result['create_time'], 'Y-m-d H:i:s');
-
-        // U函数对域名路由支持不完善导致这里只能写绝对地址
-        $result['href'] = U('Site/Index/detail/', array('id' => $result['id']));
+        $result['href']               = U('Site/Index/detail/', array('id' => $result['id']));
     }
 
     /**
@@ -78,7 +82,7 @@ class ArticleModel extends Model
      * 获取文章列表
      * @author jry <598821125@qq.com>
      */
-    public function getList($cid = '', $limit = 10, $page = 1, $order = null, $child = false, $map = null)
+    public function getList($cid = '', $limit = 10, $page = 1, $order = null, $child = false, $is_recommend = '', $map = null)
     {
         //获取分类信息
         $category_object = D('Site/Category');
@@ -108,8 +112,117 @@ class ArticleModel extends Model
         if (!$order) {
             $order = 'sort desc,create_time desc';
         }
+        if ($is_recommend) {
+            $con["is_recommend"] = $is_recommend;
+        }
         $return_list = $this->page($page, $limit)->order($order)->where($con)->select();
 
         return $return_list;
     }
+
+    /**
+     * 获取标签和每个标签的文章数量
+     */
+    public function getTag(){
+        $tag_object = D('Article');
+        $data = $tag_object->where(['status'=>1])->getField("id,tags");
+        $str = implode(",",$data);
+        $arr = explode(",",$str);
+        $data = array_count_values($arr);
+        $tag_list = array();
+        $array = array();
+        foreach ($data as $key => $value) {
+            $array['tag'] = $key;
+            $array['count'] = $value;
+            $array['href'] = U("Site/Index/lists/",array('tag'=>$key));
+            $tag_list[] = $array;
+        }
+        return $tag_list;
+    }
+
+        /**
+     * 获取文章详情
+     * @author jry <598821125@qq.com>
+     */
+    public function detail($id, $map = null)
+    {
+        //获取基础表信息
+        $con       = array();
+        $con['id'] = $id;
+        if ($map) {
+            $con = array_merge($con, $map);
+        }
+        $info = $this->where($con)->find();
+        if (!is_array($info)) {
+            $this->error = '文章被禁用或已删除！';
+            return false;
+        }
+
+        // 阅读量加1
+        $result = $this->where(array('id' => $id))->SetInc('view_count');
+
+
+        // 获取作者信息
+        $info['user'] = D('Admin/User')->getUserInfo($info['uid']);
+
+        // 获取发帖数量
+        $info['user']['post_count'] = $this->where(array('uid' => $info['uid']))->count();
+
+        // 获取评论数量
+        $info['user']['comment_count'] = D($this->moduleName . '/Comment')->where(array('uid' => $info['uid']))->count();
+
+
+        // 基础信息与扩展信息合并
+        if (is_array($extend_data)) {
+            $info = array_merge($info, $extend_data);
+        }
+
+        // 获取上一篇和下一篇文章信息
+        $info['previous'] = $this->getPrevious($info);
+        $info['next']     = $this->getNext($info);
+        return $info;
+    }
+
+        /**
+     * 获取当前分类上一篇文章
+     * @author jry <598821125@qq.com>
+     */
+    private function getPrevious($info)
+    {
+        // 获取文档信息
+        $map['status'] = array('eq', 1);
+        $map['id']     = array('lt', $info['id']);
+        $map['cid']    = array('eq', $info['cid']);
+        $previous      = $this->where($map)->order('id desc')->find();
+
+        if (!$previous) {
+            $previous['title'] = '没有了';
+            $previous['href']  = '#';
+        } else {
+            $previous['href'] = U($this->moduleName . '/index/detail', array('id' => $previous['id']));
+        }
+        return $previous;
+    }
+
+    /**
+     * 获取当前分类下一篇文章
+     * @author jry <598821125@qq.com>
+     */
+    private function getNext($info)
+    {
+        // 获取文档信息
+        $map['status'] = array('eq', 1);
+        $map['id']     = array('gt', $info['id']);
+        $map['cid']    = array('eq', $info['cid']);
+        $next          = $this->where($map)->order('id asc')->find();
+
+        if (!$next) {
+            $next['title'] = '没有了';
+            $next['href']  = '#';
+        } else {
+            $next['href'] = U($this->moduleName . '/index/detail', array('id' => $next['id']));
+        }
+        return $next;
+    }
+
 }

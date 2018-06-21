@@ -13,7 +13,6 @@
 namespace Site\Controller;
 
 use Home\Controller\HomeController;
-
 /**
  * 站点控制器
  * 该控制器需要结合TP的域名部署绑定从而支持站群模块每个网站绑定自己的域名
@@ -36,15 +35,20 @@ class IndexController extends HomeController
         // 设置模板后缀
         C('TMPL_TEMPLATE_SUFFIX', '.htm');
 
-        $info             = C('site_config');
-        $info['logo_url'] = get_cover($info['logo']);
-        $info['homepage'] = U('Site/Site/index');
-        $this->info       = $info;
+        // 网站配置
+        $con           = array();
+        $con['status'] = '1';
+        $con['id']     = 1;
+        $info          = D('Index')->where($con)->find();
+        if (!$info) {
+            $this->error('站点不存在或已禁用');
+        }
+        $this->info = $info;
 
         // 增加访问次数
         $con       = array();
-        $con['id'] = C('Site_config.theme');
-        D('Theme')->where($con)->setInc('view_count');
+        $con['id'] = 1;
+        D('Index')->where($con)->setInc('view_count');
     }
 
     /**
@@ -65,33 +69,48 @@ class IndexController extends HomeController
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
         }
 
         // 模板自定义配置
-        $theme_info['config'] = json_decode($theme_info['config'], true);
+        $order_info = D('Order')->where(array('site_id' => 1, 'theme_id' => $info['theme']))->find();
+        $theme_info['config'] = json_decode($order_info['config'], true);
         $this->assign('config_info', $theme_info['config']);
-
         $this->assign('meta_title', "首页");
+
+        // 移动端适配
+        $theme_info_name_template = $theme_info['name_path'];
+        if (request()->isMobile()) {
+            if (C('CURRENT_THEME')) {
+                $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            } else {
+                $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+            }
+            if (is_dir($dir . '/wap')) {
+                $theme_info_name_template = $theme_info_name_template . "/wap";
+            }
+        }
 
         // 显示页面
         if (C('CURRENT_THEME')) {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
-            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
+            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
             $this->assign('info', $info);
-            $this->display('Site/theme/' . $theme_info['name'] . '/index');
+            $this->display('Site/theme/' . $theme_info_name_template . '/index');
         } else {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
-            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
+            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
+            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
             $this->assign('info', $info);
-            $this->display('Site/theme/' . $theme_info['name'] . '/index');
+            $this->display('Site/theme/' . $theme_info_name_template . '/index');
         }
     }
 
@@ -99,86 +118,125 @@ class IndexController extends HomeController
      * 文章列表
      * @author jry <598821125@qq.com>
      */
-    public function lists($cid)
+    public function lists($cid = '', $tag = '')
     {
         // 网站配置
         $info = $this->info;
 
         // 获取分类信息
-        $category_model = D('Category');
-        $con            = array();
-        $con['status']  = '1';
-        $con['id']      = $cid;
-        $category_info  = $category_model->where($con)->find();
-        if (!$category_info) {
-            $this->error('分类不存在');
-        }
+        if ($cid) {
+            $con            = array();
+            $con['status']  = '1';
+            $con['id']      = $cid;
+            $category_model = D('Category');
+            $category_info  = $category_model->where($con)->find();
+            if (!$category_info) {
+                $this->error('分类不存在');
+            }
+            // 获取父分类信息
+            if ($category_info['pid']) {
+                $con            = array();
+                $con['status']  = '1';
+                $con['id']      = $category_info['pid'];
+                $parent_category_info  = $category_model->where($con)->find();
+                $this->assign('parent_category_info', $parent_category_info);
+            }
 
-        // 获取与当前分类同级的分类
-        if (!$category_info['pid']) {
+            // 获取与当前分类同级的分类
+            if (!$category_info['pid']) {
+                $con           = array();
+                $con['status'] = '1';
+                $con['pid']    = $category_info['pid'];
+                $category_list = $category_model->getCategoryTree($category_info['id']);
+            } else {
+                $con           = array();
+                $con['status'] = '1';
+                $con['pid']    = $category_info['pid'];
+                $category_list = $category_model->getSameLevelCategoryTree($category_info['id']);
+            }
+
+            // 获取面包屑导航数据
+            $breadcrumb_list = $category_model->getParentCategory($category_info['id']);
+
+            // 获取文章列表
+            $article_model = D('Article');
             $con           = array();
             $con['status'] = '1';
-            $con['pid']    = $category_info['pid'];
-            $category_list = $category_model->getCategoryTree($category_info['id']);
-        } else {
-            $con           = array();
-            $con['status'] = '1';
-            $con['pid']    = $category_info['pid'];
-            $category_list = $category_model->getSameLevelCategoryTree($category_info['id']);
-        }
+            $con['cid']    = $cid;
+            $p             = !empty($_GET["p"]) ? $_GET['p'] : 1;
+            $data_list     = $article_model->where($con)->page($p, 10)->select();
 
-        // 获取面包屑导航数据
-        $breadcrumb_list = $category_model->getParentCategory($category_info['id']);
+            // 分页
+            $page = new \lyf\Page(
+                $article_model->where($con)->count(),
+                10
+            );
+            $this->assign('page', $page->show());
+        }
 
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
         }
 
         // 模板自定义配置
-        $theme_info['config'] = json_decode($theme_info['config'], true);
+        $order_info = D('Order')->where(array('site_id' => 1, 'theme_id' => $info['theme']))->find();
+        $theme_info['config'] = json_decode($order_info['config'], true);
         $this->assign('config_info', $theme_info['config']);
 
-        // 获取文章列表
-        $article_model = D('Article');
-        $con           = array();
-        $con['status'] = '1';
-        $con['cid']    = $cid;
-        $p             = !empty($_GET["p"]) ? $_GET['p'] : 1;
-        $data_list     = $article_model->where($con)->page($p, 9)->select();
 
-        // 分页
-        $page = new \lyf\Page(
-            $article_model->where($con)->count(),
-            9
-        );
-
+        if ($tag) {
+            $tag_object = D("Site/article");
+            $article_list = $tag_object->where(['status'=>1])->order('sort desc,id asc')->select();
+            $data_list = array();
+            foreach ($article_list as $item){
+                $array = explode(",",$item['tags']);
+                if (in_array($tag,$array)){
+                    $data_list[] = $item;
+                }
+            }
+        }
+        $this->assign('tag', $tag);
         $this->assign('category_info', $category_info);
         $this->assign('category_list', $category_list);
         $this->assign('breadcrumb_list', $breadcrumb_list);
         $this->assign('data_list', $data_list);
-        $this->assign('page', $page->show());
         $this->assign('meta_title', $category_info['title'] . "-" . $info['title']);
+
+        // 移动端适配
+        $theme_info_name_template = $theme_info['name_path'];
+        if (request()->isMobile()) {
+            if (C('CURRENT_THEME')) {
+                $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            } else {
+                $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+            }
+            if (is_dir($dir . '/wap')) {
+                $theme_info_name_template = $theme_info_name_template . "/wap";
+            }
+        }
 
         // 显示页面
         if (C('CURRENT_THEME')) {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . ($category_info['lists_template'] ?: 'lists_list'));
+            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . ($category_info['lists_template'] ?: 'lists_list'));
         } else {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . ($category_info['lists_template'] ?: 'lists_list'));
+            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . ($category_info['lists_template'] ?: 'lists_list'));
         }
     }
 
@@ -201,6 +259,15 @@ class IndexController extends HomeController
             $this->error('分类不存在');
         }
 
+        // 获取父分类信息
+        if ($category_info['pid']) {
+            $con            = array();
+            $con['status']  = '1';
+            $con['id']      = $category_info['pid'];
+            $parent_category_info  = $category_model->where($con)->find();
+            $this->assign('parent_category_info', $parent_category_info);
+        }
+
         // 获取与当前分类同级的分类
         if (!$category_info['pid']) {
             $con           = array();
@@ -220,14 +287,15 @@ class IndexController extends HomeController
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
         }
 
         // 模板自定义配置
-        $theme_info['config'] = json_decode($theme_info['config'], true);
+        $order_info = D('Order')->where(array('site_id' => 1, 'theme_id' => $info['theme']))->find();
+        $theme_info['config'] = json_decode($order_info['config'], true);
         $this->assign('config_info', $theme_info['config']);
 
         $this->assign('category_info', $category_info);
@@ -236,21 +304,36 @@ class IndexController extends HomeController
         $this->assign('article_info', $category_info);
         $this->assign('meta_title', $category_info['title'] . "-" . $info['title']);
 
+        // 移动端适配
+        $theme_info_name_template = $theme_info['name_path'];
+        if (request()->isMobile()) {
+            if (C('CURRENT_THEME')) {
+                $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            } else {
+                $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+            }
+            if (is_dir($dir . '/wap')) {
+                $theme_info_name_template = $theme_info_name_template . "/wap";
+            }
+        }
+
         // 显示页面
         if (C('CURRENT_THEME')) {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . ($category_info['lists_template'] ?: 'lists_page'));
+            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . ($category_info['lists_template'] ?: 'lists_page'));
         } else {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . ($category_info['lists_template'] ?: 'lists_page'));
+            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . ($category_info['lists_template'] ?: 'lists_page'));
         }
     }
 
@@ -267,8 +350,11 @@ class IndexController extends HomeController
         $article_model = D('Article');
         $con           = array();
         $con['status'] = '1';
-        $con['id']     = $id;
-        $article_info  = $article_model->where($con)->find();
+        $article_info  = $article_model->where($con)->detail($id);
+        if (!$article_info) {
+            $this->error('错误：' . $article_model->getError());
+        }
+
 
         // 增加阅读次数
         $article_model->where($con)->setInc('view_count');
@@ -302,29 +388,49 @@ class IndexController extends HomeController
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
         }
 
         // 模板自定义配置
-        $theme_info['config'] = json_decode($theme_info['config'], true);
+        $order_info = D('Order')->where(array('site_id' => 1, 'theme_id' => $info['theme']))->find();
+        $theme_info['config'] = json_decode($order_info['config'], true);
         $this->assign('config_info', $theme_info['config']);
 
+        // 获取评论列表
+        $comment_p            = I('p') ?: 1;
+        $comment_order        = I('comment_order') ?: 'id desc';
+        $comment_list         = D("Site/Comment")->getCommentList($id, 10, $comment_p, $comment_order);
+        $this->assign('comment_page', $comment_list['page']);
         $this->assign('category_info', $category_info);
         $this->assign('category_list', $category_list);
-        $this->assign('breadcrumb_list', $breadcrumb_list);
         $this->assign('article_info', $article_info);
+        $this->assign('breadcrumb_list', $breadcrumb_list);
         $this->assign('meta_title', $article_info['title'] . "-" . $info['title']);
+
+        // 移动端适配
+        $theme_info_name_template = $theme_info['name_path'];
+        if (request()->isMobile()) {
+            if (C('CURRENT_THEME')) {
+                $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            } else {
+                $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+            }
+            if (is_dir($dir . '/wap')) {
+                $theme_info_name_template = $theme_info_name_template . "/wap";
+            }
+        }
 
         // 显示页面
         if (C('CURRENT_THEME')) {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
+            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
 
             // 详情页模板
             if ($article_info['detail_template']) {
@@ -334,13 +440,14 @@ class IndexController extends HomeController
             } else {
                 $detail_tmp = 'detail';
             }
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . $detail_tmp);
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . $detail_tmp);
         } else {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
+            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
 
             // 详情页模板
             if ($article_info['detail_template']) {
@@ -350,7 +457,7 @@ class IndexController extends HomeController
             } else {
                 $detail_tmp = 'detail';
             }
-            $this->display('Site/theme/' . $theme_info['name'] . '/' . $detail_tmp);
+            $this->display('Site/theme/' . $theme_info_name_template . '/' . $detail_tmp);
         }
     }
 
@@ -381,35 +488,51 @@ class IndexController extends HomeController
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
         }
 
         // 模板自定义配置
-        $theme_info['config'] = json_decode($theme_info['config'], true);
+        $order_info = D('Order')->where(array('site_id' => 1, 'theme_id' => $info['theme']))->find();
+        $theme_info['config'] = json_decode($order_info['config'], true);
         $this->assign('config_info', $theme_info['config']);
 
         $this->assign('data_list', $data_list);
         $this->assign('page', $page->show());
         $this->assign('meta_title', $category_info['title'] . "-" . $info['title']);
 
+        // 移动端适配
+        $theme_info_name_template = $theme_info['name_path'];
+        if (request()->isMobile()) {
+            if (C('CURRENT_THEME')) {
+                $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+            } else {
+                $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+            }
+            if (is_dir($dir . '/wap')) {
+                $theme_info_name_template = $theme_info_name_template . "/wap";
+            }
+        }
+
         // 显示页面
         if (C('CURRENT_THEME')) {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/search');
+            $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/search');
         } else {
             // 主题目录
-            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
+            $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
             $this->assign('info', $info);
-            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
-            $this->display('Site/theme/' . $theme_info['name'] . '/search');
+            $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+            $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+            $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
+            $this->display('Site/theme/' . $theme_info_name_template . '/search');
         }
     }
 
@@ -449,7 +572,7 @@ class IndexController extends HomeController
         // 获取模板订单信息
         $theme_model = D('Site/Theme');
         $con         = array();
-        $con['id']   = C('Site_config.theme');
+        $con['id']   = $info['theme'];
         $theme_info  = $theme_model->where($con)->find();
         if (!$theme_info) {
             $this->error('请先在后台设置网站模板');
@@ -514,21 +637,36 @@ class IndexController extends HomeController
             $this->assign('form_info', $form_info);
             $this->assign('field_info', $field_info);
 
+            // 移动端适配
+            $theme_info_name_template = $theme_info['name_path'];
+            if (request()->isMobile()) {
+                if (C('CURRENT_THEME')) {
+                    $dir =  './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
+                } else {
+                    $dir =  './Application/Site/View/Site/theme/' . $theme_info_name_template;
+                }
+                if (is_dir($dir . '/wap')) {
+                    $theme_info_name_template = $theme_info_name_template . "/wap";
+                }
+            }
+
             // 显示页面
             if (C('CURRENT_THEME')) {
                 // 主题目录
-                $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'];
+                $info['theme_path'] = __ROOT__ . '/Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template;
                 $this->assign('info', $info);
-                $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/header.htm');
-                $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info['name'] . '/footer.htm');
-                $this->display('Site/theme/' . $theme_info['name'] . '/form');
+                $this->assign('theme_path_header', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/header.htm');
+                $this->assign('theme_path_footer', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/footer.htm');
+                $this->assign('lists_side', './Theme/' . C('CURRENT_THEME') . '/Site/Site/theme/' . $theme_info_name_template . '/side.htm');
+                $this->display('Site/theme/' . $theme_info_name_template . '/form');
             } else {
                 // 主题目录
-                $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info['name'];
+                $info['theme_path'] = __ROOT__ . '/Application/Site/View/Site/theme/' . $theme_info_name_template;
                 $this->assign('info', $info);
-                $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/header.htm');
-                $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info['name'] . '/footer.htm');
-                $this->display('Site/theme/' . $theme_info['name'] . '/form');
+                $this->assign('theme_path_header', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/header.htm');
+                $this->assign('theme_path_footer', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/footer.htm');
+                $this->assign('lists_side', './Application/Site/View/Site/theme/' . $theme_info_name_template . '/side.htm');
+                $this->display('Site/theme/' . $theme_info_name_template . '/form');
             }
         }
     }

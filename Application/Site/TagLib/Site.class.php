@@ -28,8 +28,11 @@ class Site extends TagLib
         'breadcrumb'    => array('attr' => 'name,cid', 'close' => 1), //面包屑导航列表
         'slider_list'   => array('attr' => 'name,limit,page,order,key', 'close' => 1), //幻灯列表
         'category_list' => array('attr' => 'name,pid,limit,page', 'close' => 1), //栏目分类列表
-        'article_list'  => array('attr' => 'name,cid,limit,page,order,child,cover,banner', 'close' => 1), //文章列表
+        'article_list'  => array('attr' => 'name,cid,limit,page,order,child,cover,banner,is_recommend', 'close' => 1), //文章列表
         'flink_list'    => array('attr' => 'name,pid,limit,page,order', 'close' => 1), //友链列表
+        'tag_list'      => array('attr' => 'name','close'=>1),//标签云列表
+        'comment_list'  => array('attr' => 'name,data_id,limit,page,order', 'close' => 1), //评论列表
+        'ad'            => array('attr' => 'name,width,height', 'close' => 0), //广告调用
     );
 
     /**
@@ -106,9 +109,10 @@ class Site extends TagLib
         $limit   = $tag['limit'] ?: 10;
         $page    = $tag['page'] ?: 1;
         $order   = $tag['order'] ?: '';
-        $child   = $tag['child'] ?: '';
+        $child   = $tag['child'] ?: '""';
         $cover   = $tag['cover'] ?: '';
         $cover_slider   = $tag['banner'] ?: '';
+        $is_recommend = $tag['is_recommend'] ?: '""';
         $parse   = '<?php ';
         $parse .= '$map = array(); ';
         if ($cover) {
@@ -117,7 +121,7 @@ class Site extends TagLib
         if ($cover_slider) {
             $parse .= '$map["banner"] = array("neq", "");';
         }
-        $parse .= '$__ARTICLE_LIST__ = D("Site/Article")->getList(' . $cid . ', ' . $limit . ', ' . $page . ', "' . $order . '", "' . $child . '", $map);';
+        $parse .= '$__ARTICLE_LIST__ = D("Site/Article")->getList(' . $cid . ', ' . $limit . ', ' . $page . ', "' . $order . '", ' . $child . ', ' . $is_recommend . ', $map);';
         $parse .= ' ?>';
         $parse .= '<volist name="__ARTICLE_LIST__" id="' . $name . '">';
         $parse .= $content;
@@ -144,6 +148,69 @@ class Site extends TagLib
         $parse .= '<volist name="__FLINK_LIST__" id="' . $name . '">';
         $parse .= $content;
         $parse .= '</volist>';
+        return $parse;
+    }
+
+    /**
+     * 标签云列表
+     */
+    public function _tag_list($tag, $content){
+        $site_id = I('get.site_id');
+        $name    = $tag['name'];
+        $parse   = '<?php ';
+        $parse .= '$__TAG_LIST__ = D("Site/Article")->getTag();';
+        $parse .= ' ?>';
+        $parse .= '<volist name="__TAG_LIST__" id="' . $name . '">';
+        $parse .= $content;
+        $parse .= '</volist>';
+        return $parse;
+    }
+
+    /**
+     * 评论列表
+     * @author jry <598821125@qq.com>
+     */
+    public function _comment_list($tag, $content)
+    {
+        $name    = $tag['name'];
+        $data_id = $tag['data_id']?: '';
+        $limit   = $tag['limit'] ?: 10;
+        $page    = $tag['page'] ?: 1;
+        $order   = $tag['order'] ?: 'sort desc,id desc';
+        $parse   = '<?php ';
+        $parse .= '$__COMMENT_LIST__ = D("Site/Comment")->getCommentList("' . $data_id . '", ' . $limit . ', ' . $page . ', "' . $order . '");';
+        $parse .= ' ?>';
+        $parse .= '<volist name="__COMMENT_LIST__" id="' . $name . '">';
+        $parse .= $content;
+        $parse .= '</volist>';
+        return $parse;
+    }
+
+    /**
+     * 广告调用
+     */
+    public function _ad($tag, $content)
+    {
+        $name   = $tag['name'];
+        $width  = $tag['width'] ?: '100%';
+        $height = $tag['height'] ?: '100%';
+        $parse  = '<?php ';
+        $parse .= '$map["status"] = array("eq", "1");';
+        $parse .= '$map["name"] = array("eq", "' . $name . '");';
+        $parse .= '$__AD__ = D("Site/Ad")->where($map)->find();';
+        $parse .= 'if($__AD__):?>';
+        $parse .= '<?php switch ($__AD__["type"]):?>';
+        $parse .= '<?php case "1":?>';
+        $parse .= '<a target="_blank" style="width:' . $width . ';height:' . $height . ';" href="$__AD__[\"url\"]">$__AD__["value"]</a>';
+        $parse .= '<?php break;?>';
+        $parse .= '<?php case "2":?>';
+        $parse .= '<a target="_blank" href="{$__AD__[\"url\"]}"><img style="width:' . $width . ';height:' . $height . ';" src="{$__AD__.value|get_cover}"></a>';
+        $parse .= '<?php break;?>';
+        $parse .= '<?php case "3":?>';
+        $parse .= '<div class="ad-code" style="width:' . $width . ';height:' . $height . ';">{$__AD__.value}</div>';
+        $parse .= '<?php break;?>';
+        $parse .= '<?php endswitch;?>';
+        $parse .= "<?php endif;?>";
         return $parse;
     }
 }

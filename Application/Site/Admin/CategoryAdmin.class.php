@@ -46,7 +46,7 @@ class CategoryAdmin extends AdminController
             ->addTableColumn('id', 'ID')
             ->addTableColumn('title_show', '分类')
             ->addTableColumn('cover', '封面', 'picture')
-            ->addTableColumn('sort', '排序')
+            ->addTableColumn('sort', '排序', 'quickedit')
             ->addTableColumn('status', '状态', 'status')
             ->addTableColumn('right_button', '操作', 'btn')
             ->setTableDataList($data_list) // 数据列表
@@ -55,6 +55,7 @@ class CategoryAdmin extends AdminController
             ->addRightButton('delete', array('model' => 'Category')) // 添加删除按钮
             ->display();
     }
+
     // 文档类型切换触发操作JS
     private $extra_html = <<<EOF
         <script type="text/javascript">
@@ -81,14 +82,14 @@ EOF;
      * 新增分类
      * @author jry <598821125@qq.com>
      */
-    public function category_add()
+    public function category_add($site_id = 1)
     {
         // 新增
         $category_object = D('Site/Category');
         if (request()->isPost()) {
             $data = $category_object->create();
             if ($data) {
-                $id = $category_object->add();
+                $id = $category_object->add($data);
                 if ($id) {
                     $this->success('新增成功', U('category'));
                 } else {
@@ -98,12 +99,18 @@ EOF;
                 $this->error($category_object->getError());
             }
         } else {
+            // 站点信息
+            $index_model = D('Site/Index');
+            $con         = array();
+            $con['id']   = $site_id;
+            $info        = $index_model->where($con)->find();
+
             // 获取前台模版供选择
             // 获取模板信息
-            $theme_model     = D('Site/Theme');
-            $con             = array();
-            $con['id'] = C('Site_config.theme');
-            $theme_info      = $theme_model->where($con)->find();
+            $theme_model = D('Site/Theme');
+            $con         = array();
+            $con['id']   = $info['theme'];
+            $theme_info  = $theme_model->where($con)->find();
             if (!$theme_info) {
                 $this->error('请先在后台设置网站模板');
             }
@@ -134,6 +141,8 @@ EOF;
                 ->addFormItem('banner', 'picture_temp', 'Banner图片', 'Banner图片', null, array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('lists_template', 'select', '列表模版', '文章列表或单页模板', $template_lists)
                 ->addFormItem('detail_template', 'select', '详情模版', '文章详情页模版', $template_detail)
+                ->addFormItem('is_show', 'radio', '显示', '显示与否', array('1' => '显示', '0' => '隐藏'))
+                ->setFormData(array('is_show' => 1))
                 ->setExtraHtml($this->extra_html)
                 ->display();
         }
@@ -143,7 +152,7 @@ EOF;
      * 编辑分类
      * @author jry <598821125@qq.com>
      */
-    public function category_edit($id)
+    public function category_edit($id, $site_id = 1)
     {
         // 权限检测
         $category_object = D('Site/Category');
@@ -155,7 +164,7 @@ EOF;
         if (request()->isPost()) {
             $data = $category_object->create();
             if ($data) {
-                if ($category_object->save() !== false) {
+                if ($category_object->save($data) !== false) {
                     $this->success('更新成功', U('category'));
                 } else {
                     $this->error('更新失败');
@@ -164,12 +173,18 @@ EOF;
                 $this->error($category_object->getError());
             }
         } else {
+            // 站点信息
+            $index_model = D('Site/Index');
+            $con         = array();
+            $con['id']   = $site_id;
+            $info        = $index_model->where($con)->find();
+
             // 获取前台模版供选择
             // 获取模板信息
-            $theme_model     = D('Site/Theme');
-            $con             = array();
-            $con['id'] = C('Site_config.theme');
-            $theme_info      = $theme_model->where($con)->find();
+            $theme_model = D('Site/Theme');
+            $con         = array();
+            $con['id']   = $infop['theme'];
+            $theme_info  = $theme_model->where($con)->find();
             if (!$theme_info) {
                 $this->error('请先在后台设置网站模板');
             }
@@ -201,6 +216,7 @@ EOF;
                 ->addFormItem('banner', 'picture_temp', 'Banner图片', 'Banner图片', null, array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
                 ->addFormItem('lists_template', 'select', '列表模版', '文章列表或单页模板', $template_lists)
                 ->addFormItem('detail_template', 'select', '详情模版', '文章详情页模版', $template_detail)
+                ->addFormItem('is_show', 'radio', '显示', '显示与否', array('1' => '显示', '0' => '隐藏'))
                 ->addFormItem('sort', 'num', '排序', '用于显示的顺序')
                 ->setExtraHtml($this->extra_html)
                 ->setFormData($category_info)

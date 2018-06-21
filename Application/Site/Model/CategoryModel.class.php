@@ -45,7 +45,6 @@ class CategoryModel extends Model
     protected $_auto = array(
         array('create_time', 'time', self::MODEL_INSERT, 'function'),
         array('update_time', 'time', self::MODEL_BOTH, 'function'),
-        array('is_show', '1', self::MODEL_INSERT),
         array('status', '1', self::MODEL_INSERT),
     );
 
@@ -56,6 +55,7 @@ class CategoryModel extends Model
     protected function _after_find(&$result, $options)
     {
         $result['cover_url'] = get_cover($result['cover'], 'default');
+        $result['banner_url']         = get_cover($result['banner']);
 
         // U函数对域名路由支持不完善导致这里只能写绝对地址
         // 为了开发方便兼容localhost和127.0.0.1
@@ -67,7 +67,11 @@ class CategoryModel extends Model
                 $result['href'] = U('Site/Index/page/', array('cid' => $result['id']));
                 break;
             case '2': // 外链列表
-                $result['href'] = $result['url'];
+                if (!stristr($result['url'], 'http')) {
+                    $result['href'] = U($result['url']);
+                } else {
+                    $result['href'] = $result['url'];
+                }
                 break;
         }
     }

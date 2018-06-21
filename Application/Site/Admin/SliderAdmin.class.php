@@ -45,7 +45,7 @@ class SliderAdmin extends AdminController
             ->addTableColumn('id', 'ID')
             ->addTableColumn('title', '标题')
             ->addTableColumn('cover', '图片', 'picture_temp', '', array('self' => array('upload_driver' => C('site_config.upload_driver') ?: 'Qiniu')))
-            ->addTableColumn('sort', '排序')
+            ->addTableColumn('sort', '排序', 'quickedit')
             ->addTableColumn('status', '状态', 'status')
             ->addTableColumn('right_button', '操作', 'btn')
             ->setTableDataList($data_list) // 数据列表
@@ -67,7 +67,7 @@ class SliderAdmin extends AdminController
         if (request()->isPost()) {
             $data = $slider_model->create();
             if ($data) {
-                $id = $slider_model->add();
+                $id = $slider_model->add($data);
                 if ($id) {
                     $this->success('新增成功', U('slider'));
                 } else {
@@ -106,7 +106,7 @@ class SliderAdmin extends AdminController
         if (request()->isPost()) {
             $data = $slider_model->create();
             if ($data) {
-                if ($slider_model->save() !== false) {
+                if ($slider_model->save($data) !== false) {
                     $this->success('更新成功', U('slider'));
                 } else {
                     $this->error('更新失败');

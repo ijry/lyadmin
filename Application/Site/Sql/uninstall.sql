@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `ly_site_theme_cate`;
 DROP TABLE IF EXISTS `ly_site_theme`;
 DROP TABLE IF EXISTS `ly_site_category`;
 DROP TABLE IF EXISTS `ly_site_article`;
@@ -7,3 +8,7 @@ DROP TABLE IF EXISTS `ly_site_liuyan`;
 DROP TABLE IF EXISTS `ly_site_form`;
 DROP TABLE IF EXISTS `ly_site_field`;
 DROP TABLE IF EXISTS `ly_site_data`;
+DROP TABLE IF EXISTS `ly_site_comment`;
+DROP TABLE IF EXISTS `ly_site_ad`;
+DROP TABLE IF EXISTS `ly_site_source`;
+DROP TABLE IF EXISTS `ly_site_order`;
